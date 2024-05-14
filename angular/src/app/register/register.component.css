@@ -1,10 +1,17 @@
+.parentContainer{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    align-items: center;
+    height: 100vh;
+}
+
 mat-form-field{
     width: 300px;
 }
 
 .registerContainer{
-    margin-top: 30px;
-    margin-left: 30px;
+    margin: 30px;
 }
 
 .buttons{
