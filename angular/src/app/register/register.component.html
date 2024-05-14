@@ -1,7 +1,10 @@
 <div class="parentContainer">
-    <button mat-raised-button color="primary" (click)="navigate('login')">Login</button>
+    <div class="leftContainer">
+    <div class="textLeft">Already have an account?</div>
+    <button mat-button class="loginButton" color="primary" (click)="navigate('login')">Login</button>
+    </div>
     <div class="registerContainer">
-        <div>Create Your Account</div>
+        <div class="text">Create Your Account</div>
         <div>
             <mat-form-field>
                 <mat-label>User Name</mat-label>
@@ -11,7 +14,8 @@
         <div>
             <mat-form-field>
                 <mat-label>Email</mat-label>
-                <input matInput #emailInput>
+                <input matInput #emailInput placeholder="pat@example.com" [formControl]="email" required>
+                <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
             </mat-form-field>
         </div>
         <div>
@@ -25,7 +29,7 @@
         </div>
         <div>
             <mat-form-field>
-                <mat-label>confirm Password</mat-label>
+                <mat-label>Confirm Password</mat-label>
                 <input matInput #confirmPasswordInput [type]="hideConfirmPassword ? 'password' : 'text'">
                 <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword">
                     <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -33,7 +37,7 @@
             </mat-form-field>
         </div>
         <div class="buttons">
-            <button mat-raised-button>Reset</button>
+            <button mat-raised-button (click)="reset()">Reset</button>
             <button mat-raised-button color="primary" (click)="navigate('login')">Register</button>
         </div>
     </div>
