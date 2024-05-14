@@ -21,10 +21,11 @@
         <div>
             <mat-form-field>
                 <mat-label>Password</mat-label>
-                <input matInput #passwordInput [type]="hidePassword ? 'password' : 'text'">
+                <input matInput #passwordInput [type]="hidePassword ? 'password' : 'text'" [formControl]="password" required>
                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                     <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
+                <mat-error *ngIf="password.invalid">{{getErrorMessagePassword()}}</mat-error>
             </mat-form-field>
         </div>
         <div>
@@ -34,6 +35,7 @@
                 <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword">
                     <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
+                <!-- <mat-error>{{getErrorMessageConfirmPassword()}}</mat-error> -->
             </mat-form-field>
         </div>
         <div class="buttons">

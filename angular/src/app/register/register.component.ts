@@ -41,10 +41,13 @@ export class RegisterComponent {
 
   ngOnInit(): void {
   }
+
+  // navigate to the login page
   navigate(path: string) {
-    this.router.navigate([path]); // navigate to the path
+    this.router.navigate([path]);
   }
 
+  // email validation
   email = new FormControl('', [Validators.required, Validators.email]);
 
   getErrorMessage() {
@@ -55,6 +58,33 @@ export class RegisterComponent {
     return this.email.hasError('email') ? 'Not a valid email' : '';
   }
 
+  // password validation
+  password = new FormControl('', [
+    Validators.required,
+    Validators.minLength(8),
+    Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
+  ]);
+
+  getErrorMessagePassword() {
+    if (this.password.hasError('required')) {
+      return 'You must enter a value';
+    }
+    else if (this.password.hasError('minlength')) {
+      return 'Must be at least 8 characters';
+    }
+
+    return this.password.hasError('pattern') ? 'Must contain at least 1 letter and 1 number' : '';
+  };
+
+  // confirm password validation xxx
+  getErrorMessageConfirmPassword() {
+    if (this.confirmPasswordInput.nativeElement.value != this.passwordInput.nativeElement.value) {
+      return 'Passwords do not match';
+    }
+    return null;
+  };
+
+  // rest the form
   reset(){
     this.userNameInput.nativeElement.value = '';
     this.emailInput.nativeElement.value = '';
