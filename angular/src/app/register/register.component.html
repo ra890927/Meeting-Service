@@ -1,0 +1,27 @@
+<p>register page</p>
+<div>
+    <mat-form-field>
+        <mat-label>User Name</mat-label>
+        <input matInput #userNameInput>
+    </mat-form-field>
+</div>
+<div>
+    <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput #emailInput>
+    </mat-form-field>
+</div>
+<div>
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput #passwordInput>
+    </mat-form-field>
+</div>
+<div>
+    <mat-form-field>
+        <mat-label>confirm Password</mat-label>
+        <input matInput #confirmPasswordInput>
+    </mat-form-field>
+</div>
+<button mat-raised-button>Reset</button>
+<button mat-raised-button class="registerButton" color="primary" (click)="navigate('login')">Register</button>
