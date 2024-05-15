@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
 @Component({
@@ -34,63 +34,61 @@ export class RegisterComponent {
   @ViewChild("confirmPasswordInput")
   confirmPasswordInput!: ElementRef<MatInput>;
 
+  registerForm: FormGroup;
+
+  constructor(private fb: FormBuilder, private router: Router) {
+    this.registerForm = this.fb.group({
+      userName: ['', [Validators.required, Validators.minLength(4)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
+      ]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+  }
+
 
   hidePassword = true;
   hideConfirmPassword = true;
-  constructor(private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  passwordMatchValidator(form: FormGroup) : {[key: string]: any} | null{
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    return password && confirmPassword && password.value === confirmPassword.value ? null : { 'mismatch': true };
+  }
+
+  getErrorMessage(field: string) {
+    let control = this.registerForm.get(field);
+    if (control && control.errors?.['required']) {
+      return 'You must enter a value';
+    } else if (control && control.errors?.['minlength'] && field === 'userName') {
+      return 'Must be at least 4 characters';
+    } else if (control && control.errors?.['email'] && field === 'email') {
+      return 'Not a valid email';
+    } else if (control && control.errors?.['minlength'] && field === 'password') {
+      return 'Must be at least 8 characters';
+    } else if (control && control.errors?.['pattern'] && field === 'password') {
+      return 'Must contain at least 1 letter and 1 number';
+    } else if (control && control.errors?.['mismatch'] && field === 'confirmPassword') {
+      return 'Passwords do not match';
+    }
+    return '';
+  }
+
+
+  // rest the form
+  reset(){
+    this.registerForm.reset();
   }
 
   // navigate to the login page
   navigate(path: string) {
     this.router.navigate([path]);
-  }
-
-  // email validation
-  email = new FormControl('', [Validators.required, Validators.email]);
-
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
-    }
-
-    return this.email.hasError('email') ? 'Not a valid email' : '';
-  }
-
-  // password validation
-  password = new FormControl('', [
-    Validators.required,
-    Validators.minLength(8),
-    Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
-  ]);
-
-  getErrorMessagePassword() {
-    if (this.password.hasError('required')) {
-      return 'You must enter a value';
-    }
-    else if (this.password.hasError('minlength')) {
-      return 'Must be at least 8 characters';
-    }
-
-    return this.password.hasError('pattern') ? 'Must contain at least 1 letter and 1 number' : '';
-  };
-
-  // confirm password validation xxx
-  getErrorMessageConfirmPassword() {
-    if (this.confirmPasswordInput.nativeElement.value != this.passwordInput.nativeElement.value) {
-      return 'Passwords do not match';
-    }
-    return null;
-  };
-
-  // rest the form
-  reset(){
-    this.userNameInput.nativeElement.value = '';
-    this.emailInput.nativeElement.value = '';
-    this.passwordInput.nativeElement.value = '';
-    this.confirmPasswordInput.nativeElement.value = '';
-
   }
 
 }

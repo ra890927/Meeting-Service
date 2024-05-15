@@ -5,39 +5,42 @@
     </div>
     <div class="registerContainer">
         <div class="text">Create Your Account</div>
+        <form [formGroup]="registerForm">
         <div>
             <mat-form-field>
                 <mat-label>User Name</mat-label>
-                <input matInput #userNameInput>
+                <input matInput #userNameInput formControlName="userName">
+                <mat-error>{{ getErrorMessage('userName') }}</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field>
                 <mat-label>Email</mat-label>
-                <input matInput #emailInput placeholder="pat@example.com" [formControl]="email" required>
-                <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+                <input matInput #emailInput placeholder="pat@example.com" formControlName="email">
+                <mat-error>{{ getErrorMessage('email') }}</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field>
                 <mat-label>Password</mat-label>
-                <input matInput #passwordInput [type]="hidePassword ? 'password' : 'text'" [formControl]="password" required>
+                <input matInput #passwordInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                     <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
-                <mat-error *ngIf="password.invalid">{{getErrorMessagePassword()}}</mat-error>
+                <mat-error>{{ getErrorMessage('password') }}</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field>
                 <mat-label>Confirm Password</mat-label>
-                <input matInput #confirmPasswordInput [type]="hideConfirmPassword ? 'password' : 'text'">
+                <input matInput #confirmPasswordInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
                 <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmPassword">
                     <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
-                <!-- <mat-error>{{getErrorMessageConfirmPassword()}}</mat-error> -->
+                <mat-error>{{ getErrorMessage('confirmPassword') }}</mat-error>
             </mat-form-field>
         </div>
+        </form>
         <div class="buttons">
             <button mat-raised-button (click)="reset()">Reset</button>
             <button mat-raised-button color="primary" (click)="navigate('login')">Register</button>
