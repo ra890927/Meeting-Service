@@ -34,14 +34,10 @@ export class RoomSchedulerComponent {
       right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
 
-    // initialView: 'dayGridMonth',
-    // editable: true,
-    // // weekends: false,
-    // firstDay: 1,
     // events: [
     //   { title: 'Meeting', start: new Date() }
     // ]
-    initialView: 'dayGridMonth',
+    initialView: 'timeGridWeek',
     initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
     weekends: true,
     editable: true,
