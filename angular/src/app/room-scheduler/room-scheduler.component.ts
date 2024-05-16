@@ -5,6 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { Router } from '@angular/router';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 import { CommonModule } from '@angular/common';
@@ -15,7 +16,7 @@ import { INITIAL_EVENTS, createEventId } from './event-utils';
 @Component({
   selector: 'app-room-scheduler',
   standalone: true,
-  imports: [FullCalendarModule],
+  imports: [FullCalendarModule, MatButtonToggleModule],
   templateUrl: './room-scheduler.component.html',
   styleUrl: './room-scheduler.component.css'
 })
