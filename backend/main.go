@@ -27,6 +27,7 @@ func main() {
 		{
 			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
+			eg.PUT("", userPresentation.UpdateUser)
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

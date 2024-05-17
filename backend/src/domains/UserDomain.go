@@ -7,6 +7,7 @@ import (
 
 type UserDomain interface {
 	CreateUser(user *models.User) (*models.User, error)
+	UpdateUser(user *models.User) (*models.User, error)
 }
 
 type userDomain struct {
@@ -35,4 +36,16 @@ func (ud *userDomain) CreateUser(user *models.User) (*models.User, error) {
 	}
 
 	return createdUser, nil
+}
+
+func (ud *userDomain) UpdateUser(user *models.User) (*models.User, error) {
+	// Update a user
+	updatedUser, err := ud.UserRepo.UpdateUser(user)
+
+	// return the user if no errors
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
 }

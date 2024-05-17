@@ -7,6 +7,7 @@ import (
 
 type UserService interface {
 	CreateUser(user *models.User) (*models.User, error)
+	UpdateUser(user *models.User) (*models.User, error)
 }
 
 type userService struct {
@@ -35,4 +36,16 @@ func (us *userService) CreateUser(user *models.User) (*models.User, error) {
 	}
 
 	return createdUser, nil
+}
+
+func (us *userService) UpdateUser(user *models.User) (*models.User, error) {
+	// Update a user
+	updatedUser, err := us.UserDomain.UpdateUser(user)
+
+	// return the user if no errors
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
 }

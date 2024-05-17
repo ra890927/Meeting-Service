@@ -19,7 +19,11 @@ type mockUserService struct {
 
 func (m *mockUserService) CreateUser(user *models.User) (*models.User, error) {
 	args := m.Called(user)
+	return args.Get(0).(*models.User), nil
+}
 
+func (m *mockUserService) UpdateUser(user *models.User) (*models.User, error) {
+	args := m.Called(user)
 	return args.Get(0).(*models.User), nil
 }
 
@@ -50,4 +54,36 @@ func TestRegisterUser(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 
+}
+
+func TestUpdateUser(t *testing.T) {
+	// Arrange
+	user := models.User{
+		Username: "test-user-updated",
+		Email:    "test-email-updated",
+		Password: "test-password-updated",
+		Role:     "test-role-updated",
+	}
+	// - Mock the user service
+	mockUserService := new(mockUserService)
+	mockUserService.On("UpdateUser", &user).Return(&user, nil)
+	up := presentations.NewUserPresentation(mockUserService)
+
+	// - Set the mode to test
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.PUT("/user", up.UpdateUser)
+
+	// - Create a request
+	jsonDataString := `{"username":"test-user-updated","email":"test-email-updated","password":"test-password-updated","role":"test-role-updated"}`
+	jsonData := []byte(jsonDataString)
+	req := httptest.NewRequest("PUT", "/user", bytes.NewBuffer(jsonData))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Act
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(t, 200, w.Code)
 }

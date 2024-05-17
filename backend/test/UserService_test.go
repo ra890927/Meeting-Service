@@ -18,6 +18,11 @@ func (m *MockUserDomain) CreateUser(user *models.User) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
+func (m *MockUserDomain) UpdateUser(user *models.User) (*models.User, error) {
+	args := m.Called(user)
+	return args.Get(0).(*models.User), nil
+}
+
 func TestServiceCreateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
@@ -42,4 +47,29 @@ func TestServiceCreateUser(t *testing.T) {
 	assert.Equal(t, user.Password, createdUser.Password)
 	assert.Equal(t, user.Role, createdUser.Role)
 
+}
+
+func TestServiceUpdateUser(t *testing.T) {
+	// Arrange
+	// new user for testing input
+	user := &models.User{
+		Username: "test-username-updated",
+		Email:    "test-email-updated",
+		Password: "test-password-updated",
+		Role:     "test-role-updated",
+	}
+	// mock the user domain
+	mockUserDomain := new(MockUserDomain)
+	mockUserDomain.On("UpdateUser", user).Return(user)
+	us := services.NewUserService(mockUserDomain)
+
+	// Act
+	updatedUser, err := us.UpdateUser(user)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.Equal(t, user.Username, updatedUser.Username)
+	assert.Equal(t, user.Email, updatedUser.Email)
+	assert.Equal(t, user.Password, updatedUser.Password)
+	assert.Equal(t, user.Role, updatedUser.Role)
 }
