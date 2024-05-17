@@ -1,15 +1,25 @@
-<p>log in your account</p>
-<div>
-    <mat-form-field>
-        <mat-label>User Name</mat-label>
-        <input matInput #userNameInput>
-    </mat-form-field>
+<div class="parentContainer">
+    <div class="leftContainer">
+        <div class="text">log in your account</div>
+        <div>
+            <mat-form-field>
+                <mat-label>User Name</mat-label>
+                <input matInput #userNameInput>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput #passwordInput [formControl]="password">
+                <mat-error *ngIf="password.invalid">{{ getErrorMessage() }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="signInButton">
+            <button mat-raised-button color="primary" (click)="navigate('reservation')">Sign in</button>
+        </div>
+    </div>
+    <div class="rightContainer">
+        <div class="textRight">Don't have an account?</div>
+        <button mat-button color="primary" class="registerButton" (click)="navigate('register')">Register</button>
+    </div>
 </div>
-<div>
-    <mat-form-field>
-        <mat-label>Password</mat-label>
-        <input matInput #passwordInput>
-    </mat-form-field>
-</div>
-<button mat-raised-button (click)="navigate('register')">Register</button>
-<button mat-raised-button class="signInButton" color="primary" (click)="navigate('reservation')">Sign in</button>
