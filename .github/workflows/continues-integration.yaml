@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'backend/go.mod'
+      - name: Intall dependencies
+        run: |
+          cd backend
+          go mod download
+      - name: Format
+        uses: Jerome1337/gofmt-action@v1.0.5
+        with:
+          gofmt-path: './src'
+          gofmt-flags: '-l -d'
+      - name: Unit test
+        run: |
+          cd test
+          go test -v
