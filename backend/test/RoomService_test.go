@@ -1,9 +1,9 @@
-package services
+package test
 
 import (
 	"meeting-center/src/models"
+	"meeting-center/src/services"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -33,64 +33,69 @@ func (m *MockRoomDomain) GetRoom(id string) (*models.Room, error) {
 	return args.Get(0).(*models.Room), args.Error(1)
 }
 
-func TestCreateRoom(t *testing.T) {
+func TestServiceCreateRoom(t *testing.T) {
 	mockRoomDomain := new(MockRoomDomain)
-	roomService := NewRoomService(mockRoomDomain)
+	rs := services.NewRoomService(mockRoomDomain)
+
 	room := &models.Room{
-		RoomName:  "Conference Room A",
-		Type:      "Board Meeting",
-		Rules:     []string{"No food allowed", "Respect the start time"},
-		Capacity:  10,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		RoomName: "Conference Room A",
+		Type:     "Board Meeting",
+		Capacity: 10,
 	}
+
 	mockRoomDomain.On("CreateRoom", room).Return(room, nil)
 
-	createdRoom, err := roomService.CreateRoom(room)
+	createdRoom, err := rs.CreateRoom(room)
 
 	assert.NoError(t, err)
 	assert.Equal(t, room, createdRoom)
 }
 
-func TestUpdateRoom(t *testing.T) {
+func TestServiceUpdateRoom(t *testing.T) {
 	mockRoomDomain := new(MockRoomDomain)
-	roomService := NewRoomService(mockRoomDomain)
+	rs := services.NewRoomService(mockRoomDomain)
+
 	id := "1"
 	room := &models.Room{
-		RoomName: "Updated Room A",
+		RoomName: "Updated Conference Room",
 		Type:     "Executive Meeting",
 		Capacity: 12,
 	}
+
 	mockRoomDomain.On("UpdateRoom", id, room).Return(nil)
 
-	err := roomService.UpdateRoom(id, room)
+	err := rs.UpdateRoom(id, room)
 
 	assert.NoError(t, err)
 }
 
-func TestDeleteRoom(t *testing.T) {
+func TestServiceDeleteRoom(t *testing.T) {
 	mockRoomDomain := new(MockRoomDomain)
-	roomService := NewRoomService(mockRoomDomain)
+	rs := services.NewRoomService(mockRoomDomain)
+
 	id := "1"
+
 	mockRoomDomain.On("DeleteRoom", id).Return(nil)
 
-	err := roomService.DeleteRoom(id)
+	err := rs.DeleteRoom(id)
 
 	assert.NoError(t, err)
 }
 
-func TestGetRoom(t *testing.T) {
+func TestServiceGetRoom(t *testing.T) {
 	mockRoomDomain := new(MockRoomDomain)
-	roomService := NewRoomService(mockRoomDomain)
+	rs := services.NewRoomService(mockRoomDomain)
+
 	id := "1"
 	room := &models.Room{
 		RoomName: "Conference Room A",
 		Type:     "Board Meeting",
 		Capacity: 10,
 	}
+
 	mockRoomDomain.On("GetRoom", id).Return(room, nil)
 
-	fetchedRoom, err := roomService.GetRoom(id)
+	fetchedRoom, err := rs.GetRoom(id)
 
 	assert.NoError(t, err)
 	assert.Equal(t, room, fetchedRoom)
