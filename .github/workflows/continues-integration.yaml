@@ -14,7 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: ls -al
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -24,8 +23,8 @@ jobs:
       - name: Format
         uses: Jerome1337/gofmt-action@v1.0.5
         with:
-          gofmt-path: './src'
+          gofmt-path: 'backend/src'
           gofmt-flags: '-l -d'
       - name: Unit test
-        working-directory: ./test
+        working-directory: backend/test
         run: go test -v
