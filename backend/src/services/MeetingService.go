@@ -3,6 +3,7 @@ package services
 import (
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
+	"time"
 )
 
 type MeetingService interface {
@@ -10,6 +11,8 @@ type MeetingService interface {
 	UpdateMeeting(id string, meeting *models.Meeting) error
 	DeleteMeeting(id string) error
 	GetMeeting(id string) (*models.Meeting, error)
+	GetAllMeetings() ([]*models.Meeting, error)
+	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
 
 type meetingService struct {
@@ -58,4 +61,20 @@ func (ms *meetingService) GetMeeting(id string) (*models.Meeting, error) {
 		return nil, err
 	}
 	return meeting, nil
+}
+
+func (ms *meetingService) GetAllMeetings() ([]*models.Meeting, error) {
+	meetings, err := ms.MeetingDomain.GetAllMeetings()
+	if err != nil {
+		return nil, err
+	}
+	return meetings, nil
+}
+
+func (ms *meetingService) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+	meetings, err := ms.MeetingDomain.GetMeetingsByRoomIdAndDate(roomID, date)
+	if err != nil {
+		return nil, err
+	}
+	return meetings, nil
 }
