@@ -3,6 +3,8 @@ package presentations
 import (
 	"meeting-center/src/models"
 	"meeting-center/src/services"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +14,8 @@ type MeetingPresentation interface {
 	UpdateMeeting(c *gin.Context)
 	DeleteMeeting(c *gin.Context)
 	GetMeeting(c *gin.Context)
+	GetAllMeetings(c *gin.Context)
+	GetMeetingsByRoomIdAndDate(c *gin.Context)
 }
 
 type meetingPresentation struct {
@@ -31,14 +35,6 @@ func NewMeetingPresentation(opt ...services.MeetingService) MeetingPresentation 
 }
 
 // CreateMeeting handles the creation of a new meeting
-// @Summary Create a new meeting
-// @Description Create a new meeting with details
-// @Tags Meeting
-// @Accept json
-// @Produce json
-// @Param meeting body models.Meeting true "Meeting object"
-// @Success 200 {object} models.Meeting
-// @Router /Meeting [post]
 func (mp *meetingPresentation) CreateMeeting(c *gin.Context) {
 	var meeting models.Meeting
 	if err := c.BindJSON(&meeting); err != nil {
@@ -54,15 +50,6 @@ func (mp *meetingPresentation) CreateMeeting(c *gin.Context) {
 }
 
 // UpdateMeeting handles the updating of meeting details
-// @Summary Update meeting details
-// @Description Update the details of an existing meeting
-// @Tags Meeting
-// @Accept json
-// @Produce json
-// @Param id path string true "Meeting ID"
-// @Param meeting body models.Meeting true "Meeting object"
-// @Success 200 {string} status "updated"
-// @Router /Meeting/{id} [put]
 func (mp *meetingPresentation) UpdateMeeting(c *gin.Context) {
 	var meeting models.Meeting
 	id := c.Param("id")
@@ -79,14 +66,6 @@ func (mp *meetingPresentation) UpdateMeeting(c *gin.Context) {
 }
 
 // DeleteMeeting handles the deletion of a meeting
-// @Summary Delete a meeting
-// @Description Delete a meeting by ID
-// @Tags Meeting
-// @Accept json
-// @Produce json
-// @Param id path string true "Meeting ID"
-// @Success 200 {string} status "deleted"
-// @Router /Meeting/{id} [delete]
 func (mp *meetingPresentation) DeleteMeeting(c *gin.Context) {
 	id := c.Param("id")
 	err := mp.MeetingService.DeleteMeeting(id)
@@ -98,14 +77,6 @@ func (mp *meetingPresentation) DeleteMeeting(c *gin.Context) {
 }
 
 // GetMeeting retrieves details of a specific meeting
-// @Summary Get meeting details
-// @Description Get details of a meeting by ID
-// @Tags Meeting
-// @Accept json
-// @Produce json
-// @Param id path string true "Meeting ID"
-// @Success 200 {object} models.Meeting
-// @Router /Meeting/{id} [get]
 func (mp *meetingPresentation) GetMeeting(c *gin.Context) {
 	id := c.Param("id")
 	meeting, err := mp.MeetingService.GetMeeting(id)
@@ -114,4 +85,32 @@ func (mp *meetingPresentation) GetMeeting(c *gin.Context) {
 		return
 	}
 	c.JSON(200, meeting)
+}
+
+// GetAllMeetings retrieves all meetings
+func (mp *meetingPresentation) GetAllMeetings(c *gin.Context) {
+	meetings, err := mp.MeetingService.GetAllMeetings()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+	c.JSON(200, meetings)
+}
+
+// GetMeetingsByRoomIdAndDate retrieves meetings based on room ID and specific date
+func (mp *meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
+	roomID, roomErr := c.GetQuery("room_id")
+	date, dateErr := c.GetQuery("date")
+	if !roomErr || !dateErr {
+		c.JSON(400, gin.H{"error": "Room ID and Date required"})
+		return
+	}
+	roomIdInt, _ := strconv.Atoi(roomID)
+	parsedDate, _ := time.Parse("2006-01-02", date)
+	meetings, err := mp.MeetingService.GetMeetingsByRoomIdAndDate(roomIdInt, parsedDate)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+	c.JSON(200, meetings)
 }
