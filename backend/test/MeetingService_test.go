@@ -4,6 +4,7 @@ import (
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,6 +32,16 @@ func (m *MockMeetingDomain) DeleteMeeting(id string) error {
 func (m *MockMeetingDomain) GetMeeting(id string) (*models.Meeting, error) {
 	args := m.Called(id)
 	return args.Get(0).(*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
+	args := m.Called()
+	return args.Get(0).([]*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+	args := m.Called(roomID, date)
+	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
 func TestServiceCreateMeeting(t *testing.T) {
@@ -96,4 +107,32 @@ func TestServiceGetMeeting(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, meeting, fetchedMeeting)
+}
+
+func TestServiceGetAllMeetings(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+	expectedMeetings := []*models.Meeting{{ID: "1", Title: "Board Meeting", Description: "Annual Board Meeting"}}
+
+	mockMeetingDomain.On("GetAllMeetings").Return(expectedMeetings, nil)
+
+	meetings, err := ms.GetAllMeetings()
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedMeetings, meetings)
+}
+
+func TestServiceGetMeetingsByRoomIdAndDate(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+	roomID := 10
+	date := time.Now()
+	expectedMeetings := []*models.Meeting{{ID: "2", Title: "Strategy Meeting", Description: "Strategy planning session"}}
+
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", roomID, date).Return(expectedMeetings, nil)
+
+	meetings, err := ms.GetMeetingsByRoomIdAndDate(roomID, date)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedMeetings, meetings)
 }
