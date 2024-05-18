@@ -1,11 +1,17 @@
 definitions:
   models.User:
     properties:
+      created_at:
+        type: string
       email:
         type: string
+      id:
+        type: integer
       password:
         type: string
       role:
+        type: string
+      updated_at:
         type: string
       username:
         type: string
@@ -13,6 +19,53 @@ definitions:
 info:
   contact: {}
 paths:
+  /Auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Login a user
+      tags:
+      - Auth
+  /Auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout a user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      - description: Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Logout a user
+      tags:
+      - Auth
   /User:
     post:
       consumes:
@@ -33,6 +86,27 @@ paths:
           schema:
             $ref: '#/definitions/models.User'
       summary: Register a new user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Update user
       tags:
       - User
 swagger: "2.0"

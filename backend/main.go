@@ -29,6 +29,12 @@ func main() {
 			eg.POST("", userPresentation.RegisterUser)
 			eg.PUT("", userPresentation.UpdateUser)
 		}
+		eg = v1.Group("/Auth")
+		{
+			authPresentation := presentations.NewAuthPresentation()
+			eg.POST("/login", authPresentation.Login)
+			eg.POST("/logout", authPresentation.Logout)
+		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run(":8080")

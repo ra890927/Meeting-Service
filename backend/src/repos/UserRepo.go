@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -31,6 +32,12 @@ func NewUserRepo(dsnArgs ...string) UserRepo {
 func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 	// Create a new user
 	db, err := gorm.Open(sqlite.Open(ur.dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashValue)
+
 	if err != nil {
 		return nil, err
 	}
