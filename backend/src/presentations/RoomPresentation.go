@@ -9,9 +9,10 @@ import (
 
 type RoomPresentation interface {
 	CreateRoom(c *gin.Context)
+	GetRoom(c *gin.Context)
+	GetAllRooms(c *gin.Context)
 	UpdateRoom(c *gin.Context)
 	DeleteRoom(c *gin.Context)
-	GetRoom(c *gin.Context)
 }
 
 type roomPresentation struct {
@@ -51,6 +52,42 @@ func (rp *roomPresentation) CreateRoom(c *gin.Context) {
 		return
 	}
 	c.JSON(200, createdRoom)
+}
+
+// GetRoom retrieves details of a specific room
+// @Summary Get room details
+// @Description Get details of a room by ID
+// @Tags Room
+// @Accept json
+// @Produce json
+// @Param id path int true "Room ID"
+// @Success 200 {object} models.Room
+// @Router /Room/{id} [get]
+func (rp *roomPresentation) GetRoom(c *gin.Context) {
+	id := c.Param("id")
+	room, err := rp.RoomService.GetRoom(id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+	c.JSON(200, room)
+}
+
+// GetAllRooms retrieves details of all rooms
+// @Summary Get all rooms
+// @Description Get details of all available rooms
+// @Tags Room
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Room
+// @Router /Rooms [get]
+func (rp *roomPresentation) GetAllRooms(c *gin.Context) {
+	rooms, err := rp.RoomService.GetAllRooms()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Internal server error"})
+		return
+	}
+	c.JSON(200, rooms)
 }
 
 // UpdateRoom handles the updating of room details
@@ -95,23 +132,4 @@ func (rp *roomPresentation) DeleteRoom(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"status": "deleted"})
-}
-
-// GetRoom retrieves details of a specific room
-// @Summary Get room details
-// @Description Get details of a room by ID
-// @Tags Room
-// @Accept json
-// @Produce json
-// @Param id path int true "Room ID"
-// @Success 200 {object} models.Room
-// @Router /Room/{id} [get]
-func (rp *roomPresentation) GetRoom(c *gin.Context) {
-	id := c.Param("id")
-	room, err := rp.RoomService.GetRoom(id)
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Internal server error"})
-		return
-	}
-	c.JSON(200, room)
 }
