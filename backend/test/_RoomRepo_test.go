@@ -34,10 +34,14 @@ func (db *MockGormDB) First(out interface{}, where ...interface{}) *MockGormDB {
 	return args.Get(0).(*MockGormDB)
 }
 
+func (db *MockGormDB) Find(out interface{}, where ...interface{}) *MockGormDB {
+	args := db.Called(out, where)
+	return args.Get(0).(*MockGormDB)
+}
+
 func TestRoomRepo_CreateRoom(t *testing.T) {
 	mockDB := new(MockGormDB)
-	roomRepo := repos.RoomRepo{DB: mockDB}
-
+	roomRepo := repos.NewRoomRepo("test.db") // Assuming roomRepo constructor
 	room := &models.Room{
 		RoomName: "Test Room",
 		Type:     "Conference",
@@ -55,8 +59,7 @@ func TestRoomRepo_CreateRoom(t *testing.T) {
 
 func TestRoomRepo_UpdateRoom(t *testing.T) {
 	mockDB := new(MockGormDB)
-	roomRepo := repos.RoomRepo{DB: mockDB}
-
+	roomRepo := repos.NewRoomRepo("test.db")
 	room := &models.Room{
 		RoomName: "Updated Room",
 		Type:     "Seminar",
@@ -76,7 +79,7 @@ func TestRoomRepo_UpdateRoom(t *testing.T) {
 
 func TestRoomRepo_DeleteRoom(t *testing.T) {
 	mockDB := new(MockGormDB)
-	roomRepo := repos.RoomRepo{DB: mockDB}
+	roomRepo := repos.NewRoomRepo("test.db")
 	id := "1"
 
 	mockDB.On("Delete", &models.Room{}, id).Return(mockDB)
@@ -89,7 +92,7 @@ func TestRoomRepo_DeleteRoom(t *testing.T) {
 
 func TestRoomRepo_GetRoom(t *testing.T) {
 	mockDB := new(MockGormDB)
-	roomRepo := repos.RoomRepo{DB: mockDB}
+	roomRepo := repos.NewRoomRepo("test.db")
 	id := "1"
 	room := &models.Room{}
 
@@ -100,4 +103,30 @@ func TestRoomRepo_GetRoom(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, room, fetchedRoom)
+}
+
+func TestRoomRepo_GetAllRooms(t *testing.T) {
+	mockDB := new(MockGormDB)
+	roomRepo := repos.NewRoomRepo("test.db")
+	rooms := []*models.Room{
+		{
+			RoomName: "Conference Room A",
+			Type:     "Board Meeting",
+			Capacity: 10,
+		},
+		{
+			RoomName: "Conference Room B",
+			Type:     "Seminar",
+			Capacity: 20,
+		},
+	}
+
+	mockDB.On("Find", &rooms).Return(mockDB)
+	mockDB.On("Error").Return(nil)
+
+	allRooms, err := roomRepo.GetAllRooms()
+
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(allRooms))
+	assert.Equal(t, rooms, allRooms)
 }
