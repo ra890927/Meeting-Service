@@ -37,6 +37,11 @@ func (m *mockRoomService) GetRoom(id string) (*models.Room, error) {
 	return args.Get(0).(*models.Room), args.Error(1)
 }
 
+func (m *mockRoomService) GetAllRooms() ([]*models.Room, error) {
+	args := m.Called()
+	return args.Get(0).([]*models.Room), args.Error(1)
+}
+
 func TestCreateRoom(t *testing.T) {
 	mockService := new(mockRoomService)
 	rp := presentations.NewRoomPresentation(mockService)
@@ -59,6 +64,36 @@ func TestCreateRoom(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
+}
+
+func TestGetAllRooms(t *testing.T) {
+	mockService := new(mockRoomService)
+	rp := presentations.NewRoomPresentation(mockService)
+	rooms := []*models.Room{
+		{
+			RoomName: "Conference Room A",
+			Type:     "Board Meeting",
+			Capacity: 10,
+		},
+		{
+			RoomName: "Conference Room B",
+			Type:     "Seminar",
+			Capacity: 15,
+		},
+	}
+	mockService.On("GetAllRooms").Return(rooms, nil)
+
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	router.GET("/rooms", rp.GetAllRooms)
+
+	req := httptest.NewRequest("GET", "/rooms", nil)
+
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 2, len(rooms)) // 检查返回的房间数量
 }
 
 func TestUpdateRoom(t *testing.T) {
