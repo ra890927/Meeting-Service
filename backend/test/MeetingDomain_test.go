@@ -4,6 +4,7 @@ import (
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,6 +32,16 @@ func (m *MockMeetingRepo) DeleteMeeting(id string) error {
 func (m *MockMeetingRepo) GetMeeting(id string) (*models.Meeting, error) {
 	args := m.Called(id)
 	return args.Get(0).(*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
+	args := m.Called()
+	return args.Get(0).([]*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+	args := m.Called(roomID, date)
+	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
 func TestDomainCreateMeeting(t *testing.T) {
