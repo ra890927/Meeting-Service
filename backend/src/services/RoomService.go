@@ -7,9 +7,10 @@ import (
 
 type RoomService interface {
 	CreateRoom(room *models.Room) (*models.Room, error)
+	GetRoom(id string) (*models.Room, error)
+	GetAllRooms() ([]*models.Room, error)
 	UpdateRoom(id string, room *models.Room) error
 	DeleteRoom(id string) error
-	GetRoom(id string) (*models.Room, error)
 }
 
 type roomService struct {
@@ -63,4 +64,13 @@ func (rs *roomService) GetRoom(id string) (*models.Room, error) {
 		return nil, err
 	}
 	return room, nil
+}
+
+// GetAllRooms retrieves all rooms using the RoomDomain
+func (rs *roomService) GetAllRooms() ([]*models.Room, error) {
+	rooms, err := rs.RoomDomain.GetAllRooms()
+	if err != nil {
+		return nil, err
+	}
+	return rooms, nil
 }
