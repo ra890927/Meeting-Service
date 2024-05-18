@@ -8,22 +8,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: 'backend/go.mod'
+          go-version-file: 'backend/go.mod'
       - name: Intall dependencies
-        run: |
-          cd backend
-          go mod download
+        run: go mod download
       - name: Format
         uses: Jerome1337/gofmt-action@v1.0.5
         with:
-          gofmt-path: './src'
+          gofmt-path: 'backend/src'
           gofmt-flags: '-l -d'
       - name: Unit test
-        run: |
-          cd test
-          go test -v
+        working-directory: backend/test
+        run: go test -v
