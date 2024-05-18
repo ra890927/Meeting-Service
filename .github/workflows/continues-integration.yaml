@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Go
         uses: actions/setup-go@v5
+        run: ls -al
         with:
           go-version-file: './go.mod'
       - name: Intall dependencies
