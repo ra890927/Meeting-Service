@@ -3,6 +3,7 @@ package domains
 import (
 	"meeting-center/src/models"
 	"meeting-center/src/repos"
+	"time"
 )
 
 type MeetingDomain interface {
@@ -10,6 +11,8 @@ type MeetingDomain interface {
 	UpdateMeeting(id string, meeting *models.Meeting) error
 	DeleteMeeting(id string) error
 	GetMeeting(id string) (*models.Meeting, error)
+	GetAllMeetings() ([]*models.Meeting, error)
+	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
 
 type meetingDomain struct {
@@ -58,4 +61,12 @@ func (md *meetingDomain) GetMeeting(id string) (*models.Meeting, error) {
 		return nil, err
 	}
 	return meeting, nil
+}
+
+func (md *meetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
+	return md.MeetingRepo.GetAllMeetings()
+}
+
+func (md *meetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+	return md.MeetingRepo.GetMeetingsByRoomIdAndDate(roomID, date)
 }
