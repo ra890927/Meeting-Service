@@ -11,24 +11,26 @@ type UserService interface {
 }
 
 type userService struct {
-	UserDomain domains.UserDomain
+	userDomain domains.UserDomain
 }
 
-func NewUserService(opt ...domains.UserDomain) UserService {
-	if len(opt) == 1 {
-		return &userService{
-			UserDomain: opt[0],
+func NewUserService(userDomainArgs ...domains.UserDomain) userService {
+	if len(userDomainArgs) == 1 {
+		return userService{
+			userDomain: userDomainArgs[0],
+		}
+	} else if len(userDomainArgs) == 0 {
+		return userService{
+			userDomain: domains.NewUserDomain(),
 		}
 	} else {
-		return &userService{
-			UserDomain: domains.NewUserDomain(),
-		}
+		panic("Too many arguments")
 	}
 }
 
-func (us *userService) CreateUser(user *models.User) (*models.User, error) {
+func (us userService) CreateUser(user *models.User) (*models.User, error) {
 	// Create a new user
-	createdUser, err := us.UserDomain.CreateUser(user)
+	createdUser, err := us.userDomain.CreateUser(user)
 
 	// return the user if no errors
 	if err != nil {
@@ -38,9 +40,9 @@ func (us *userService) CreateUser(user *models.User) (*models.User, error) {
 	return createdUser, nil
 }
 
-func (us *userService) UpdateUser(user *models.User) (*models.User, error) {
+func (us userService) UpdateUser(user *models.User) (*models.User, error) {
 	// Update a user
-	updatedUser, err := us.UserDomain.UpdateUser(user)
+	updatedUser, err := us.userDomain.UpdateUser(user)
 
 	// return the user if no errors
 	if err != nil {

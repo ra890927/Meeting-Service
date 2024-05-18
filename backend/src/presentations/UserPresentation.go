@@ -1,7 +1,6 @@
 package presentations
 
 import (
-	// "fmt"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 
@@ -14,18 +13,20 @@ type UserPresentation interface {
 }
 
 type userPresentation struct {
-	UserService services.UserService
+	userService services.UserService
 }
 
-func NewUserPresentation(opt ...services.UserService) UserPresentation {
-	if len(opt) == 1 {
+func NewUserPresentation(userServiceArgs ...services.UserService) UserPresentation {
+	if len(userServiceArgs) == 1 {
 		return &userPresentation{
-			UserService: opt[0],
+			userService: userServiceArgs[0],
+		}
+	} else if len(userServiceArgs) == 0 {
+		return &userPresentation{
+			userService: services.NewUserService(),
 		}
 	} else {
-		return &userPresentation{
-			UserService: services.NewUserService(),
-		}
+		panic("Too many arguments")
 	}
 }
 
@@ -37,7 +38,7 @@ func NewUserPresentation(opt ...services.UserService) UserPresentation {
 // @Param user body models.User true "User object"
 // @Success 200 {object} models.User
 // @Router /User [post]
-func (up *userPresentation) RegisterUser(c *gin.Context) {
+func (up userPresentation) RegisterUser(c *gin.Context) {
 	// Get the user from the request
 	var user models.User
 	err := c.BindJSON(&user)
@@ -53,7 +54,7 @@ func (up *userPresentation) RegisterUser(c *gin.Context) {
 		Role:     user.Role,
 	}
 	// Register the user
-	createdUser, err := up.UserService.CreateUser(&filtered_user)
+	createdUser, err := up.userService.CreateUser(&filtered_user)
 
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error"})
@@ -74,7 +75,7 @@ func (up *userPresentation) RegisterUser(c *gin.Context) {
 // @Param user body models.User true "User object"
 // @Success 200 {object} models.User
 // @Router /User [put]
-func (up *userPresentation) UpdateUser(c *gin.Context) {
+func (up userPresentation) UpdateUser(c *gin.Context) {
 	// Get the user from the request
 	var user models.User
 	err := c.BindJSON(&user)
@@ -92,7 +93,7 @@ func (up *userPresentation) UpdateUser(c *gin.Context) {
 	}
 
 	// Update the user
-	updatedUser, err := up.UserService.UpdateUser(&filtered_user)
+	updatedUser, err := up.userService.UpdateUser(&filtered_user)
 
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error"})

@@ -11,24 +11,26 @@ type UserDomain interface {
 }
 
 type userDomain struct {
-	UserRepo repos.UserRepo
+	userRepo repos.UserRepo
 }
 
-func NewUserDomain(opt ...repos.UserRepo) UserDomain {
-	if len(opt) == 1 {
-		return &userDomain{
-			UserRepo: opt[0],
+func NewUserDomain(userRepoArgs ...repos.UserRepo) userDomain {
+	if len(userRepoArgs) == 1 {
+		return userDomain{
+			userRepo: userRepoArgs[0],
+		}
+	} else if len(userRepoArgs) == 0 {
+		return userDomain{
+			userRepo: repos.NewUserRepo(),
 		}
 	} else {
-		return &userDomain{
-			UserRepo: repos.NewUserRepo(),
-		}
+		panic("Too many arguments")
 	}
 }
 
-func (ud *userDomain) CreateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) CreateUser(user *models.User) (*models.User, error) {
 	// Create a new user
-	createdUser, err := ud.UserRepo.CreateUser(user)
+	createdUser, err := ud.userRepo.CreateUser(user)
 
 	// return the user if no errors
 	if err != nil {
@@ -38,9 +40,9 @@ func (ud *userDomain) CreateUser(user *models.User) (*models.User, error) {
 	return createdUser, nil
 }
 
-func (ud *userDomain) UpdateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) UpdateUser(user *models.User) (*models.User, error) {
 	// Update a user
-	updatedUser, err := ud.UserRepo.UpdateUser(user)
+	updatedUser, err := ud.userRepo.UpdateUser(user)
 
 	// return the user if no errors
 	if err != nil {
