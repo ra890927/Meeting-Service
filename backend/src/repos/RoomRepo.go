@@ -12,6 +12,7 @@ type RoomRepo interface {
 	UpdateRoom(id string, room *models.Room) error
 	DeleteRoom(id string) error
 	GetRoom(id string) (*models.Room, error)
+	GetAllRooms() ([]*models.Room, error) // 新增方法
 }
 
 type roomRepo struct {
@@ -35,12 +36,10 @@ func (rr *roomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	result := db.Create(room)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return room, nil
 }
 
@@ -50,12 +49,10 @@ func (rr *roomRepo) UpdateRoom(id string, room *models.Room) error {
 	if err != nil {
 		return err
 	}
-
 	result := db.Model(&models.Room{}).Where("id = ?", id).Updates(room)
 	if result.Error != nil {
 		return result.Error
 	}
-
 	return nil
 }
 
@@ -65,12 +62,10 @@ func (rr *roomRepo) DeleteRoom(id string) error {
 	if err != nil {
 		return err
 	}
-
 	result := db.Delete(&models.Room{}, id)
 	if result.Error != nil {
 		return result.Error
 	}
-
 	return nil
 }
 
@@ -80,12 +75,24 @@ func (rr *roomRepo) GetRoom(id string) (*models.Room, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	var room models.Room
 	result := db.First(&room, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return &room, nil
+}
+
+// GetAllRooms retrieves all rooms from the database
+func (rr *roomRepo) GetAllRooms() ([]*models.Room, error) {
+	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	var rooms []*models.Room
+	result := db.Find(&rooms)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return rooms, nil
 }
