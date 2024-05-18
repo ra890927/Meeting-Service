@@ -17,8 +17,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: 'backend/go.mod'
-        run: ls -al
+          go-version: './go.mod'
       - name: Intall dependencies
         run: go mod download
       - name: Format
