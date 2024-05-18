@@ -18,13 +18,9 @@ type userPresentation struct {
 
 func NewUserPresentation(userServiceArgs ...services.UserService) UserPresentation {
 	if len(userServiceArgs) == 1 {
-		return &userPresentation{
-			userService: userServiceArgs[0],
-		}
+		return UserPresentation(&userPresentation{userService: userServiceArgs[0]})
 	} else if len(userServiceArgs) == 0 {
-		return &userPresentation{
-			userService: services.NewUserService(),
-		}
+		return UserPresentation(&userPresentation{userService: services.NewUserService()})
 	} else {
 		panic("Too many arguments")
 	}

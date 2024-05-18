@@ -18,17 +18,17 @@ type userRepo struct {
 	dsn string
 }
 
-func NewUserRepo(opt ...string) UserRepo {
-	dsn := "../sqlite.db"
-	if len(opt) == 1 {
-		dsn = opt[0]
-	}
-	return &userRepo{
-		dsn: dsn,
+func NewUserRepo(dsnArgs ...string) UserRepo {
+	if len(dsnArgs) == 1 {
+		return UserRepo(&userRepo{dsn: dsnArgs[0]})
+	} else if len(dsnArgs) == 0 {
+		return UserRepo(&userRepo{dsn: "../sqlite.db"})
+	} else {
+		panic("too many arguments")
 	}
 }
 
-func (ur *userRepo) CreateUser(user *models.User) (*models.User, error) {
+func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 	// Create a new user
 	db, err := gorm.Open(sqlite.Open(ur.dsn), &gorm.Config{})
 	if err != nil {
@@ -44,7 +44,7 @@ func (ur *userRepo) CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func (ur *userRepo) UpdateUser(user *models.User) (*models.User, error) {
+func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
 	// Update a user
 	db, err := gorm.Open(sqlite.Open(ur.dsn), &gorm.Config{})
 	if err != nil {

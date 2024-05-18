@@ -14,15 +14,11 @@ type userDomain struct {
 	userRepo repos.UserRepo
 }
 
-func NewUserDomain(userRepoArgs ...repos.UserRepo) userDomain {
+func NewUserDomain(userRepoArgs ...repos.UserRepo) UserDomain {
 	if len(userRepoArgs) == 1 {
-		return userDomain{
-			userRepo: userRepoArgs[0],
-		}
+		return UserDomain(&userDomain{userRepo: userRepoArgs[0]})
 	} else if len(userRepoArgs) == 0 {
-		return userDomain{
-			userRepo: repos.NewUserRepo(),
-		}
+		return UserDomain(&userDomain{userRepo: repos.NewUserRepo()})
 	} else {
 		panic("Too many arguments")
 	}

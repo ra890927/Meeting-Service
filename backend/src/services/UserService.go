@@ -14,15 +14,11 @@ type userService struct {
 	userDomain domains.UserDomain
 }
 
-func NewUserService(userDomainArgs ...domains.UserDomain) userService {
+func NewUserService(userDomainArgs ...domains.UserDomain) UserService {
 	if len(userDomainArgs) == 1 {
-		return userService{
-			userDomain: userDomainArgs[0],
-		}
+		return UserService(&userService{userDomain: userDomainArgs[0]})
 	} else if len(userDomainArgs) == 0 {
-		return userService{
-			userDomain: domains.NewUserDomain(),
-		}
+		return UserService(&userService{userDomain: domains.NewUserDomain()})
 	} else {
 		panic("Too many arguments")
 	}
