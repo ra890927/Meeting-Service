@@ -33,6 +33,11 @@ func (m *MockRoomDomain) GetRoom(id string) (*models.Room, error) {
 	return args.Get(0).(*models.Room), args.Error(1)
 }
 
+func (m *MockRoomDomain) GetAllRooms() ([]*models.Room, error) {
+	args := m.Called()
+	return args.Get(0).([]*models.Room), args.Error(1)
+}
+
 func TestServiceCreateRoom(t *testing.T) {
 	mockRoomDomain := new(MockRoomDomain)
 	rs := services.NewRoomService(mockRoomDomain)
@@ -99,4 +104,30 @@ func TestServiceGetRoom(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, room, fetchedRoom)
+}
+
+func TestServiceGetAllRooms(t *testing.T) {
+	mockRoomDomain := new(MockRoomDomain)
+	rs := services.NewRoomService(mockRoomDomain)
+
+	rooms := []*models.Room{
+		{
+			RoomName: "Conference Room A",
+			Type:     "Board Meeting",
+			Capacity: 10,
+		},
+		{
+			RoomName: "Conference Room B",
+			Type:     "Seminar",
+			Capacity: 20,
+		},
+	}
+
+	mockRoomDomain.On("GetAllRooms").Return(rooms, nil)
+
+	allRooms, err := rs.GetAllRooms()
+
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(allRooms))
+	assert.Equal(t, rooms, allRooms)
 }
