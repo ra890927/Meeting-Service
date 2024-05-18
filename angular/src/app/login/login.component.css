@@ -1,58 +1,78 @@
-.parentContainer{
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.login-container{
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    position: absolute;
     height: 100vh;
+    width: 100%;
 }
-
-/* .leftContainer{
+.switch{
+    flex: 1;
+    background-image: url(./meeting-room.jpg);
+    background-size: cover;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    /* text-align:justify; 
-    width: 300px;
-
-} */
-
-.text{
-    margin-bottom: 30px;
-    font-size: 24px;
-    font-family: 'Courier New', Courier, monospace;
+    align-items: end
+}
+.switch>div{
+    width: fit-content;
+    height: fit-content;
+    margin: 25% 20px;
+}
+.button-style{
+    position: relative;
+    padding: 0.25em 1em;
+    font-size: 5em;
     font-weight: bold;
-
+    border: none;
+    background: none;
+    outline: none;
+    color: white;
+    mix-blend-mode: screen;
 }
-
-mat-form-field{
-    width: 300px;
+.button-style::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: black;
+    border-radius: 0.3em;
+    content: '';
+    mix-blend-mode: color-burn;
+    transition: 0.3s;
 }
-
-.signInButton{
+.button-style:hover {
+    color: black; 
+  }
+  
+.button-style:hover::before {
+    background-color: white; 
+}
+.login-form{
+    flex:1;
     display: flex;
-    /* margin-top: 20px; */
-    justify-content: flex-end;
-    width: 300px;
+    justify-content: center;
+    align-items: center; 
+}
+.log-title{
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 3em;
+}
+.login-form-inner{
+    width: 50%;
+    height: 40vh;
 }
 
-.rightContainer{
+.form-container{
+    width: 100%;
+}
+
+.buttons{
     display: flex;
-    align-items: center;
-    /* justify-content: center; */
-    /* text-align:justify; */
-
-}
-
-.textRight{
-    font-size: 22px;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-
-}
-
-.loginButton{
-    margin-left: 20px;
-}
-
-.registerButton{
-    margin-left: 20px;
+    justify-content: right;
 }
