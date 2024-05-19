@@ -7,9 +7,14 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"meeting-center/src/middlewares"
 	"meeting-center/src/presentations"
 	"meeting-center/src/utils"
 )
+
+// @title Meeting Center API
+// @version 1.0
+// @description This is a simple Meeting Center API
 
 func main() {
 	// connect to the database
@@ -34,6 +39,7 @@ func main() {
 			authPresentation := presentations.NewAuthPresentation()
 			eg.POST("/login", authPresentation.Login)
 			eg.POST("/logout", authPresentation.Logout)
+			eg.GET("/whoami", middlewares.AuthRequire(), authPresentation.WhoAmI)
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

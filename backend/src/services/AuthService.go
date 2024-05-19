@@ -7,7 +7,7 @@ import (
 
 type AuthService interface {
 	Login(user *models.User) (*models.User, *string, error)
-	Logout(user *models.User, token *string) error
+	Logout(token *string) error
 }
 
 type authService struct {
@@ -36,9 +36,9 @@ func (as authService) Login(user *models.User) (*models.User, *string, error) {
 	return loggedUser, token, nil
 }
 
-func (as authService) Logout(user *models.User, token *string) error {
+func (as authService) Logout(token *string) error {
 	// Logout a user
-	err := as.authDomain.Logout(user, token)
+	err := as.authDomain.Logout(token)
 
 	// return the user if no errors
 	if err != nil {

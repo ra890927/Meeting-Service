@@ -1,8 +1,8 @@
 package repos
 
 import (
+	"encoding/base64"
 	"meeting-center/src/models"
-
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -13,7 +13,7 @@ import (
 
 type AuthRepo interface {
 	Login(user *models.User) (*models.User, *string, error)
-	Logout(user *models.User, token *string) error
+	Logout(token *string) error
 }
 
 type authRepo struct {
@@ -69,7 +69,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	hashString := ""
 	for {
 		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+string(cnt)), bcrypt.DefaultCost)
-		hashString = string(hash)
+		hashString = base64.StdEncoding.EncodeToString(hash)
 		// check if the hash exists in the redis database
 		_, err = ar.redisClient.Get(ar.redisClient.Context(), hashString).Result()
 		if err != nil {
@@ -78,7 +78,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 		cnt++
 	}
 	// save the token in the redis database
-	err = ar.redisClient.Set(ar.redisClient.Context(), hashString, existingUser.ID, 0).Err()
+	err = ar.redisClient.Set(ar.redisClient.Context(), hashString, existingUser.ID, time.Hour*24).Err()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -87,7 +87,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	return &existingUser, &hashString, nil
 }
 
-func (ar authRepo) Logout(user *models.User, token *string) error {
+func (ar authRepo) Logout(token *string) error {
 	// check if the token exists in the redis database
 	_, err := ar.redisClient.Get(ar.redisClient.Context(), *token).Result()
 	if err != nil {
