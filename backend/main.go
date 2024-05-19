@@ -28,13 +28,13 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
-		eg := v1.Group("/User")
+		eg := v1.Group("/user")
 		{
 			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
 			eg.PUT("", userPresentation.UpdateUser)
 		}
-		eg = v1.Group("/Auth")
+		eg = v1.Group("/auth")
 		{
 			authPresentation := presentations.NewAuthPresentation()
 			eg.POST("/login", authPresentation.Login)
