@@ -18,16 +18,6 @@ type authPresentation struct {
 	as services.AuthService
 }
 
-func NewAuthPresentation(authServiceArgs ...services.AuthService) AuthPresentation {
-	if len(authServiceArgs) == 1 {
-		return AuthPresentation(&authPresentation{as: authServiceArgs[0]})
-	} else if len(authServiceArgs) == 0 {
-		return AuthPresentation(&authPresentation{as: services.NewAuthService()})
-	} else {
-		panic("Too many arguments")
-	}
-}
-
 type LoginParams struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -46,6 +36,33 @@ type LoginResponse struct {
 		Token   string `json:"token"`
 		Message string `json:"message"`
 	} `json:"data"`
+}
+
+type LogoutResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		Message string `json:"message"`
+	} `json:"data"`
+}
+
+type WhoAmIResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		User struct {
+			UserID uint `json:"id"`
+		} `json:"user"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+func NewAuthPresentation(authServiceArgs ...services.AuthService) AuthPresentation {
+	if len(authServiceArgs) == 1 {
+		return AuthPresentation(&authPresentation{as: authServiceArgs[0]})
+	} else if len(authServiceArgs) == 0 {
+		return AuthPresentation(&authPresentation{as: services.NewAuthService()})
+	} else {
+		panic("Too many arguments")
+	}
 }
 
 // @Summary Login a user
@@ -97,13 +114,6 @@ func (ap authPresentation) Login(c *gin.Context) {
 	c.JSON(200, loginResponse)
 }
 
-type LogoutResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		Message string `json:"message"`
-	} `json:"data"`
-}
-
 // @Summary Logout a user
 // @Description Logout a user
 // @Tags Auth
@@ -137,16 +147,6 @@ func (ap authPresentation) Logout(c *gin.Context) {
 	logoutResponse.Status = "success"
 	logoutResponse.Data.Message = "User logged out"
 	c.JSON(200, logoutResponse)
-}
-
-type WhoAmIResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		User struct {
-			UserID uint `json:"id"`
-		} `json:"user"`
-	} `json:"data"`
-	Message string `json:"message"`
 }
 
 // @Summary Get the user who is logged in
