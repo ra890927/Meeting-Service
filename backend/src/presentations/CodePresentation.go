@@ -31,15 +31,17 @@ type codePresentation struct {
 	cs services.CodeService
 }
 
-func NewCodePresentation(opt ...services.CodeService) CodePresentation {
-	cs := services.NewCodeService()
-	if len(opt) == 1 {
-		cs = opt[0]
+func NewCodePresentation(codeServiceArgs ...services.CodeService) CodePresentation {
+	if len(codeServiceArgs) == 1 {
+		return CodePresentation(&codePresentation{cs: codeServiceArgs[0]})
+	} else if len(codeServiceArgs) == 0 {
+		return CodePresentation(&codePresentation{cs: services.NewCodeService()})
+	} else {
+		panic("NewCodePresentation: too many arguments")
 	}
-	return &codePresentation{cs: cs}
 }
 
-func (cp *codePresentation) CreateCodeType(c *gin.Context) {
+func (cp codePresentation) CreateCodeType(c *gin.Context) {
 	var codeType models.CodeType
 	if err := c.ShouldBindJSON(&codeType); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -58,7 +60,7 @@ func (cp *codePresentation) CreateCodeType(c *gin.Context) {
 	c.JSON(200, filteredCodeType)
 }
 
-func (cp *codePresentation) CreateCodeValue(c *gin.Context) {
+func (cp codePresentation) CreateCodeValue(c *gin.Context) {
 	var codeValue models.CodeValue
 	if err := c.ShouldBindJSON(&codeValue); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -78,7 +80,7 @@ func (cp *codePresentation) CreateCodeValue(c *gin.Context) {
 	c.JSON(200, filteredCodeValue)
 }
 
-func (cp *codePresentation) GetAllCodeTypes(c *gin.Context) {
+func (cp codePresentation) GetAllCodeTypes(c *gin.Context) {
 	codeTypes, err := cp.cs.GetAllCodeTypes()
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -87,7 +89,7 @@ func (cp *codePresentation) GetAllCodeTypes(c *gin.Context) {
 	c.JSON(200, codeTypes)
 }
 
-func (cp *codePresentation) GetAllCodeValuesByType(c *gin.Context) {
+func (cp codePresentation) GetAllCodeValuesByType(c *gin.Context) {
 	codeTypeID, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -101,7 +103,7 @@ func (cp *codePresentation) GetAllCodeValuesByType(c *gin.Context) {
 	c.JSON(200, codeValues)
 }
 
-func (cp *codePresentation) UpdateCodeType(c *gin.Context) {
+func (cp codePresentation) UpdateCodeType(c *gin.Context) {
 	var codeType models.CodeType
 	if err := c.ShouldBindJSON(&codeType); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -122,7 +124,7 @@ func (cp *codePresentation) UpdateCodeType(c *gin.Context) {
 	c.JSON(200, codeType)
 }
 
-func (cp *codePresentation) UpdateCodeValue(c *gin.Context) {
+func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
 	var codeValue models.CodeValue
 	if err := c.ShouldBindJSON(&codeValue); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -144,7 +146,7 @@ func (cp *codePresentation) UpdateCodeValue(c *gin.Context) {
 	c.JSON(200, filteredCodeValue)
 }
 
-func (cp *codePresentation) DeleteCodeType(c *gin.Context) {
+func (cp codePresentation) DeleteCodeType(c *gin.Context) {
 	codeTypeID, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -158,7 +160,7 @@ func (cp *codePresentation) DeleteCodeType(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "CodeType deleted"})
 }
 
-func (cp *codePresentation) DeleteCodeValue(c *gin.Context) {
+func (cp codePresentation) DeleteCodeValue(c *gin.Context) {
 	codeValueID, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})

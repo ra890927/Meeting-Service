@@ -1,9 +1,10 @@
 package repos
 
 import (
+	"meeting-center/src/models"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"meeting-center/src/models"
 )
 
 type CodeRepo interface {
@@ -28,15 +29,19 @@ type codeRepo struct {
 	dsn string
 }
 
-func NewCodeRepo(opt ...string) CodeRepo {
+func NewCodeRepo(dsnArgs ...string) CodeRepo {
 	dsn := "../sqlite.db"
-	if len(opt) == 1 {
-		dsn = opt[0]
+	if len(dsnArgs) == 1 {
+		dsn = dsnArgs[0]
+	} else if len(dsnArgs) == 0 {
+		dsn = "../sqlite.db"
+	} else {
+		panic("NewCodeRepo: too many arguments")
 	}
-	return &codeRepo{dsn: dsn}
+	return CodeRepo(&codeRepo{dsn: dsn})
 }
 
-func (cr *codeRepo) CreateCodeType(codeType *models.CodeType) error {
+func (cr codeRepo) CreateCodeType(codeType *models.CodeType) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -45,7 +50,7 @@ func (cr *codeRepo) CreateCodeType(codeType *models.CodeType) error {
 	return db.Create(codeType).Error
 }
 
-func (cr *codeRepo) CreateCodeValue(codeValue *models.CodeValue) error {
+func (cr codeRepo) CreateCodeValue(codeValue *models.CodeValue) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -54,10 +59,10 @@ func (cr *codeRepo) CreateCodeValue(codeValue *models.CodeValue) error {
 	return db.Create(codeValue).Error
 }
 
-func (cr *codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
+func (cr codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return []models.CodeType{}, err
 	}
 
 	var codeTypes []models.CodeType
@@ -69,10 +74,10 @@ func (cr *codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
 	return codeTypes, nil
 }
 
-func (cr *codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
+func (cr codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return []models.CodeValue{}, err
 	}
 
 	var codeValues []models.CodeValue
@@ -84,7 +89,7 @@ func (cr *codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, 
 	return codeValues, nil
 }
 
-func (cr *codeRepo) UpdateCodeType(codeType *models.CodeType) error {
+func (cr codeRepo) UpdateCodeType(codeType *models.CodeType) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -93,7 +98,7 @@ func (cr *codeRepo) UpdateCodeType(codeType *models.CodeType) error {
 	return db.Save(codeType).Error
 }
 
-func (cr *codeRepo) UpdateCodeValue(codeValue *models.CodeValue) error {
+func (cr codeRepo) UpdateCodeValue(codeValue *models.CodeValue) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -102,7 +107,7 @@ func (cr *codeRepo) UpdateCodeValue(codeValue *models.CodeValue) error {
 	return db.Save(codeValue).Error
 }
 
-func (cr *codeRepo) DeleteCodeType(codeTypeID int) error {
+func (cr codeRepo) DeleteCodeType(codeTypeID int) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -111,7 +116,7 @@ func (cr *codeRepo) DeleteCodeType(codeTypeID int) error {
 	return db.Delete(&models.CodeType{}, codeTypeID).Error
 }
 
-func (cr *codeRepo) DeleteCodeValue(codeValueID int) error {
+func (cr codeRepo) DeleteCodeValue(codeValueID int) error {
 	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
