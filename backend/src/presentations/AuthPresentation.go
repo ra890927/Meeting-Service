@@ -25,12 +25,17 @@ func NewAuthPresentation(authServiceArgs ...services.AuthService) AuthPresentati
 	}
 }
 
+type LoginParams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 // @Summary Login a user
 // @Description Login a user
 // @Tags Auth
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User object"
+// @Param user body LoginParams true "User object"
 // @Success 200 {object} models.User
 // @Router /Auth/login [post]
 func (ap authPresentation) Login(c *gin.Context) {
