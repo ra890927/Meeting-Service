@@ -83,7 +83,7 @@ func (cr codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, e
 	var codeValues []models.CodeValue
 	err = db.Where("code_type_id = ?", codeTypeID).Find(&codeValues).Error
 	if err != nil {
-		return nil, err
+		return []models.CodeValue{}, err
 	}
 
 	return codeValues, nil
