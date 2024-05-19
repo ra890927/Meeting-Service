@@ -81,7 +81,7 @@ info:
   title: Meeting Center API
   version: "1.0"
 paths:
-  /Auth/login:
+  /auth/login:
     post:
       consumes:
       - application/json
@@ -103,7 +103,7 @@ paths:
       summary: Login a user
       tags:
       - Auth
-  /Auth/logout:
+  /auth/logout:
     post:
       consumes:
       - application/json
@@ -118,7 +118,7 @@ paths:
       summary: Logout a user
       tags:
       - Auth
-  /Auth/whoami:
+  /auth/whoami:
     get:
       consumes:
       - application/json
@@ -133,7 +133,7 @@ paths:
       summary: Get the user who is logged in
       tags:
       - Auth
-  /User:
+  /user:
     post:
       consumes:
       - application/json

@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/Auth/login": {
+        "/auth/login": {
             "post": {
                 "description": "Login a user",
                 "consumes": [
@@ -49,7 +49,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/Auth/logout": {
+        "/auth/logout": {
             "post": {
                 "description": "Logout a user",
                 "consumes": [
@@ -72,7 +72,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/Auth/whoami": {
+        "/auth/whoami": {
             "get": {
                 "description": "Get the user who is logged in",
                 "consumes": [
@@ -95,7 +95,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/User": {
+        "/user": {
             "put": {
                 "description": "Update user",
                 "consumes": [

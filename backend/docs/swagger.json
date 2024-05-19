@@ -7,7 +7,7 @@
         "version": "1.0"
     },
     "paths": {
-        "/Auth/login": {
+        "/auth/login": {
             "post": {
                 "description": "Login a user",
                 "consumes": [
@@ -41,7 +41,7 @@
                 }
             }
         },
-        "/Auth/logout": {
+        "/auth/logout": {
             "post": {
                 "description": "Logout a user",
                 "consumes": [
@@ -64,7 +64,7 @@
                 }
             }
         },
-        "/Auth/whoami": {
+        "/auth/whoami": {
             "get": {
                 "description": "Get the user who is logged in",
                 "consumes": [
@@ -87,7 +87,7 @@
                 }
             }
         },
-        "/User": {
+        "/user": {
             "put": {
                 "description": "Update user",
                 "consumes": [

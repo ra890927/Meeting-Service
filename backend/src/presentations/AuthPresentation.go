@@ -72,7 +72,7 @@ func NewAuthPresentation(authServiceArgs ...services.AuthService) AuthPresentati
 // @Produce json
 // @Param user body LoginParams true "User object"
 // @Success 200 {object} LoginResponse
-// @Router /Auth/login [post]
+// @Router /auth/login [post]
 func (ap authPresentation) Login(c *gin.Context) {
 	// Get the user from the request
 	var loginParams LoginParams
@@ -120,7 +120,7 @@ func (ap authPresentation) Login(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} LogoutResponse
-// @Router /Auth/logout [post]
+// @Router /auth/logout [post]
 func (ap authPresentation) Logout(c *gin.Context) {
 	// Get the user from the request
 	var logoutResponse LogoutResponse
@@ -155,7 +155,7 @@ func (ap authPresentation) Logout(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} WhoAmIResponse
-// @Router /Auth/whoami [get]
+// @Router /auth/whoami [get]
 func (ap authPresentation) WhoAmI(c *gin.Context) {
 	var whoAmIResponse WhoAmIResponse
 
