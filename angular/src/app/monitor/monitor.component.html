@@ -1,0 +1,33 @@
+<app-header></app-header>
+<mat-tab-group animationDuration="0ms" class="vertical-tab-group">
+    <mat-tab label="User">
+        <mat-card>
+            <mat-list>
+                <mat-list-item>
+                    <div class="list-header">
+                        <div class="list-column">Name</div>
+                        <div class="list-column">E-mail</div>
+                        <div class="list-column">Role</div>
+                        <div class="list-column">Details</div>
+                        <div class="list-column">Actions</div>
+                    </div>
+                </mat-list-item>
+                <mat-list-item *ngFor="let users of usersList">
+                    <div class="users row">
+                        <div class="column show" data-title="{{users.userName}}">{{users.userName}}</div>
+                        <div class="column show" data-title="{{users.email}}">{{users.email}}</div>
+                        <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User'}" (click)="changeStatus(users)">{{users.role}}</span></div>
+                        <div class="column show" data-title="{{users.details}}">{{users.details}}</div>    
+                        <div class="column controls">
+                            <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
+                            <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon>
+                        </div> 
+                    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card>
+    </mat-tab>
+    <mat-tab label="Room">Room</mat-tab>
+    <mat-tab label="Tag">Tag</mat-tab>
+</mat-tab-group>
+
