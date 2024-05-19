@@ -19,7 +19,7 @@ func TestRepoCreateUser(t *testing.T) {
 	// Create a new user
 	user := &models.User{
 		Username: "test-username",
-		Email:    "test-email",
+		Email:    "test@test.com",
 		Password: "test-password",
 		Role:     "test-role",
 	}

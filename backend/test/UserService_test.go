@@ -28,7 +28,7 @@ func TestServiceCreateUser(t *testing.T) {
 	// new user for testing input
 	user := &models.User{
 		Username: "test-username",
-		Email:    "test-email",
+		Email:    "test@test.com",
 		Password: "test-password",
 		Role:     "test-role",
 	}
@@ -54,7 +54,7 @@ func TestServiceUpdateUser(t *testing.T) {
 	// new user for testing input
 	user := &models.User{
 		Username: "test-username-updated",
-		Email:    "test-email-updated",
+		Email:    "test@test.com",
 		Password: "test-password-updated",
 		Role:     "test-role-updated",
 	}

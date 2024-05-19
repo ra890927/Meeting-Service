@@ -30,7 +30,7 @@ func (m *mockUserService) UpdateUser(user *models.User) (*models.User, error) {
 func TestRegisterUser(t *testing.T) {
 	user := models.User{
 		Username: "test-user",
-		Email:    "test-email",
+		Email:    "test@test.com",
 		Password: "test-password",
 		Role:     "test-role",
 	}
@@ -44,7 +44,7 @@ func TestRegisterUser(t *testing.T) {
 	r.POST("/user", up.RegisterUser)
 
 	// Create a request
-	jsonDataString := `{"username":"test-user","email":"test-email","password":"test-password","role":"test-role"}`
+	jsonDataString := `{"username":"test-user","email":"test@test.com","password":"test-password","role":"test-role"}`
 	jsonData := []byte(jsonDataString)
 	req := httptest.NewRequest("POST", "/user", bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")
@@ -60,7 +60,7 @@ func TestUpdateUser(t *testing.T) {
 	// Arrange
 	user := models.User{
 		Username: "test-user-updated",
-		Email:    "test-email-updated",
+		Email:    "test@test.com",
 		Password: "test-password-updated",
 		Role:     "test-role-updated",
 	}
@@ -75,7 +75,7 @@ func TestUpdateUser(t *testing.T) {
 	r.PUT("/user", up.UpdateUser)
 
 	// - Create a request
-	jsonDataString := `{"username":"test-user-updated","email":"test-email-updated","password":"test-password-updated","role":"test-role-updated"}`
+	jsonDataString := `{"username":"test-user-updated","email":"test@test.com","password":"test-password-updated","role":"test-role-updated"}`
 	jsonData := []byte(jsonDataString)
 	req := httptest.NewRequest("PUT", "/user", bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")

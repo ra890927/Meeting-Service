@@ -28,7 +28,7 @@ func TestDomainCreateUser(t *testing.T) {
 	// new user for testing input
 	user := &models.User{
 		Username: "test",
-		Email:    "qwe",
+		Email:    "test@test.com",
 		Password: "password",
 		Role:     "user",
 	}
@@ -57,7 +57,7 @@ func TestDomainUpdateUser(t *testing.T) {
 	// new user for testing input
 	user := &models.User{
 		Username: "test-username-updated",
-		Email:    "test-email-updated",
+		Email:    "test@test.com",
 		Password: "test-password-updated",
 		Role:     "test-role-updated",
 	}

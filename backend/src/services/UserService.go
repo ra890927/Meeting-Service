@@ -3,6 +3,7 @@ package services
 import (
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
+	"net/mail"
 )
 
 type UserService interface {
@@ -25,6 +26,12 @@ func NewUserService(userDomainArgs ...domains.UserDomain) UserService {
 }
 
 func (us userService) CreateUser(user *models.User) (*models.User, error) {
+	// Validate the email
+	_, err := mail.ParseAddress(user.Email)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create a new user
 	createdUser, err := us.userDomain.CreateUser(user)
 
@@ -37,6 +44,12 @@ func (us userService) CreateUser(user *models.User) (*models.User, error) {
 }
 
 func (us userService) UpdateUser(user *models.User) (*models.User, error) {
+	// Validate the email
+	_, err := mail.ParseAddress(user.Email)
+	if err != nil {
+		return nil, err
+	}
+
 	// Update a user
 	updatedUser, err := us.userDomain.UpdateUser(user)
 
