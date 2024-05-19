@@ -1,19 +1,139 @@
 definitions:
   models.User:
     properties:
+      created_at:
+        type: string
       email:
         type: string
+      id:
+        type: integer
       password:
         type: string
       role:
         type: string
+      updated_at:
+        type: string
       username:
+        type: string
+    type: object
+  presentations.LoginParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  presentations.LoginResponse:
+    properties:
+      data:
+        properties:
+          message:
+            type: string
+          token:
+            type: string
+          user:
+            properties:
+              created_at:
+                type: string
+              email:
+                type: string
+              id:
+                type: integer
+              role:
+                type: string
+              updated_at:
+                type: string
+              username:
+                type: string
+            type: object
+        type: object
+      status:
+        type: string
+    type: object
+  presentations.LogoutResponse:
+    properties:
+      data:
+        properties:
+          message:
+            type: string
+        type: object
+      status:
+        type: string
+    type: object
+  presentations.WhoAmIResponse:
+    properties:
+      data:
+        properties:
+          user:
+            properties:
+              id:
+                type: integer
+            type: object
+        type: object
+      message:
+        type: string
+      status:
         type: string
     type: object
 info:
   contact: {}
+  description: This is a simple Meeting Center API
+  title: Meeting Center API
+  version: "1.0"
 paths:
-  /User:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.LoginParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.LoginResponse'
+      summary: Login a user
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.LogoutResponse'
+      summary: Logout a user
+      tags:
+      - Auth
+  /auth/whoami:
+    get:
+      consumes:
+      - application/json
+      description: Get the user who is logged in
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.WhoAmIResponse'
+      summary: Get the user who is logged in
+      tags:
+      - Auth
+  /user:
     post:
       consumes:
       - application/json
@@ -33,6 +153,27 @@ paths:
           schema:
             $ref: '#/definitions/models.User'
       summary: Register a new user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Update user
       tags:
       - User
 swagger: "2.0"

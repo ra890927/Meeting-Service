@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +36,13 @@ func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 		return nil, err
 	}
 
+	// hash the password of the input user's password
+	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(hashValue)
+
 	result := db.Create(user)
 	// return the user if no errors
 	if result.Error != nil {
@@ -50,6 +58,13 @@ func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// hash the password of the input user's password
+	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(hashValue)
 
 	result := db.Save(user)
 	// return the user if no errors

@@ -33,7 +33,7 @@ func NewUserPresentation(userServiceArgs ...services.UserService) UserPresentati
 // @Produce json
 // @Param user body models.User true "User object"
 // @Success 200 {object} models.User
-// @Router /User [post]
+// @Router /user [post]
 func (up userPresentation) RegisterUser(c *gin.Context) {
 	// Get the user from the request
 	var user models.User
@@ -70,7 +70,7 @@ func (up userPresentation) RegisterUser(c *gin.Context) {
 // @Produce json
 // @Param user body models.User true "User object"
 // @Success 200 {object} models.User
-// @Router /User [put]
+// @Router /user [put]
 func (up userPresentation) UpdateUser(c *gin.Context) {
 	// Get the user from the request
 	var user models.User
