@@ -18,20 +18,22 @@ type roomService struct {
 }
 
 // NewRoomService constructs a new RoomService. Optionally a specific RoomDomain can be injected.
-func NewRoomService(opt ...domains.RoomDomain) RoomService {
-	if len(opt) == 1 {
+func NewRoomService(roomDomainArgs ...domains.RoomDomain) RoomService {
+	if len(roomDomainArgs) == 1 {
 		return &roomService{
-			RoomDomain: opt[0],
+			RoomDomain: roomDomainArgs[0],
 		}
-	} else {
+	} else if len(roomDomainArgs) == 0 {
 		return &roomService{
 			RoomDomain: domains.NewRoomDomain(),
 		}
+	} else {
+		panic("Too many arguments")
 	}
 }
 
 // CreateRoom creates a new room using the RoomDomain
-func (rs *roomService) CreateRoom(room *models.Room) (*models.Room, error) {
+func (rs roomService) CreateRoom(room *models.Room) (*models.Room, error) {
 	createdRoom, err := rs.RoomDomain.CreateRoom(room)
 	if err != nil {
 		return nil, err
@@ -40,7 +42,7 @@ func (rs *roomService) CreateRoom(room *models.Room) (*models.Room, error) {
 }
 
 // UpdateRoom updates an existing room using the RoomDomain
-func (rs *roomService) UpdateRoom(id string, room *models.Room) error {
+func (rs roomService) UpdateRoom(id string, room *models.Room) error {
 	err := rs.RoomDomain.UpdateRoom(id, room)
 	if err != nil {
 		return err
@@ -49,7 +51,7 @@ func (rs *roomService) UpdateRoom(id string, room *models.Room) error {
 }
 
 // DeleteRoom deletes a room by its ID using the RoomDomain
-func (rs *roomService) DeleteRoom(id string) error {
+func (rs roomService) DeleteRoom(id string) error {
 	err := rs.RoomDomain.DeleteRoom(id)
 	if err != nil {
 		return err
@@ -58,7 +60,7 @@ func (rs *roomService) DeleteRoom(id string) error {
 }
 
 // GetRoom retrieves a room by its ID using the RoomDomain
-func (rs *roomService) GetRoom(id string) (*models.Room, error) {
+func (rs roomService) GetRoom(id string) (*models.Room, error) {
 	room, err := rs.RoomDomain.GetRoom(id)
 	if err != nil {
 		return nil, err
@@ -67,7 +69,7 @@ func (rs *roomService) GetRoom(id string) (*models.Room, error) {
 }
 
 // GetAllRooms retrieves all rooms using the RoomDomain
-func (rs *roomService) GetAllRooms() ([]*models.Room, error) {
+func (rs roomService) GetAllRooms() ([]*models.Room, error) {
 	rooms, err := rs.RoomDomain.GetAllRooms()
 	if err != nil {
 		return nil, err
