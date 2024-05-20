@@ -9,5 +9,7 @@ export class users {
 export class rooms {
     id: string = '';
     roomNumber: string = '';
+    tag: { name: string, selected: boolean, color: string }[] = [
+    ];
     details: string = '';
 }

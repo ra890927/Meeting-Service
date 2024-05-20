@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { rooms } from '../users';
-import { Component, ElementRef, ViewChild, Inject} from '@angular/core';
+import { Component, ElementRef, ViewChild, Inject, OnInit} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -8,6 +8,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import {MatChipsModule} from '@angular/material/chips';
 import { v4 as uuidv4 } from 'uuid'; // generate random id
 import { FormsModule } from '@angular/forms'
 
@@ -22,12 +23,13 @@ import { FormsModule } from '@angular/forms'
     MatDialogModule,
     MatInputModule,
     MatButtonModule,
+    MatChipsModule,
     CommonModule
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
 })
-export class RoomComponent {
+export class RoomComponent implements OnInit{
 
   constructor(public dialog: MatDialog) {}
 
@@ -41,6 +43,11 @@ export class RoomComponent {
         this.roomsList.push({
           id: uuidv4(),
           roomNumber: result.roomNumber,
+          tag: [
+            { name: 'Projector Available', selected: false, color: 'primary' },
+            { name: 'Free WiFi', selected: false, color: 'accent' },
+            { name: 'Air Conditioning', selected: false, color: 'warn' }
+          ],
           details: result.details
         });
       } else {
@@ -55,26 +62,38 @@ export class RoomComponent {
   detailsInput!: ElementRef<MatInput>;
   
   roomsList: rooms[] = [
-    { id: '001',
-      roomNumber: 'lab639',
-      details: 'This is a test room.'
-    },
-    { id: '002',
-      roomNumber: 'lab637',
-      details: 'This is a test room2.'
-    }
   ];
   roomsEditing: rooms | undefined;
   isEditing: boolean = false;
 
   ngOnInit(): void {
+      this.roomsList.push({ id: '001',
+      roomNumber: 'lab639',
+      tag: [
+        { name: 'Projector Available', selected: true, color: 'primary' },
+        { name: 'Free WiFi', selected: true, color: 'primary' },
+        { name: 'Air Conditioning', selected: false, color: 'primary' }
+      ],
+      details: 'This is a test room.'
+    },
+    { id: '002',
+      roomNumber: 'lab637',
+      tag: [
+        { name: 'Projector Available', selected: false, color: 'primary' },
+        { name: 'Free WiFi', selected: true, color: 'primary' },
+        { name: 'Air Conditioning', selected: true, color: 'primary' }
+      ],
+      details: 'This is a test room2.'
+    });
+    localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
+
     const roomsJson = localStorage.getItem("roomslist");
     if (roomsJson) this.roomsList = JSON.parse(roomsJson);
+    console.log(this.roomsList);
   }
-
+  
   delete(rooms: rooms): void {
     this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
-    
     localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
   }
 
@@ -112,6 +131,11 @@ export class RoomComponent {
     this.roomsList.push({
       id: uuidv4(),
       roomNumber,
+      tag: [
+        { name: 'Projector Available', selected: false, color: 'primary' },
+        { name: 'Free WiFi', selected: true, color: 'accent' },
+        { name: 'Air Conditioning', selected: true, color: 'warn' }
+      ],
       details
 
     });

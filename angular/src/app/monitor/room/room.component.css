@@ -10,13 +10,30 @@ button{
 
 .list-header, .list-row {
     display: flex;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .list-column {
-    flex: 1;
+    /* flex: 1; */
     padding: 8px;
     text-align: left;
+}
+
+.room {
+    width: 200px;
+}
+
+.tags {
+    width: 800px;
+}
+
+.details{
+    width: 300px;
+
+}
+
+.actions{
+    width: 150px;
 }
 
 .list-header .list-column {
@@ -31,7 +48,7 @@ button{
 }
 
 .rooms.row .column {
-    flex: 1;
+    /* flex: 1; */
     padding: 8px;
     white-space: nowrap;
     overflow: hidden;
