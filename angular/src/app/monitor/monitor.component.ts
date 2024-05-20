@@ -28,9 +28,16 @@ import { MatInput } from '@angular/material/input';
 export class MonitorComponent {
   usersList: users[] = [];
   usersEditing: users | undefined;
+  isEditing: boolean = false;
 
   @ViewChild("userNameInput")
   userNameInput!: ElementRef<MatInput>;
+  @ViewChild("emailInput")
+  emailInput!: ElementRef<MatInput>;
+  @ViewChild("roleInput")
+  roleInput!: ElementRef<MatInput>;
+  @ViewChild("detailsInput")
+  detailsInput!: ElementRef<MatInput>;
 
   ngOnInit(): void {
     this.usersList.push({
@@ -44,20 +51,22 @@ export class MonitorComponent {
     if (usersJson) this.usersList = JSON.parse(usersJson);
   }
 
-  changeStatus(users: users): void {
-    // users.status = !users.status;
-    switch (users.role) {
-      case 'Admin':
-          users.role = 'Admin';
-          break;
-      case 'User':
-          users.role = 'User';
-          break;
-      default:
-        users.role = 'User'; // Default to incomplete if something goes wrong
-  }
 
-    localStorage.setItem("userslist", JSON.stringify(this.usersList)); // save to local storage
+  changeStatus(users: users): void {
+    if (this.isEditing){
+      // users.status = !users.status;
+      switch (users.role) {
+        case 'Admin':
+            users.role = 'User';
+            break;
+        case 'User':
+            users.role = 'Admin';
+            break;
+        default:
+          users.role = 'User'; // Default to User
+      }
+      localStorage.setItem("userslist", JSON.stringify(this.usersList)); // save to local storage
+    }
   }
 
   delete(users: users): void {
@@ -67,12 +76,33 @@ export class MonitorComponent {
   }
 
   edit(users: users): void {
+    this.isEditing = !this.isEditing;
     this.usersEditing = users;
-    this.userNameInput.nativeElement.value = users.userName;
+    // this.userNameInput.nativeElement.value = users.userName;
+    // console.log(this.userNameInput.nativeElement.value);
 
-  
+    // 确保 input 已经被渲染后再设置值
+    setTimeout(() => {
+      if (this.userNameInput && this.emailInput && this.detailsInput) {
+        this.userNameInput.nativeElement.value = users.userName;
+        this.userNameInput.nativeElement.focus();
+        this.emailInput.nativeElement.value = users.email;
+        this.detailsInput.nativeElement.value = users.details;
+      }
+    }, 0);
     
     localStorage.setItem("userslist", JSON.stringify(this.usersList));
+  }
+
+  save(): void {
+    if (this.usersEditing) {
+      this.usersEditing.userName = this.userNameInput.nativeElement.value;
+      this.usersEditing.email = this.emailInput.nativeElement.value;
+      this.usersEditing.details = this.detailsInput.nativeElement.value;
+      localStorage.setItem("usersList", JSON.stringify(this.usersList));
+    }
+    this.isEditing = false;
+    this.usersEditing = undefined;
   }
 
 }

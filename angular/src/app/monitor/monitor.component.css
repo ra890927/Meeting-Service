@@ -33,6 +33,9 @@
 .edit {
     color: goldenrod;
 }
+.save {
+    color: goldenrod;
+}
 .delete {
     color: red;
 }
