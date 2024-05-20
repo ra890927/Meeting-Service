@@ -23,10 +23,10 @@ type meetingPresentation struct {
 	MeetingService services.MeetingService
 }
 
-func NewMeetingPresentation(opt ...services.MeetingService) MeetingPresentation {
-	if len(opt) == 1 {
+func NewMeetingPresentation(RoomServiceArg ...services.MeetingService) MeetingPresentation {
+	if len(RoomServiceArg) == 1 {
 		return &meetingPresentation{
-			MeetingService: opt[0],
+			MeetingService: RoomServiceArg[0],
 		}
 	} else {
 		return &meetingPresentation{
@@ -36,7 +36,7 @@ func NewMeetingPresentation(opt ...services.MeetingService) MeetingPresentation 
 }
 
 // CreateMeeting handles the creation of a new meeting
-func (mp *meetingPresentation) CreateMeeting(c *gin.Context) {
+func (mp meetingPresentation) CreateMeeting(c *gin.Context) {
 	var meeting models.Meeting
 	if err := c.BindJSON(&meeting); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request"})
@@ -51,7 +51,7 @@ func (mp *meetingPresentation) CreateMeeting(c *gin.Context) {
 }
 
 // UpdateMeeting handles the updating of meeting details
-func (mp *meetingPresentation) UpdateMeeting(c *gin.Context) {
+func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
 	var meeting models.Meeting
 	id := c.Param("id")
 	if err := c.BindJSON(&meeting); err != nil {
@@ -67,7 +67,7 @@ func (mp *meetingPresentation) UpdateMeeting(c *gin.Context) {
 }
 
 // DeleteMeeting handles the deletion of a meeting
-func (mp *meetingPresentation) DeleteMeeting(c *gin.Context) {
+func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 	id := c.Param("id")
 	err := mp.MeetingService.DeleteMeeting(id)
 	if err != nil {
@@ -78,7 +78,7 @@ func (mp *meetingPresentation) DeleteMeeting(c *gin.Context) {
 }
 
 // GetMeeting retrieves details of a specific meeting
-func (mp *meetingPresentation) GetMeeting(c *gin.Context) {
+func (mp meetingPresentation) GetMeeting(c *gin.Context) {
 	id := c.Param("id")
 	meeting, err := mp.MeetingService.GetMeeting(id)
 	if err != nil {
@@ -89,7 +89,7 @@ func (mp *meetingPresentation) GetMeeting(c *gin.Context) {
 }
 
 // GetAllMeetings retrieves all meetings
-func (mp *meetingPresentation) GetAllMeetings(c *gin.Context) {
+func (mp meetingPresentation) GetAllMeetings(c *gin.Context) {
 	meetings, err := mp.MeetingService.GetAllMeetings()
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error"})
@@ -99,7 +99,7 @@ func (mp *meetingPresentation) GetAllMeetings(c *gin.Context) {
 }
 
 // GetMeetingsByRoomIdAndDate retrieves meetings based on room ID and specific date
-func (mp *meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
+func (mp meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
 	roomID, roomErr := c.GetQuery("room_id")
 	date, dateErr := c.GetQuery("date")
 	if !roomErr || !dateErr {
