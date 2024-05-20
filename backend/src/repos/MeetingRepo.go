@@ -21,17 +21,17 @@ type meetingRepo struct {
 	dsn string
 }
 
-func NewMeetingRepo(opt ...string) MeetingRepo {
+func NewMeetingRepo(dsnArg ...string) MeetingRepo {
 	dsn := "../sqlite.db"
-	if len(opt) == 1 {
-		dsn = opt[0]
+	if len(dsnArg) == 1 {
+		dsn = dsnArg[0]
 	}
 	return &meetingRepo{
 		dsn: dsn,
 	}
 }
 
-func (mr *meetingRepo) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
+func (mr meetingRepo) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (mr *meetingRepo) CreateMeeting(meeting *models.Meeting) (*models.Meeting, 
 	return meeting, nil
 }
 
-func (mr *meetingRepo) UpdateMeeting(id string, meeting *models.Meeting) error {
+func (mr meetingRepo) UpdateMeeting(id string, meeting *models.Meeting) error {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (mr *meetingRepo) UpdateMeeting(id string, meeting *models.Meeting) error {
 	return nil
 }
 
-func (mr *meetingRepo) DeleteMeeting(id string) error {
+func (mr meetingRepo) DeleteMeeting(id string) error {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (mr *meetingRepo) DeleteMeeting(id string) error {
 	return nil
 }
 
-func (mr *meetingRepo) GetMeeting(id string) (*models.Meeting, error) {
+func (mr meetingRepo) GetMeeting(id string) (*models.Meeting, error) {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (mr *meetingRepo) GetMeeting(id string) (*models.Meeting, error) {
 	return &meeting, nil
 }
 
-func (mr *meetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
+func (mr meetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (mr *meetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
 	return meetings, nil
 }
 
-func (mr *meetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+func (mr meetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
 	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
