@@ -123,7 +123,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CodeType"
+                            "$ref": "#/definitions/presentations.UpdateCodeTypeResponse"
                         }
                     }
                 }
@@ -155,7 +155,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CodeType"
+                            "$ref": "#/definitions/presentations.CreateCodeTypeResponse"
                         }
                     }
                 }
@@ -185,7 +185,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/presentations.DeleteCodeTypeResponse"
                         }
                     }
                 }
@@ -208,10 +208,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CodeType"
-                            }
+                            "$ref": "#/definitions/presentations.GetAllCodeTypesResponse"
                         }
                     }
                 }
@@ -245,7 +242,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CodeValue"
+                            "$ref": "#/definitions/presentations.UpdateCodeValueResponse"
                         }
                     }
                 }
@@ -277,7 +274,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CodeValue"
+                            "$ref": "#/definitions/presentations.CreateCodeValueResponse"
                         }
                     }
                 }
@@ -307,7 +304,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/presentations.DeleteCodeValueResponse"
                         }
                     }
                 }
@@ -447,14 +444,50 @@ const docTemplate = `{
         "presentations.CreateCodeTypeParam": {
             "type": "object",
             "required": [
-                "typeDesc",
-                "typeName"
+                "type_desc",
+                "type_name"
             ],
             "properties": {
-                "typeDesc": {
+                "type_desc": {
                     "type": "string"
                 },
-                "typeName": {
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_type": {
+                            "type": "object",
+                            "properties": {
+                                "code_values": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/models.CodeValue"
+                                    }
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "type_desc": {
+                                    "type": "string"
+                                },
+                                "type_name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -462,18 +495,101 @@ const docTemplate = `{
         "presentations.CreateCodeValueParam": {
             "type": "object",
             "required": [
-                "codeTypeID",
-                "codeValue",
-                "codeValueDesc"
+                "code_type_id",
+                "code_value",
+                "code_value_desc"
             ],
             "properties": {
-                "codeTypeID": {
+                "code_type_id": {
                     "type": "integer"
                 },
-                "codeValue": {
+                "code_value": {
                     "type": "string"
                 },
-                "codeValueDesc": {
+                "code_value_desc": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "type": "object",
+                            "properties": {
+                                "code_type_id": {
+                                    "type": "integer"
+                                },
+                                "code_value": {
+                                    "type": "string"
+                                },
+                                "code_value_desc": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.DeleteCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.DeleteCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetAllCodeTypesResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_types": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CodeType"
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -551,17 +667,36 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "id",
-                "typeDesc",
-                "typeName"
+                "type_desc",
+                "type_name"
             ],
             "properties": {
                 "id": {
                     "type": "integer"
                 },
-                "typeDesc": {
+                "type_desc": {
                     "type": "string"
                 },
-                "typeName": {
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_type": {
+                            "$ref": "#/definitions/models.CodeType"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -569,23 +704,56 @@ const docTemplate = `{
         "presentations.UpdateCodeValueParam": {
             "type": "object",
             "required": [
-                "codeTypeID",
-                "codeValue",
-                "codeValueDesc",
+                "code_type_id",
+                "code_value",
+                "code_value_desc",
                 "id"
             ],
             "properties": {
-                "codeTypeID": {
+                "code_type_id": {
                     "type": "integer"
                 },
-                "codeValue": {
+                "code_value": {
                     "type": "string"
                 },
-                "codeValueDesc": {
+                "code_value_desc": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "presentations.UpdateCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "type": "object",
+                            "properties": {
+                                "code_type_id": {
+                                    "type": "integer"
+                                },
+                                "code_value": {
+                                    "type": "string"
+                                },
+                                "code_value_desc": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

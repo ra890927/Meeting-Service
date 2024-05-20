@@ -42,26 +42,102 @@ definitions:
     type: object
   presentations.CreateCodeTypeParam:
     properties:
-      typeDesc:
+      type_desc:
         type: string
-      typeName:
+      type_name:
         type: string
     required:
-    - typeDesc
-    - typeName
+    - type_desc
+    - type_name
+    type: object
+  presentations.CreateCodeTypeResponse:
+    properties:
+      data:
+        properties:
+          code_type:
+            properties:
+              code_values:
+                items:
+                  $ref: '#/definitions/models.CodeValue'
+                type: array
+              id:
+                type: integer
+              type_desc:
+                type: string
+              type_name:
+                type: string
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
     type: object
   presentations.CreateCodeValueParam:
     properties:
-      codeTypeID:
+      code_type_id:
         type: integer
-      codeValue:
+      code_value:
         type: string
-      codeValueDesc:
+      code_value_desc:
         type: string
     required:
-    - codeTypeID
-    - codeValue
-    - codeValueDesc
+    - code_type_id
+    - code_value
+    - code_value_desc
+    type: object
+  presentations.CreateCodeValueResponse:
+    properties:
+      data:
+        properties:
+          code_value:
+            properties:
+              code_type_id:
+                type: integer
+              code_value:
+                type: string
+              code_value_desc:
+                type: string
+              id:
+                type: integer
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.DeleteCodeTypeResponse:
+    properties:
+      data:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.DeleteCodeValueResponse:
+    properties:
+      data:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetAllCodeTypesResponse:
+    properties:
+      data:
+        properties:
+          code_types:
+            items:
+              $ref: '#/definitions/models.CodeType'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
     type: object
   presentations.LoginParams:
     properties:
@@ -111,30 +187,63 @@ definitions:
     properties:
       id:
         type: integer
-      typeDesc:
+      type_desc:
         type: string
-      typeName:
+      type_name:
         type: string
     required:
     - id
-    - typeDesc
-    - typeName
+    - type_desc
+    - type_name
+    type: object
+  presentations.UpdateCodeTypeResponse:
+    properties:
+      data:
+        properties:
+          code_type:
+            $ref: '#/definitions/models.CodeType'
+        type: object
+      message:
+        type: string
+      status:
+        type: string
     type: object
   presentations.UpdateCodeValueParam:
     properties:
-      codeTypeID:
+      code_type_id:
         type: integer
-      codeValue:
+      code_value:
         type: string
-      codeValueDesc:
+      code_value_desc:
         type: string
       id:
         type: integer
     required:
-    - codeTypeID
-    - codeValue
-    - codeValueDesc
+    - code_type_id
+    - code_value
+    - code_value_desc
     - id
+    type: object
+  presentations.UpdateCodeValueResponse:
+    properties:
+      data:
+        properties:
+          code_value:
+            properties:
+              code_type_id:
+                type: integer
+              code_value:
+                type: string
+              code_value_desc:
+                type: string
+              id:
+                type: integer
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
     type: object
   presentations.WhoAmIResponse:
     properties:
@@ -226,7 +335,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/presentations.DeleteCodeTypeResponse'
       summary: Delete a code type
       tags:
       - code
@@ -247,7 +356,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.CodeType'
+            $ref: '#/definitions/presentations.CreateCodeTypeResponse'
       summary: Create a new code type
       tags:
       - code
@@ -268,7 +377,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.CodeType'
+            $ref: '#/definitions/presentations.UpdateCodeTypeResponse'
       summary: Update a code type
       tags:
       - code
@@ -283,9 +392,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.CodeType'
-            type: array
+            $ref: '#/definitions/presentations.GetAllCodeTypesResponse'
       summary: Get all code types
       tags:
       - code
@@ -306,7 +413,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/presentations.DeleteCodeValueResponse'
       summary: Delete a code value
       tags:
       - code
@@ -327,7 +434,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.CodeValue'
+            $ref: '#/definitions/presentations.CreateCodeValueResponse'
       summary: Create a new code value
       tags:
       - code
@@ -348,7 +455,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.CodeValue'
+            $ref: '#/definitions/presentations.UpdateCodeValueResponse'
       summary: Update a code value
       tags:
       - code

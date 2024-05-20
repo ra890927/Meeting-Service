@@ -31,6 +31,87 @@ type codePresentation struct {
 	cs services.CodeService
 }
 
+type CreateCodeTypeParam struct {
+	TypeName string `json:"type_name" binding:"required"`
+	TypeDesc string `json:"type_desc" binding:"required"`
+}
+type CreateCodeTypeResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeType struct {
+			ID         int                `json:"id"`
+			TypeName   string             `json:"type_name"`
+			TypeDesc   string             `json:"type_desc"`
+			CodeValues []models.CodeValue `json:"code_values"`
+		} `json:"code_type"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+type UpdateCodeValueParam struct {
+	ID            int    `json:"id" binding:"required"`
+	CodeTypeID    int    `json:"code_type_id" binding:"required"`
+	CodeValue     string `json:"code_value" binding:"required"`
+	CodeValueDesc string `json:"code_value_desc" binding:"required"`
+}
+
+type UpdateCodeValueResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeValue struct {
+			ID            int    `json:"id"`
+			CodeTypeID    int    `json:"code_type_id"`
+			CodeValue     string `json:"code_value"`
+			CodeValueDesc string `json:"code_value_desc"`
+		} `json:"code_value"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+type DeleteCodeTypeResponse struct {
+	Status  string   `json:"status"`
+	Data    struct{} `json:"data"`
+	Message string   `json:"message"`
+}
+
+type DeleteCodeValueResponse struct {
+	Status  string   `json:"status"`
+	Data    struct{} `json:"data"`
+	Message string   `json:"message"`
+}
+
+type CreateCodeValueParam struct {
+	CodeTypeID    int    `json:"code_type_id" binding:"required"`
+	CodeValue     string `json:"code_value" binding:"required"`
+	CodeValueDesc string `json:"code_value_desc" binding:"required"`
+}
+
+type CreateCodeValueResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeValue struct {
+			ID            int    `json:"id"`
+			CodeTypeID    int    `json:"code_type_id"`
+			CodeValue     string `json:"code_value"`
+			CodeValueDesc string `json:"code_value_desc"`
+		} `json:"code_value"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+type UpdateCodeTypeParam struct {
+	ID       int    `json:"id" binding:"required"`
+	TypeName string `json:"type_name" binding:"required"`
+	TypeDesc string `json:"type_desc" binding:"required"`
+}
+
+type UpdateCodeTypeResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeType models.CodeType `json:"code_type"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
 func NewCodePresentation(codeServiceArgs ...services.CodeService) CodePresentation {
 	if len(codeServiceArgs) == 1 {
 		return CodePresentation(&codePresentation{cs: codeServiceArgs[0]})
@@ -41,28 +122,21 @@ func NewCodePresentation(codeServiceArgs ...services.CodeService) CodePresentati
 	}
 }
 
-type CreateCodeTypeParam struct {
-	TypeName string `json:"typeName" binding:"required"`
-	TypeDesc string `json:"typeDesc" binding:"required"`
-}
-type CreateCodeTypeResponse struct {
-	ID       int    `json:"id"`
-	TypeName string `json:"typeName"`
-	TypeDesc string `json:"typeDesc"`
-}
-
 // @Summary Create a new code type
 // @Description Create a new code type
 // @Tags code
 // @Accept json
 // @Produce json
 // @Param codeType body CreateCodeTypeParam true "CodeType"
-// @Success 200 {object} models.CodeType
+// @Success 200 {object} CreateCodeTypeResponse
 // @Router /code/type [post]
 func (cp codePresentation) CreateCodeType(c *gin.Context) {
 	var codeTypeParam CreateCodeTypeParam
+	var response CreateCodeTypeResponse
 	if err := c.ShouldBindJSON(&codeTypeParam); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
 	// filter out TypeName, TypeDesc
@@ -72,16 +146,20 @@ func (cp codePresentation) CreateCodeType(c *gin.Context) {
 	}
 
 	if err := cp.cs.CreateCodeType(&filteredCodeType); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, filteredCodeType)
-}
 
-type CreateCodeValueParam struct {
-	CodeTypeID    int    `json:"codeTypeID" binding:"required"`
-	CodeValue     string `json:"codeValue" binding:"required"`
-	CodeValueDesc string `json:"codeValueDesc" binding:"required"`
+	response.Status = "success"
+	response.Data.CodeType.ID = filteredCodeType.ID
+	response.Data.CodeType.TypeName = filteredCodeType.TypeName
+	response.Data.CodeType.TypeDesc = filteredCodeType.TypeDesc
+	response.Data.CodeType.CodeValues = []models.CodeValue{}
+	response.Message = "CodeType created"
+
+	c.JSON(200, response)
 }
 
 // @Summary Create a new code value
@@ -90,12 +168,15 @@ type CreateCodeValueParam struct {
 // @Accept json
 // @Produce json
 // @Param codeValue body CreateCodeValueParam true "CodeValue"
-// @Success 200 {object} models.CodeValue
+// @Success 200 {object} CreateCodeValueResponse
 // @Router /code/value [post]
 func (cp codePresentation) CreateCodeValue(c *gin.Context) {
 	var codeValueParam CreateCodeValueParam
+	var response CreateCodeValueResponse
 	if err := c.ShouldBindJSON(&codeValueParam); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
 	// filter out CodeTypeID, CodeValue, CodeValueDesc
@@ -106,10 +187,27 @@ func (cp codePresentation) CreateCodeValue(c *gin.Context) {
 	}
 
 	if err := cp.cs.CreateCodeValue(&filteredCodeValue); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, filteredCodeValue)
+
+	response.Status = "success"
+	response.Data.CodeValue.ID = filteredCodeValue.ID
+	response.Data.CodeValue.CodeTypeID = filteredCodeValue.CodeTypeID
+	response.Data.CodeValue.CodeValue = filteredCodeValue.CodeValue
+	response.Data.CodeValue.CodeValueDesc = filteredCodeValue.CodeValueDesc
+	response.Message = "CodeValue created"
+	c.JSON(200, response)
+}
+
+type GetAllCodeTypesResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeTypes []models.CodeType `json:"code_types"`
+	} `json:"data"`
+	Message string `json:"message"`
 }
 
 // @Summary Get all code types
@@ -117,17 +215,24 @@ func (cp codePresentation) CreateCodeValue(c *gin.Context) {
 // @Tags code
 // @Accept json
 // @Produce json
-// @Success 200 {object} []models.CodeType
+// @Success 200 {object} GetAllCodeTypesResponse
 // @Router /code/type/getAllCodeTypes [get]
 func (cp codePresentation) GetAllCodeTypes(c *gin.Context) {
+	var response GetAllCodeTypesResponse
 	codeTypes, err := cp.cs.GetAllCodeTypes()
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, codeTypes)
+	response.Status = "success"
+	response.Data.CodeTypes = codeTypes
+	response.Message = "CodeTypes fetched"
+	c.JSON(200, response)
 }
 
+// TODO: To see if this is necessary
 func (cp codePresentation) GetAllCodeValuesByType(c *gin.Context) {
 	codeTypeID, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -142,24 +247,21 @@ func (cp codePresentation) GetAllCodeValuesByType(c *gin.Context) {
 	c.JSON(200, codeValues)
 }
 
-type UpdateCodeTypeParam struct {
-	ID       int    `json:"id" binding:"required"`
-	TypeName string `json:"typeName" binding:"required"`
-	TypeDesc string `json:"typeDesc" binding:"required"`
-}
-
 // @Summary Update a code type
 // @Description Update a code type
 // @Tags code
 // @Accept json
 // @Produce json
 // @Param codeType body UpdateCodeTypeParam true "CodeType"
-// @Success 200 {object} models.CodeType
+// @Success 200 {object} UpdateCodeTypeResponse
 // @Router /code/type [put]
 func (cp codePresentation) UpdateCodeType(c *gin.Context) {
 	var codeTypeParam UpdateCodeTypeParam
+	var response UpdateCodeTypeResponse
 	if err := c.ShouldBindJSON(&codeTypeParam); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
 	// filter out TypeName, TypeDesc
@@ -170,18 +272,17 @@ func (cp codePresentation) UpdateCodeType(c *gin.Context) {
 	}
 
 	if err := cp.cs.UpdateCodeType(&filteredCodeType); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
 
-	c.JSON(200, filteredCodeType)
-}
+	response.Status = "success"
+	response.Data.CodeType = filteredCodeType
+	response.Message = "CodeType updated"
 
-type UpdateCodeValueParam struct {
-	ID            int    `json:"id" binding:"required"`
-	CodeTypeID    int    `json:"codeTypeID" binding:"required"`
-	CodeValue     string `json:"codeValue" binding:"required"`
-	CodeValueDesc string `json:"codeValueDesc" binding:"required"`
+	c.JSON(200, response)
 }
 
 // @Summary Update a code value
@@ -190,12 +291,15 @@ type UpdateCodeValueParam struct {
 // @Accept json
 // @Produce json
 // @Param codeValue body UpdateCodeValueParam true "CodeValue"
-// @Success 200 {object} models.CodeValue
+// @Success 200 {object} UpdateCodeValueResponse
 // @Router /code/value [put]
 func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
 	var codeValueParam UpdateCodeValueParam
+	var response UpdateCodeValueResponse
 	if err := c.ShouldBindJSON(&codeValueParam); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
 	// filter out CodeTypeID, CodeValue, CodeValueDesc
@@ -207,11 +311,20 @@ func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
 	}
 
 	if err := cp.cs.UpdateCodeValue(&filteredCodeValue); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
 
-	c.JSON(200, filteredCodeValue)
+	response.Status = "success"
+	response.Data.CodeValue.ID = filteredCodeValue.ID
+	response.Data.CodeValue.CodeTypeID = filteredCodeValue.CodeTypeID
+	response.Data.CodeValue.CodeValue = filteredCodeValue.CodeValue
+	response.Data.CodeValue.CodeValueDesc = filteredCodeValue.CodeValueDesc
+	response.Message = "CodeValue updated"
+
+	c.JSON(200, response)
 }
 
 // @Summary Delete a code type
@@ -220,20 +333,26 @@ func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "CodeType ID"
-// @Success 200 {object} string
+// @Success 200 {object} DeleteCodeTypeResponse
 // @Router /code/type [delete]
 func (cp codePresentation) DeleteCodeType(c *gin.Context) {
 	codeTypeID, err := strconv.Atoi(c.Query("id"))
+	var response DeleteCodeTypeResponse
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
-	fmt.Println(codeTypeID)
 	if err := cp.cs.DeleteCodeType(codeTypeID); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, gin.H{"message": "CodeType deleted"})
+	response.Status = "success"
+	response.Message = fmt.Sprintf("CodeType with ID %d deleted", codeTypeID)
+	c.JSON(200, response)
 }
 
 // @Summary Delete a code value
@@ -242,17 +361,24 @@ func (cp codePresentation) DeleteCodeType(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "CodeValue ID"
-// @Success 200 {object} string
+// @Success 200 {object} DeleteCodeValueResponse
 // @Router /code/value [delete]
 func (cp codePresentation) DeleteCodeValue(c *gin.Context) {
 	codeValueID, err := strconv.Atoi(c.Query("id"))
+	var response DeleteCodeValueResponse
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
 	if err := cp.cs.DeleteCodeValue(codeValueID); err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, gin.H{"message": "CodeValue deleted"})
+	response.Status = "success"
+	response.Message = fmt.Sprintf("CodeValue with ID %d deleted", codeValueID)
+	c.JSON(200, response)
 }

@@ -54,10 +54,12 @@ func (cs codeService) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue
 }
 
 func (cs codeService) UpdateCodeType(codeType *models.CodeType) error {
+	// TODO: check if codeType exists
 	return cs.cd.UpdateCodeType(codeType)
 }
 
 func (cs codeService) UpdateCodeValue(codeValue *models.CodeValue) error {
+	// TODO: check if codeValue exists
 	return cs.cd.UpdateCodeValue(codeValue)
 }
 
