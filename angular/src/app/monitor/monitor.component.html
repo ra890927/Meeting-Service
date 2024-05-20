@@ -1,35 +1,7 @@
 <app-header></app-header>
-<mat-tab-group animationDuration="0ms" class="vertical-tab-group">
+<mat-tab-group animationDuration="0ms">
     <mat-tab label="User">
-        <mat-card>
-            <mat-list>
-                <mat-list-item>
-                    <div class="list-header">
-                        <div class="list-column">Name</div>
-                        <div class="list-column">E-mail</div>
-                        <div class="list-column">Role</div>
-                        <div class="list-column">Details</div>
-                        <div class="list-column">Actions</div>
-                    </div>
-                </mat-list-item>
-                <mat-list-item *ngFor="let users of usersList">
-                    <div class="users row">
-                        <div class="column show" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
-                        <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #userNameInput>
-                        <div class="column show"  *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.email}}">{{users.email}}</div>
-                        <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #emailInput>
-                        <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User'}" (click)="changeStatus(users)">{{users.role}}</span></div>
-                        <div class="column show" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.details}}">{{users.details}}</div>
-                        <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #detailsInput>
-                        <div class="column controls">
-                            <mat-icon *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
-                            <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
-                            <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon>
-                        </div> 
-                    </div>
-                </mat-list-item>
-            </mat-list>
-        </mat-card>
+        <app-user></app-user>
     </mat-tab>
     <mat-tab label="Room">Room</mat-tab>
     <mat-tab label="Tag">Tag</mat-tab>
