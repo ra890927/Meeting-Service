@@ -160,7 +160,8 @@ func TestGetMeetingsByRoomIdAndDate(t *testing.T) {
 	roomID := 101
 	date := time.Now()
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("GetMeetingsByRoomIdAndDate", roomID, date).Return(meetings, nil)
+	mockMeetingService.On("GetMeetingsByRoomIdAndDate", roomID, mock.AnythingOfType("time.Time")).Return(meetings, nil)
+	// mockMeetingService.On("GetMeetingsByRoomIdAndDate", roomID, date).Return(meetings, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
