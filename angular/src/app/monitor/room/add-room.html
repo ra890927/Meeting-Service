@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>New Room</h1>
+<div mat-dialog-content>
+    <div class="inputContainer">
+        <mat-form-field>
+            <mat-label>Room Number</mat-label>
+            <input matInput [(ngModel)]="roomNumber">
+        </mat-form-field>
+
+        <mat-form-field>
+        <mat-label>Details</mat-label>
+        <textarea matInput [(ngModel)]="details"></textarea>
+        </mat-form-field>
+        
+    </div>
+    <div class="buttonContainer">
+        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Add</button>
+    </div>
+
+</div>

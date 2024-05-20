@@ -12,7 +12,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     HeaderComponent,
     UserComponent,
     RoomComponent,
-    MatTabsModule
+    MatTabsModule,
   ],
   templateUrl: './monitor.component.html',
   styleUrl: './monitor.component.css'

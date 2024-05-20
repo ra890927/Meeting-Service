@@ -1,3 +1,13 @@
+.inputDiv {
+    /* text-align: center; */
+    margin: 20px;
+}
+
+button{
+    margin-top: 20px;
+
+}
+
 .list-header, .list-row {
     display: flex;
     width: 100%;
