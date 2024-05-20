@@ -1,15 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { users } from './users';
+import { Component } from '@angular/core';
 
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
-
-import { HeaderComponent } from '../layout/header/header.component';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
 import { UserComponent } from './user/user.component';
+import { HeaderComponent } from '../layout/header/header.component';
+import { RoomComponent } from './room/room.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-monitor',
@@ -17,12 +11,8 @@ import { UserComponent } from './user/user.component';
   imports: [
     HeaderComponent,
     UserComponent,
-    MatTabsModule,
-    MatCardModule,
-    MatListModule,
-    MatIconModule,
-    CommonModule
-
+    RoomComponent,
+    MatTabsModule
   ],
   templateUrl: './monitor.component.html',
   styleUrl: './monitor.component.css'

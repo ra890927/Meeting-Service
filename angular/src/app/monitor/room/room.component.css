@@ -1,0 +1,47 @@
+.list-header, .list-row {
+    display: flex;
+    width: 100%;
+}
+
+.list-column {
+    flex: 1;
+    padding: 8px;
+    text-align: left;
+}
+
+.list-header .list-column {
+    font-weight: bold;
+    background-color: #f5f1f1;
+}
+
+.rooms.row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.rooms.row .column {
+    flex: 1;
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative; 
+}
+
+.edit {
+    color: goldenrod;
+}
+.save {
+    color: goldenrod;
+}
+.delete {
+    color: red;
+}
+
+.controls {
+    cursor: pointer;
+}
+.controls:hover {
+    color: purple;
+}

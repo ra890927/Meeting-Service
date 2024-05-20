@@ -5,3 +5,9 @@ export class users {
     role: 'Admin' | 'User'  = 'User';
     details: string = '';
 }
+
+export class rooms {
+    id: string = '';
+    roomNumber: string = '';
+    details: string = '';
+}

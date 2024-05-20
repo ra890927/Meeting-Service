@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { HeaderComponent } from '../../layout/header/header.component';
 import { users } from '../users';
 
 import { MatTabsModule } from '@angular/material/tabs';
@@ -14,7 +13,6 @@ import { CommonModule } from '@angular/common';
   selector: 'app-user',
   standalone: true,
   imports: [
-    HeaderComponent,
     MatTabsModule,
     MatCardModule,
     MatListModule,
