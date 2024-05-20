@@ -1,6 +1,7 @@
 package presentations
 
 import (
+	"fmt"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"strconv"
@@ -107,6 +108,7 @@ func (mp *meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
 	}
 	roomIdInt, _ := strconv.Atoi(roomID)
 	parsedDate, _ := time.Parse("2006-01-02", date)
+	fmt.Println(roomIdInt, parsedDate)
 	meetings, err := mp.MeetingService.GetMeetingsByRoomIdAndDate(roomIdInt, parsedDate)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error"})
