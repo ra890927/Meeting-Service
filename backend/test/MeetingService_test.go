@@ -44,21 +44,77 @@ func (m *MockMeetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Tim
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
-func TestServiceCreateMeeting(t *testing.T) {
+func TestServiceCreateMeetingWithInvalidTime(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
 	meeting := &models.Meeting{
-		Title:       "Board Meeting",
-		Description: "Annual Board Meeting",
+		Title:       "Invalid Time Meeting",
+		Description: "This meeting has invalid time",
+		RoomID:      101,
+		StartTime:   time.Now().Add(2 * time.Hour),
+		EndTime:     time.Now(),
 	}
 
+	createdMeeting, err := ms.CreateMeeting(meeting)
+
+	assert.Error(t, err)
+	assert.Nil(t, createdMeeting)
+	assert.Contains(t, err.Error(), "StartTime must be before EndTime")
+}
+
+func TestServiceCreateMeetingWithNoConflict(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	meeting := &models.Meeting{
+		ID:          "1",
+		Title:       "Board Meeting",
+		Description: "Annual Board Meeting",
+		RoomID:      101,
+		StartTime:   time.Now(),
+		EndTime:     time.Now().Add(2 * time.Hour),
+	}
+
+	// Assume no existing meetings
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{}, nil)
 	mockMeetingDomain.On("CreateMeeting", meeting).Return(meeting, nil)
 
 	createdMeeting, err := ms.CreateMeeting(meeting)
 
 	assert.NoError(t, err)
 	assert.Equal(t, meeting, createdMeeting)
+}
+
+func TestServiceCreateMeetingWithConflict(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	meeting := &models.Meeting{
+		ID:          "1",
+		Title:       "Board Meeting",
+		Description: "Annual Board Meeting",
+		RoomID:      101,
+		StartTime:   time.Now(),
+		EndTime:     time.Now().Add(2 * time.Hour),
+	}
+
+	existingMeeting := &models.Meeting{
+		ID:        "2",
+		Title:     "Strategy Meeting",
+		RoomID:    101,
+		StartTime: time.Now().Add(1 * time.Hour),
+		EndTime:   time.Now().Add(3 * time.Hour),
+	}
+
+	// Return existing meeting that conflicts
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{existingMeeting}, nil)
+
+	createdMeeting, err := ms.CreateMeeting(meeting)
+
+	assert.Error(t, err)
+	assert.Nil(t, createdMeeting)
+	assert.Contains(t, err.Error(), "time slot is already booked")
 }
 
 func TestServiceUpdateMeeting(t *testing.T) {
