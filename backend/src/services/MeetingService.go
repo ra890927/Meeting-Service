@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
 	"time"
@@ -32,6 +33,22 @@ func NewMeetingService(opt ...domains.MeetingDomain) MeetingService {
 }
 
 func (ms *meetingService) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
+	// Validate time
+	if !meeting.StartTime.Before(meeting.EndTime) {
+		return nil, errors.New("StartTime must be before EndTime")
+	}
+
+	// Check for overlapping meetings
+	existingMeetings, err := ms.GetMeetingsByRoomIdAndDate(meeting.RoomID, meeting.StartTime)
+	if err != nil {
+		return nil, err
+	}
+	for _, m := range existingMeetings {
+		if meeting.StartTime.Before(m.EndTime) && meeting.EndTime.After(m.StartTime) {
+			return nil, errors.New("time slot is already booked")
+		}
+	}
+
 	createdMeeting, err := ms.MeetingDomain.CreateMeeting(meeting)
 	if err != nil {
 		return nil, err
