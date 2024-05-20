@@ -20,10 +20,10 @@ type meetingService struct {
 	MeetingDomain domains.MeetingDomain
 }
 
-func NewMeetingService(opt ...domains.MeetingDomain) MeetingService {
-	if len(opt) == 1 {
+func NewMeetingService(RoomRepoArg ...domains.MeetingDomain) MeetingService {
+	if len(RoomRepoArg) == 1 {
 		return &meetingService{
-			MeetingDomain: opt[0],
+			MeetingDomain: RoomRepoArg[0],
 		}
 	} else {
 		return &meetingService{
@@ -32,7 +32,7 @@ func NewMeetingService(opt ...domains.MeetingDomain) MeetingService {
 	}
 }
 
-func (ms *meetingService) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
+func (ms meetingService) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
 	// Validate time
 	if !meeting.StartTime.Before(meeting.EndTime) {
 		return nil, errors.New("StartTime must be before EndTime")
@@ -56,7 +56,7 @@ func (ms *meetingService) CreateMeeting(meeting *models.Meeting) (*models.Meetin
 	return createdMeeting, nil
 }
 
-func (ms *meetingService) UpdateMeeting(id string, meeting *models.Meeting) error {
+func (ms meetingService) UpdateMeeting(id string, meeting *models.Meeting) error {
 	err := ms.MeetingDomain.UpdateMeeting(id, meeting)
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (ms *meetingService) UpdateMeeting(id string, meeting *models.Meeting) erro
 	return nil
 }
 
-func (ms *meetingService) DeleteMeeting(id string) error {
+func (ms meetingService) DeleteMeeting(id string) error {
 	err := ms.MeetingDomain.DeleteMeeting(id)
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func (ms *meetingService) DeleteMeeting(id string) error {
 	return nil
 }
 
-func (ms *meetingService) GetMeeting(id string) (*models.Meeting, error) {
+func (ms meetingService) GetMeeting(id string) (*models.Meeting, error) {
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (ms *meetingService) GetMeeting(id string) (*models.Meeting, error) {
 	return meeting, nil
 }
 
-func (ms *meetingService) GetAllMeetings() ([]*models.Meeting, error) {
+func (ms meetingService) GetAllMeetings() ([]*models.Meeting, error) {
 	meetings, err := ms.MeetingDomain.GetAllMeetings()
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (ms *meetingService) GetAllMeetings() ([]*models.Meeting, error) {
 	return meetings, nil
 }
 
-func (ms *meetingService) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
+func (ms meetingService) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
 	meetings, err := ms.MeetingDomain.GetMeetingsByRoomIdAndDate(roomID, date)
 	if err != nil {
 		return nil, err
