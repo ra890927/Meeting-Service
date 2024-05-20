@@ -36,7 +36,7 @@ func (suite *CodeRepoTestSuite) TearDownTest() {
 
 func (suite *CodeRepoTestSuite) TestCreateCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestCreateCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -46,7 +46,7 @@ func (suite *CodeRepoTestSuite) TestCreateCodeType() {
 
 func (suite *CodeRepoTestSuite) TestCreateCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestCreateCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -69,7 +69,7 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeTypes() {
 	originalLength := len(codeTypes)
 
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestGetAllCodeTypes",
 		TypeDesc: "This is a test type",
 	}
 	err = suite.cr.CreateCodeType(codeType)
@@ -82,7 +82,7 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeTypes() {
 
 func (suite *CodeRepoTestSuite) TestGetAllCodeValuesByType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestGetAllCodeValuesByType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -103,7 +103,7 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeValuesByType() {
 
 func (suite *CodeRepoTestSuite) TestUpdateCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestUpdateCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -116,7 +116,7 @@ func (suite *CodeRepoTestSuite) TestUpdateCodeType() {
 
 func (suite *CodeRepoTestSuite) TestUpdateCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestUpdateCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -137,7 +137,7 @@ func (suite *CodeRepoTestSuite) TestUpdateCodeValue() {
 
 func (suite *CodeRepoTestSuite) TestDeleteCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestDeleteCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -157,7 +157,7 @@ func (suite *CodeRepoTestSuite) TestDeleteCodeValue() {
 
 func (suite *CodeRepoTestSuite) TestDeleteCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestDeleteCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
