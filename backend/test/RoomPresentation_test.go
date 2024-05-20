@@ -93,7 +93,7 @@ func TestGetAllRooms(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, 2, len(rooms)) // 检查返回的房间数量
+	assert.Equal(t, 2, len(rooms))
 }
 
 func TestUpdateRoom(t *testing.T) {
