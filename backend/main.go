@@ -41,6 +41,20 @@ func main() {
 			eg.POST("/logout", authPresentation.Logout)
 			eg.GET("/whoami", middlewares.AuthRequire(), authPresentation.WhoAmI)
 		}
+		eg = v1.Group("/code")
+		{
+			codePresentation := presentations.NewCodePresentation()
+			// type routes
+			eg.GET("/type/getAllCodeTypes", codePresentation.GetAllCodeTypes)
+			eg.POST("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeType)
+			eg.PUT("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeType)
+			eg.DELETE("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeType)
+
+			// value routes
+			eg.POST("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeValue)
+			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
+			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)
+		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run(":8080")

@@ -1,4 +1,28 @@
 definitions:
+  models.CodeType:
+    properties:
+      code_values:
+        items:
+          $ref: '#/definitions/models.CodeValue'
+        type: array
+      id:
+        type: integer
+      type_desc:
+        type: string
+      type_name:
+        type: string
+    type: object
+  models.CodeValue:
+    properties:
+      code_type_id:
+        type: integer
+      code_value:
+        type: string
+      code_value_desc:
+        type: string
+      id:
+        type: integer
+    type: object
   models.User:
     properties:
       created_at:
@@ -15,6 +39,29 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  presentations.CreateCodeTypeParam:
+    properties:
+      typeDesc:
+        type: string
+      typeName:
+        type: string
+    required:
+    - typeDesc
+    - typeName
+    type: object
+  presentations.CreateCodeValueParam:
+    properties:
+      codeTypeID:
+        type: integer
+      codeValue:
+        type: string
+      codeValueDesc:
+        type: string
+    required:
+    - codeTypeID
+    - codeValue
+    - codeValueDesc
     type: object
   presentations.LoginParams:
     properties:
@@ -59,6 +106,35 @@ definitions:
         type: object
       status:
         type: string
+    type: object
+  presentations.UpdateCodeTypeParam:
+    properties:
+      id:
+        type: integer
+      typeDesc:
+        type: string
+      typeName:
+        type: string
+    required:
+    - id
+    - typeDesc
+    - typeName
+    type: object
+  presentations.UpdateCodeValueParam:
+    properties:
+      codeTypeID:
+        type: integer
+      codeValue:
+        type: string
+      codeValueDesc:
+        type: string
+      id:
+        type: integer
+    required:
+    - codeTypeID
+    - codeValue
+    - codeValueDesc
+    - id
     type: object
   presentations.WhoAmIResponse:
     properties:
@@ -133,6 +209,149 @@ paths:
       summary: Get the user who is logged in
       tags:
       - Auth
+  /code/type:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a code type
+      parameters:
+      - description: CodeType ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a code type
+      tags:
+      - code
+    post:
+      consumes:
+      - application/json
+      description: Create a new code type
+      parameters:
+      - description: CodeType
+        in: body
+        name: codeType
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateCodeTypeParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CodeType'
+      summary: Create a new code type
+      tags:
+      - code
+    put:
+      consumes:
+      - application/json
+      description: Update a code type
+      parameters:
+      - description: CodeType
+        in: body
+        name: codeType
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateCodeTypeParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CodeType'
+      summary: Update a code type
+      tags:
+      - code
+  /code/type/getAllCodeTypes:
+    get:
+      consumes:
+      - application/json
+      description: Get all code types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CodeType'
+            type: array
+      summary: Get all code types
+      tags:
+      - code
+  /code/value:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a code value
+      parameters:
+      - description: CodeValue ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a code value
+      tags:
+      - code
+    post:
+      consumes:
+      - application/json
+      description: Create a new code value
+      parameters:
+      - description: CodeValue
+        in: body
+        name: codeValue
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateCodeValueParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CodeValue'
+      summary: Create a new code value
+      tags:
+      - code
+    put:
+      consumes:
+      - application/json
+      description: Update a code value
+      parameters:
+      - description: CodeValue
+        in: body
+        name: codeValue
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateCodeValueParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CodeValue'
+      summary: Update a code value
+      tags:
+      - code
   /user:
     post:
       consumes:
