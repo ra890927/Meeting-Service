@@ -44,7 +44,7 @@ func TestDomainCreateRoom(t *testing.T) {
 	room := &models.Room{
 		RoomName: "Conference Room A",
 		Type:     "Board Meeting",
-		Capacity: 10,
+		Capacity: 11,
 	}
 
 	mockRoomRepo.On("CreateRoom", room).Return(room, nil)
