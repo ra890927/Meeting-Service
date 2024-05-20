@@ -20,10 +20,10 @@ type roomRepo struct {
 }
 
 // NewRoomRepo constructs a new RoomRepo. Optionally a specific DSN can be injected.
-func NewRoomRepo(opt ...string) RoomRepo {
+func NewRoomRepo(dsnArgs ...string) RoomRepo {
 	dsn := "../sqlite.db" // Default DSN
-	if len(opt) == 1 {
-		dsn = opt[0]
+	if len(dsnArgs) == 1 {
+		dsn = dsnArgs[0]
 	}
 	return &roomRepo{
 		dsn: dsn,
@@ -31,7 +31,7 @@ func NewRoomRepo(opt ...string) RoomRepo {
 }
 
 // CreateRoom creates a new room in the database
-func (rr *roomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
+func (rr roomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
 	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (rr *roomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
 }
 
 // UpdateRoom updates an existing room in the database
-func (rr *roomRepo) UpdateRoom(id string, room *models.Room) error {
+func (rr roomRepo) UpdateRoom(id string, room *models.Room) error {
 	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (rr *roomRepo) UpdateRoom(id string, room *models.Room) error {
 }
 
 // DeleteRoom deletes a room from the database
-func (rr *roomRepo) DeleteRoom(id string) error {
+func (rr roomRepo) DeleteRoom(id string) error {
 	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func (rr *roomRepo) DeleteRoom(id string) error {
 }
 
 // GetRoom retrieves a room from the database
-func (rr *roomRepo) GetRoom(id string) (*models.Room, error) {
+func (rr roomRepo) GetRoom(id string) (*models.Room, error) {
 	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (rr *roomRepo) GetRoom(id string) (*models.Room, error) {
 }
 
 // GetAllRooms retrieves all rooms from the database
-func (rr *roomRepo) GetAllRooms() ([]*models.Room, error) {
+func (rr roomRepo) GetAllRooms() ([]*models.Room, error) {
 	db, err := gorm.Open(sqlite.Open(rr.dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
