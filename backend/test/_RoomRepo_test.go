@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockGormDB simulates the GormDB for testing
 type MockGormDB struct {
 	mock.Mock
 }
