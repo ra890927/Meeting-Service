@@ -21,13 +21,13 @@ type meetingDomain struct {
 
 func NewMeetingDomain(meetingRepoArg ...repos.MeetingRepo) MeetingDomain {
 	if len(meetingRepoArg) == 1 {
-		return &meetingDomain{
+		return MeetingDomain(&meetingDomain{
 			MeetingRepo: meetingRepoArg[0],
-		}
+		})
 	} else {
-		return &meetingDomain{
+		return MeetingDomain(&meetingDomain{
 			MeetingRepo: repos.NewMeetingRepo(),
-		}
+		})
 	}
 }
 
