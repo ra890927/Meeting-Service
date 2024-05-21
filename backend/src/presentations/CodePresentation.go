@@ -16,7 +16,8 @@ type CodePresentation interface {
 
 	// R
 	GetAllCodeTypes(c *gin.Context)
-	GetAllCodeValuesByType(c *gin.Context)
+	GetCodeTypeByID(c *gin.Context)
+	GetCodeValueByID(c *gin.Context)
 
 	// U
 	UpdateCodeType(c *gin.Context)
@@ -232,19 +233,82 @@ func (cp codePresentation) GetAllCodeTypes(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-// TODO: To see if this is necessary
-func (cp codePresentation) GetAllCodeValuesByType(c *gin.Context) {
+type GetCodeTypeByIDResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeType models.CodeType `json:"code_type"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+// @Summary Get a code type by ID
+// @Description Get a code type by ID
+// @Tags code
+// @Accept json
+// @Produce json
+// @Param id query int true "CodeType ID"
+// @Success 200 {object} CreateCodeTypeResponse
+// @Router /code/type/getCodeTypeByID [get]
+func (cp codePresentation) GetCodeTypeByID(c *gin.Context) {
 	codeTypeID, err := strconv.Atoi(c.Query("id"))
+	var response GetCodeTypeByIDResponse
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
 		return
 	}
-	codeValues, err := cp.cs.GetAllCodeValuesByType(codeTypeID)
+	codeType, err := cp.cs.GetCodeTypeByID(codeTypeID)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
 		return
 	}
-	c.JSON(200, codeValues)
+
+	response.Status = "success"
+	response.Data.CodeType = *codeType
+	response.Message = "CodeType fetched"
+	c.JSON(200, response)
+}
+
+type GetCodeValueByIDResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		CodeValue models.CodeValue `json:"code_value"`
+	} `json:"data"`
+	Message string `json:"message"`
+}
+
+// @Summary Get a code value by ID
+// @Description Get a code value by ID
+// @Tags code
+// @Accept json
+// @Produce json
+// @Param id query int true "CodeValue ID"
+// @Success 200 {object} GetCodeValueByIDResponse
+// @Router /code/value/getCodeValueByID [get]
+func (cp codePresentation) GetCodeValueByID(c *gin.Context) {
+	codeValueID, err := strconv.Atoi(c.Query("id"))
+	var response GetCodeValueByIDResponse
+	if err != nil {
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(400, response)
+		return
+	}
+	codeValue, err := cp.cs.GetCodeValueByID(codeValueID)
+	if err != nil {
+		response.Status = "fail"
+		response.Message = err.Error()
+		c.JSON(500, response)
+		return
+	}
+
+	response.Status = "success"
+	response.Data.CodeValue = *codeValue
+	response.Message = "CodeValue fetched"
+	c.JSON(200, response)
 }
 
 // @Summary Update a code type

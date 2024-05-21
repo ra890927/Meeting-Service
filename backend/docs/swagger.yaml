@@ -139,6 +139,18 @@ definitions:
       status:
         type: string
     type: object
+  presentations.GetCodeValueByIDResponse:
+    properties:
+      data:
+        properties:
+          code_value:
+            $ref: '#/definitions/models.CodeValue'
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.LoginParams:
     properties:
       email:
@@ -396,6 +408,27 @@ paths:
       summary: Get all code types
       tags:
       - code
+  /code/type/getCodeTypeByID:
+    get:
+      consumes:
+      - application/json
+      description: Get a code type by ID
+      parameters:
+      - description: CodeType ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateCodeTypeResponse'
+      summary: Get a code type by ID
+      tags:
+      - code
   /code/value:
     delete:
       consumes:
@@ -457,6 +490,27 @@ paths:
           schema:
             $ref: '#/definitions/presentations.UpdateCodeValueResponse'
       summary: Update a code value
+      tags:
+      - code
+  /code/value/getCodeValueByID:
+    get:
+      consumes:
+      - application/json
+      description: Get a code value by ID
+      parameters:
+      - description: CodeValue ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetCodeValueByIDResponse'
+      summary: Get a code value by ID
       tags:
       - code
   /user:

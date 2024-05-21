@@ -12,7 +12,8 @@ type CodeDomain interface {
 
 	// R
 	GetAllCodeTypes() ([]models.CodeType, error)
-	GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error)
+	GetCodeTypeByID(codeTypeID int) (*models.CodeType, error)
+	GetCodeValueByID(codeValueID int) (*models.CodeValue, error)
 
 	// U
 	UpdateCodeType(codeType *models.CodeType) error
@@ -49,8 +50,12 @@ func (cd codeDomain) GetAllCodeTypes() ([]models.CodeType, error) {
 	return cd.cr.GetAllCodeTypes()
 }
 
-func (cd codeDomain) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
-	return cd.cr.GetAllCodeValuesByType(codeTypeID)
+func (cd codeDomain) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
+	return cd.cr.GetCodeTypeByID(codeTypeID)
+}
+
+func (cd codeDomain) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
+	return cd.cr.GetCodeValueByID(codeValueID)
 }
 
 func (cd codeDomain) UpdateCodeType(codeType *models.CodeType) error {

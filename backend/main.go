@@ -46,11 +46,13 @@ func main() {
 			codePresentation := presentations.NewCodePresentation()
 			// type routes
 			eg.GET("/type/getAllCodeTypes", codePresentation.GetAllCodeTypes)
+			eg.GET("/type/getCodeTypeByID", codePresentation.GetCodeTypeByID)
 			eg.POST("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeType)
 			eg.PUT("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeType)
 			eg.DELETE("/type", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeType)
 
 			// value routes
+			eg.GET("/value/getCodeValueByID", codePresentation.GetCodeValueByID)
 			eg.POST("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeValue)
 			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
 			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)

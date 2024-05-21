@@ -214,6 +214,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/code/type/getCodeTypeByID": {
+            "get": {
+                "description": "Get a code type by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Get a code type by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeType ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeTypeResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/code/value": {
             "put": {
                 "description": "Update a code value",
@@ -305,6 +337,38 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/presentations.DeleteCodeValueResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/code/value/getCodeValueByID": {
+            "get": {
+                "description": "Get a code value by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Get a code value by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeValue ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetCodeValueByIDResponse"
                         }
                     }
                 }
@@ -583,6 +647,25 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.CodeType"
                             }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetCodeValueByIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "$ref": "#/definitions/models.CodeValue"
                         }
                     }
                 },

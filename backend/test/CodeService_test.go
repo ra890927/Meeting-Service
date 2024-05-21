@@ -29,9 +29,14 @@ func (m *MockCodeDomain) GetAllCodeTypes() ([]models.CodeType, error) {
 	return args.Get(0).([]models.CodeType), args.Error(1)
 }
 
-func (m *MockCodeDomain) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
+func (m *MockCodeDomain) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
 	args := m.Called(codeTypeID)
-	return args.Get(0).([]models.CodeValue), args.Error(1)
+	return args.Get(0).(*models.CodeType), args.Error(1)
+}
+
+func (m *MockCodeDomain) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
+	args := m.Called(codeValueID)
+	return args.Get(0).(*models.CodeValue), args.Error(1)
 }
 
 func (m *MockCodeDomain) UpdateCodeType(codeType *models.CodeType) error {
@@ -110,13 +115,23 @@ func (suite *CodeServiceTestSuite) TestGetAllCodeTypes() {
 	// Assert
 	assert.NoError(suite.T(), err)
 }
-
-func (suite *CodeServiceTestSuite) TestGetAllCodeValuesByType() {
+func (suite *CodeServiceTestSuite) TestGetCodeTypeByID() {
 	// Arrange
-	suite.cr.On("GetAllCodeValuesByType", 1).Return([]models.CodeValue{}, nil)
+	suite.cr.On("GetCodeTypeByID", 1).Return(&models.CodeType{}, nil)
 
 	// Act
-	_, err := suite.cd.GetAllCodeValuesByType(1)
+	_, err := suite.cd.GetCodeTypeByID(1)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+}
+
+func (suite *CodeServiceTestSuite) TestGetCodeValueByID() {
+	// Arrange
+	suite.cr.On("GetCodeValueByID", 1).Return(&models.CodeValue{}, nil)
+
+	// Act
+	_, err := suite.cd.GetCodeValueByID(1)
 
 	// Assert
 	assert.NoError(suite.T(), err)
@@ -129,6 +144,7 @@ func (suite *CodeServiceTestSuite) TestUpdateCodeType() {
 		TypeName: "TestType",
 		TypeDesc: "This is a test type",
 	}
+	suite.cr.On("GetCodeTypeByID", codeType.ID).Return(codeType, nil)
 	suite.cr.On("UpdateCodeType", codeType).Return(nil)
 
 	// Act
@@ -146,6 +162,7 @@ func (suite *CodeServiceTestSuite) TestUpdateCodeValue() {
 		CodeValue:     "TestValue",
 		CodeValueDesc: "This is a test value",
 	}
+	suite.cr.On("GetCodeValueByID", codeValue.ID).Return(codeValue, nil)
 	suite.cr.On("UpdateCodeValue", codeValue).Return(nil)
 
 	// Act
@@ -160,6 +177,7 @@ func (suite *CodeServiceTestSuite) TestDeleteCodeType() {
 	codeType := &models.CodeType{
 		ID: 1,
 	}
+	suite.cr.On("GetCodeTypeByID", codeType.ID).Return(codeType, nil)
 	suite.cr.On("DeleteCodeType", codeType.ID).Return(nil)
 
 	// Act
@@ -174,6 +192,7 @@ func (suite *CodeServiceTestSuite) TestDeleteCodeValue() {
 	codeValue := &models.CodeValue{
 		ID: 1,
 	}
+	suite.cr.On("GetCodeValueByID", codeValue.ID).Return(codeValue, nil)
 	suite.cr.On("DeleteCodeValue", codeValue.ID).Return(nil)
 
 	// Act
