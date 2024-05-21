@@ -1,10 +1,12 @@
 package middlewares
 
 import (
-	"strconv"
+	"encoding/json"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+
+	"meeting-center/src/models"
 )
 
 func AuthRequire() gin.HandlerFunc {
@@ -24,20 +26,21 @@ func AuthRequire() gin.HandlerFunc {
 		})
 
 		// Check if the token is valid
-		userID, err := redisClient.Get(redisClient.Context(), token.Value).Result()
+		marshaledValue, err := redisClient.Get(redisClient.Context(), token.Value).Result()
 		if err != nil {
 			c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})
 			return
 		}
-		// convert the user ID to uint
-		userIDUint, err := strconv.ParseUint(userID, 10, 32)
+		// Unmarshal the value
+		var user models.User
+		err = json.Unmarshal([]byte(marshaledValue), &user)
 		if err != nil {
 			c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})
 			return
 		}
 
 		// Set the user ID in the context
-		c.Set("validate_user_id", userIDUint)
+		c.Set("validate_user", user)
 
 		// Close the Redis client
 		redisClient.Close()
