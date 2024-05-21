@@ -2,12 +2,12 @@ package repos
 
 import (
 	"encoding/base64"
+	db "meeting-center/src/io"
 	"meeting-center/src/models"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -28,14 +28,11 @@ func NewAuthRepo(authRepoArgs ...authRepo) AuthRepo {
 			redisClient: authRepoArgs[0].redisClient,
 		})
 	} else if len(authRepoArgs) == 0 {
-		db, err := gorm.Open(sqlite.Open("../sqlite.db"), &gorm.Config{})
-		if err != nil {
-			panic("Failed to connect to database")
-		}
+		db := db.GetDBInstance()
 		red := redis.NewClient(&redis.Options{
 			Addr: "localhost:6379",
 		})
-		_, err = red.Ping(red.Context()).Result()
+		_, err := red.Ping(red.Context()).Result()
 		if err != nil {
 			panic("Failed to connect to redis")
 		}

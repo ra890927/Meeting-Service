@@ -1,40 +1,19 @@
 package repos
 
 import (
+	db "meeting-center/src/io"
 	"meeting-center/src/models"
 
-	"gorm.io/driver/sqlite"
-
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type UserRepo interface {
 	CreateUser(user *models.User) (*models.User, error)
-
 	UpdateUser(user *models.User) (*models.User, error)
 }
 
-type userRepo struct {
-	dsn string
-}
-
-func NewUserRepo(dsnArgs ...string) UserRepo {
-	if len(dsnArgs) == 1 {
-		return UserRepo(&userRepo{dsn: dsnArgs[0]})
-	} else if len(dsnArgs) == 0 {
-		return UserRepo(&userRepo{dsn: "../sqlite.db"})
-	} else {
-		panic("too many arguments")
-	}
-}
-
-func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
-	// Create a new user
-	db, err := gorm.Open(sqlite.Open(ur.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
+func CreateUser(user *models.User) (*models.User, error) {
+	db := db.GetDBInstance()
 
 	// hash the password of the input user's password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -52,12 +31,8 @@ func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
-	// Update a user
-	db, err := gorm.Open(sqlite.Open(ur.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
+func UpdateUser(user *models.User) (*models.User, error) {
+	db := db.GetDBInstance()
 
 	// hash the password of the input user's password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
