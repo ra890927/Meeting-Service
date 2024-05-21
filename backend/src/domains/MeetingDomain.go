@@ -19,10 +19,10 @@ type meetingDomain struct {
 	MeetingRepo repos.MeetingRepo
 }
 
-func NewMeetingDomain(MeetingRepoArg ...repos.MeetingRepo) MeetingDomain {
-	if len(MeetingRepoArg) == 1 {
+func NewMeetingDomain(meetingRepoArg ...repos.MeetingRepo) MeetingDomain {
+	if len(meetingRepoArg) == 1 {
 		return &meetingDomain{
-			MeetingRepo: MeetingRepoArg[0],
+			MeetingRepo: meetingRepoArg[0],
 		}
 	} else {
 		return &meetingDomain{
