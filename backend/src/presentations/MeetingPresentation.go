@@ -25,13 +25,13 @@ type meetingPresentation struct {
 
 func NewMeetingPresentation(roomServiceArg ...services.MeetingService) MeetingPresentation {
 	if len(roomServiceArg) == 1 {
-		return &meetingPresentation{
+		return MeetingPresentation(&meetingPresentation{
 			MeetingService: roomServiceArg[0],
-		}
+		})
 	} else {
-		return &meetingPresentation{
+		return MeetingPresentation(&meetingPresentation{
 			MeetingService: services.NewMeetingService(),
-		}
+		})
 	}
 }
 
