@@ -10,11 +10,9 @@ button{
 
 .list-header, .list-row {
     display: flex;
-    /* width: 100%; */
 }
 
 .list-column {
-    /* flex: 1; */
     padding: 8px;
     text-align: left;
 }
@@ -23,8 +21,19 @@ button{
     width: 200px;
 }
 
-.tags {
-    width: 800px;
+.tagContainer{
+    overflow-y: auto;
+    overflow-x: auto;
+    display: flex;
+}
+
+.tagsChips {
+    width: 1400px;
+    flex: 1 0 auto;
+}
+
+.tags{
+    width:1400px;
 }
 
 .details{
@@ -33,7 +42,7 @@ button{
 }
 
 .actions{
-    width: 150px;
+    width: 100px;
 }
 
 .list-header .list-column {

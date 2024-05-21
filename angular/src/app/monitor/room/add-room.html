@@ -6,6 +6,12 @@
             <input matInput [(ngModel)]="roomNumber">
         </mat-form-field>
 
+        <mat-chip-listbox class="tags" aria-label="Room tags" [multiple]="true">
+            <mat-chip-option *ngFor="let tag of tag" [selected]="tag.selected" [color]="tag.color" (click)="toggleTagSelection(tag)">
+            {{tag.name}}
+            </mat-chip-option>
+        </mat-chip-listbox>
+
         <mat-form-field>
         <mat-label>Details</mat-label>
         <textarea matInput [(ngModel)]="details"></textarea>

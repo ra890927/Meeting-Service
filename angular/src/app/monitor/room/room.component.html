@@ -14,15 +14,25 @@
         <mat-list-item *ngFor="let rooms of roomsList">
             <div class="rooms row">
                 <div class="column show room" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
-                <input *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show" matInput #roomNumberInput>
+                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show room">
+                    <!-- <mat-label>Room Number</mat-label> -->
+                    <input matInput #roomNumberInput [formControl]="roomNumberControl">
+                </mat-form-field>
+                <div class="tagContainer">
                 <!-- Tags (Chips) -->
-                <mat-chip-listbox class="tags" aria-label="Room tags" [multiple]="true">
-                    <mat-chip-option *ngFor="let tag of rooms.tag" [selected]="tag.selected" [color]="tag.color" [disabled]="!isEditing">
-                    {{tag.name}}
-                    </mat-chip-option>
+                <mat-chip-listbox class="tagsChips" aria-label="Room tags" [multiple]="true">
+                    <ng-container *ngFor="let tag of rooms.tag">
+                        <mat-chip-option *ngIf="isEditing || tag.selected" [selected]="tag.selected" [color]="tag.color" [disabled]="!isEditing || roomsEditing?.id !== rooms.id" (click)="toggleTagSelection(tag)">
+                        {{tag.name}}
+                        </mat-chip-option>
+                    </ng-container>
                 </mat-chip-listbox>
+                </div>
                 <div class="column show details" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.details}}">{{rooms.details}}</div>
-                <input *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show details" matInput #detailsInput>
+                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show details">
+                    <!-- <mat-label>Details</mat-label> -->
+                    <input matInput #detailsInput [formControl]="detailsControl">
+                  </mat-form-field>
                 <div class="column controls actions">
                     <mat-icon *ngIf="!isEditing || roomsEditing?.id !== rooms.id" class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
                     <mat-icon *ngIf="isEditing && roomsEditing?.id === rooms.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>

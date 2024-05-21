@@ -45,7 +45,7 @@ export class UserComponent {
       role: 'Admin',
       details: 'This is a test user'
     });
-    const usersJson = localStorage.getItem("userslist");
+    const usersJson = localStorage.getItem("usersList");
     if (usersJson) this.usersList = JSON.parse(usersJson);
   }
 
@@ -62,14 +62,14 @@ export class UserComponent {
         default:
           users.role = 'User'; // Default to User
       }
-      localStorage.setItem("userslist", JSON.stringify(this.usersList)); // save to local storage
+      localStorage.setItem("usersList", JSON.stringify(this.usersList)); // save to local storage
     }
   }
 
   delete(users: users): void {
     this.usersList = this.usersList.filter(t => t.id !== users.id);
     
-    localStorage.setItem("userslist", JSON.stringify(this.usersList));
+    localStorage.setItem("usersList", JSON.stringify(this.usersList));
   }
 
   edit(users: users): void {
@@ -85,7 +85,7 @@ export class UserComponent {
       }
     }, 0);
     
-    localStorage.setItem("userslist", JSON.stringify(this.usersList));
+    localStorage.setItem("usersList", JSON.stringify(this.usersList));
   }
 
   save(): void {

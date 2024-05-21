@@ -6,11 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { v4 as uuidv4 } from 'uuid'; // generate random id
-import { FormsModule } from '@angular/forms'
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 @Component({
   selector: 'app-room',
@@ -24,12 +24,48 @@ import { FormsModule } from '@angular/forms'
     MatInputModule,
     MatButtonModule,
     MatChipsModule,
+    ReactiveFormsModule,
     CommonModule
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
 })
 export class RoomComponent implements OnInit{
+  @ViewChild("roomNumberInput")
+  roomNumberInput!: ElementRef<MatInput>;
+  @ViewChild("detailsInput")
+  detailsInput!: ElementRef<MatInput>;
+  
+  roomsList: rooms[] = [{ 
+    id: '001',
+    roomNumber: 'lab639',
+    tag: [
+      { name: 'Projector Available', selected: true, color: 'primary' },
+      { name: 'Free WiFi', selected: true, color: 'primary' },
+      { name: 'Air Conditioning', selected: false, color: 'primary' } ,
+      // { name: 'Projector Available1', selected: true, color: 'primary' },
+      // { name: 'Free WiF2i', selected: true, color: 'primary' },
+      // { name: 'Air Conditioning3', selected: false, color: 'primary' },
+      // { name: 'Free WiFi4', selected: true, color: 'primary' },
+      // { name: 'Air Conditioning5', selected: false, color: 'primary' } ,
+      // { name: 'Projector Available6', selected: true, color: 'primary' },
+      // { name: 'Free WiF7i', selected: true, color: 'primary' },
+    ],
+    details: 'This is a test room.'
+  },
+  { id: '002',
+    roomNumber: 'lab637',
+    tag: [
+      { name: 'Projector Available', selected: false, color: 'primary' },
+      { name: 'Free WiFi', selected: true, color: 'primary' },
+      { name: 'Air Conditioning', selected: true, color: 'primary' }
+    ],
+    details: 'This is a test room2.'
+  }];
+  roomsEditing: rooms | undefined;
+  isEditing: boolean = false;
+  roomNumberControl = new FormControl();
+  detailsControl = new FormControl();
 
   constructor(public dialog: MatDialog) {}
 
@@ -39,67 +75,37 @@ export class RoomComponent implements OnInit{
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('The dialog was closed with the following data:', result.roomNumber, result.details);
         this.roomsList.push({
           id: uuidv4(),
           roomNumber: result.roomNumber,
-          tag: [
-            { name: 'Projector Available', selected: false, color: 'primary' },
-            { name: 'Free WiFi', selected: false, color: 'accent' },
-            { name: 'Air Conditioning', selected: false, color: 'warn' }
-          ],
+          tag: result.tags,
           details: result.details
         });
+        console.log(this.roomsList);
+        localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+        console.log(localStorage.setItem("roomsList", JSON.stringify(this.roomsList)))
+        
       } else {
         console.log('The dialog was closed without any data');
       }
     });
   }
 
-  @ViewChild("roomNumberInput")
-  roomNumberInput!: ElementRef<MatInput>;
-  @ViewChild("detailsInput")
-  detailsInput!: ElementRef<MatInput>;
-  
-  roomsList: rooms[] = [
-  ];
-  roomsEditing: rooms | undefined;
-  isEditing: boolean = false;
-
   ngOnInit(): void {
-      this.roomsList.push({ id: '001',
-      roomNumber: 'lab639',
-      tag: [
-        { name: 'Projector Available', selected: true, color: 'primary' },
-        { name: 'Free WiFi', selected: true, color: 'primary' },
-        { name: 'Air Conditioning', selected: false, color: 'primary' }
-      ],
-      details: 'This is a test room.'
-    },
-    { id: '002',
-      roomNumber: 'lab637',
-      tag: [
-        { name: 'Projector Available', selected: false, color: 'primary' },
-        { name: 'Free WiFi', selected: true, color: 'primary' },
-        { name: 'Air Conditioning', selected: true, color: 'primary' }
-      ],
-      details: 'This is a test room2.'
-    });
-    localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
-
-    const roomsJson = localStorage.getItem("roomslist");
+    const roomsJson = localStorage.getItem("roomsList");
     if (roomsJson) this.roomsList = JSON.parse(roomsJson);
-    console.log(this.roomsList);
   }
   
   delete(rooms: rooms): void {
     this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
-    localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
+    localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
   }
 
   edit(rooms: rooms): void {
     this.isEditing = !this.isEditing;
     this.roomsEditing = rooms;
+    this.roomNumberControl.setValue(rooms.roomNumber);
+    this.detailsControl.setValue(rooms.details);
 
     setTimeout(() => {
       if (this.roomNumberInput && this.detailsInput) {
@@ -109,7 +115,11 @@ export class RoomComponent implements OnInit{
       }
     }, 0);
     
-    localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
+    localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+  }
+
+  toggleTagSelection(tag: { name: string, selected: boolean, color: string }) {
+    tag.selected = !tag.selected;
   }
 
   save(): void {
@@ -124,27 +134,6 @@ export class RoomComponent implements OnInit{
     this.detailsInput.nativeElement.value = "";
   }
 
-  add(): void {
-    const roomNumber = this.roomNumberInput.nativeElement.value.trim();
-    const details = this.detailsInput.nativeElement.value.trim();
-    if (!roomNumber) return;
-    this.roomsList.push({
-      id: uuidv4(),
-      roomNumber,
-      tag: [
-        { name: 'Projector Available', selected: false, color: 'primary' },
-        { name: 'Free WiFi', selected: true, color: 'accent' },
-        { name: 'Air Conditioning', selected: true, color: 'warn' }
-      ],
-      details
-
-    });
-    this.roomNumberInput.nativeElement.value = "";
-    this.detailsInput.nativeElement.value = "";
-    
-    localStorage.setItem("roomslist", JSON.stringify(this.roomsList));
-  }
-
 }
 
 @Component({
@@ -157,25 +146,37 @@ export class RoomComponent implements OnInit{
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule
+    MatChipsModule,
+    FormsModule,
+    CommonModule
   ],
 })
 export class AddRoom {
   roomNumber: string = '';
+  tag: { name: string, selected: boolean, color: string }[] = [
+    { name: 'Projector Available', selected: false, color: 'primary' },
+    { name: 'Free WiFi', selected: false, color: 'primary' },
+    { name: 'Air Conditioning', selected: false, color: 'primary' }
+  ];
   details: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<AddRoom>,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 
-  onSave(): void {
-    this.dialogRef.close({
-      roomNumber: this.roomNumber,
-      details: this.details
-    });
-  }
+    toggleTagSelection(tag: { name: string, selected: boolean, color: string }) {
+      tag.selected = !tag.selected;
+    }
 
-  onCancel(): void {
-    this.dialogRef.close();
-  }
+    onSave(): void {
+      this.dialogRef.close({
+        roomNumber: this.roomNumber,
+        tags: this.tag,
+        details: this.details
+      });
+    }
+
+    onCancel(): void {
+      this.dialogRef.close();
+    }
 }
