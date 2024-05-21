@@ -26,9 +26,9 @@ func NewMeetingRepo(dsnArg ...string) MeetingRepo {
 	if len(dsnArg) == 1 {
 		dsn = dsnArg[0]
 	}
-	return &meetingRepo{
+	return MeetingRepo(&meetingRepo{
 		dsn: dsn,
-	}
+	})
 }
 
 func (mr meetingRepo) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
