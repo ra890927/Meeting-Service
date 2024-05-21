@@ -20,10 +20,10 @@ type meetingService struct {
 	MeetingDomain domains.MeetingDomain
 }
 
-func NewMeetingService(RoomRepoArg ...domains.MeetingDomain) MeetingService {
-	if len(RoomRepoArg) == 1 {
+func NewMeetingService(roomRepoArg ...domains.MeetingDomain) MeetingService {
+	if len(roomRepoArg) == 1 {
 		return &meetingService{
-			MeetingDomain: RoomRepoArg[0],
+			MeetingDomain: roomRepoArg[0],
 		}
 	} else {
 		return &meetingService{
