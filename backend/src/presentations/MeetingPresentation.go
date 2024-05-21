@@ -23,10 +23,10 @@ type meetingPresentation struct {
 	MeetingService services.MeetingService
 }
 
-func NewMeetingPresentation(RoomServiceArg ...services.MeetingService) MeetingPresentation {
-	if len(RoomServiceArg) == 1 {
+func NewMeetingPresentation(roomServiceArg ...services.MeetingService) MeetingPresentation {
+	if len(roomServiceArg) == 1 {
 		return &meetingPresentation{
-			MeetingService: RoomServiceArg[0],
+			MeetingService: roomServiceArg[0],
 		}
 	} else {
 		return &meetingPresentation{
