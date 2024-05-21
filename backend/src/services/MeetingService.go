@@ -22,13 +22,13 @@ type meetingService struct {
 
 func NewMeetingService(roomRepoArg ...domains.MeetingDomain) MeetingService {
 	if len(roomRepoArg) == 1 {
-		return &meetingService{
+		return MeetingService(&meetingService{
 			MeetingDomain: roomRepoArg[0],
-		}
+		})
 	} else {
-		return &meetingService{
+		return MeetingService(&meetingService{
 			MeetingDomain: domains.NewMeetingDomain(),
-		}
+		})
 	}
 }
 
