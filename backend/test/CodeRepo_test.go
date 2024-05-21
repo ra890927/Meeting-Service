@@ -1,13 +1,14 @@
 package test
 
 import (
+	"meeting-center/src/models"
+	. "meeting-center/src/repos"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"meeting-center/src/models"
-	. "meeting-center/src/repos"
-	"testing"
 )
 
 type CodeRepoTestSuite struct {
@@ -24,7 +25,7 @@ func (suite *CodeRepoTestSuite) SetupTest() {
 	assert.NoError(suite.T(), err)
 
 	suite.db = db
-	suite.cr = NewCodeRepo("./test.sqlite")
+	suite.cr = NewCodeRepo(db)
 }
 
 func (suite *CodeRepoTestSuite) TearDownTest() {

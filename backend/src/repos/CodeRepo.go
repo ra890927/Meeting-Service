@@ -3,7 +3,13 @@ package repos
 import (
 	db "meeting-center/src/io"
 	"meeting-center/src/models"
+
+	"gorm.io/gorm"
 )
+
+type codeRepo struct {
+	db *gorm.DB
+}
 
 type CodeRepo interface {
 	// C
@@ -23,21 +29,27 @@ type CodeRepo interface {
 	DeleteCodeValue(codeValueID int) error
 }
 
-func CreateCodeType(codeType *models.CodeType) error {
-	db := db.GetDBInstance()
-	return db.Create(codeType).Error
+func NewCodeRepo(dbArgs ...*gorm.DB) CodeRepo {
+	if len(dbArgs) == 0 {
+		return codeRepo{db: db.GetDBInstance()}
+	} else if len(dbArgs) == 1 {
+		return codeRepo{db: dbArgs[0]}
+	} else {
+		panic("Too many arguments")
+	}
 }
 
-func CreateCodeValue(codeValue *models.CodeValue) error {
-	db := db.GetDBInstance()
-	return db.Create(codeValue).Error
+func (cr codeRepo) CreateCodeType(codeType *models.CodeType) error {
+	return cr.db.Create(codeType).Error
 }
 
-func GetAllCodeTypes() ([]models.CodeType, error) {
-	db := db.GetDBInstance()
+func (cr codeRepo) CreateCodeValue(codeValue *models.CodeValue) error {
+	return cr.db.Create(codeValue).Error
+}
 
+func (cr codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
 	var codeTypes []models.CodeType
-	err := db.Preload("CodeValues").Find(&codeTypes).Error
+	err := cr.db.Preload("CodeValues").Find(&codeTypes).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,11 +57,9 @@ func GetAllCodeTypes() ([]models.CodeType, error) {
 	return codeTypes, nil
 }
 
-func GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
-	db := db.GetDBInstance()
-
+func (cr codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
 	var codeValues []models.CodeValue
-	err := db.Where("code_type_id = ?", codeTypeID).Find(&codeValues).Error
+	err := cr.db.Where("code_type_id = ?", codeTypeID).Find(&codeValues).Error
 	if err != nil {
 		return []models.CodeValue{}, err
 	}
@@ -57,22 +67,18 @@ func GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
 	return codeValues, nil
 }
 
-func UpdateCodeType(codeType *models.CodeType) error {
-	db := db.GetDBInstance()
-	return db.Save(codeType).Error
+func (cr codeRepo) UpdateCodeType(codeType *models.CodeType) error {
+	return cr.db.Save(codeType).Error
 }
 
-func UpdateCodeValue(codeValue *models.CodeValue) error {
-	db := db.GetDBInstance()
-	return db.Save(codeValue).Error
+func (cr codeRepo) UpdateCodeValue(codeValue *models.CodeValue) error {
+	return cr.db.Save(codeValue).Error
 }
 
-func DeleteCodeType(codeTypeID int) error {
-	db := db.GetDBInstance()
-	return db.Delete(&models.CodeType{}, codeTypeID).Error
+func (cr codeRepo) DeleteCodeType(codeTypeID int) error {
+	return cr.db.Delete(&models.CodeType{}, codeTypeID).Error
 }
 
-func DeleteCodeValue(codeValueID int) error {
-	db := db.GetDBInstance()
-	return db.Delete(&models.CodeValue{}, codeValueID).Error
+func (cr codeRepo) DeleteCodeValue(codeValueID int) error {
+	return cr.db.Delete(&models.CodeValue{}, codeValueID).Error
 }

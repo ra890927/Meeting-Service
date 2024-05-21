@@ -5,16 +5,29 @@ import (
 	"meeting-center/src/models"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
+
+type userRepo struct {
+	db *gorm.DB
+}
 
 type UserRepo interface {
 	CreateUser(user *models.User) (*models.User, error)
 	UpdateUser(user *models.User) (*models.User, error)
 }
 
-func CreateUser(user *models.User) (*models.User, error) {
-	db := db.GetDBInstance()
+func NewUserRepo(dbArgs ...*gorm.DB) UserRepo {
+	if len(dbArgs) == 0 {
+		return userRepo{db: db.GetDBInstance()}
+	} else if len(dbArgs) == 1 {
+		return userRepo{db: dbArgs[0]}
+	} else {
+		panic("Too many arguments")
+	}
+}
 
+func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 	// hash the password of the input user's password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -22,7 +35,7 @@ func CreateUser(user *models.User) (*models.User, error) {
 	}
 	user.Password = string(hashValue)
 
-	result := db.Create(user)
+	result := ur.db.Create(user)
 	// return the user if no errors
 	if result.Error != nil {
 		return nil, result.Error
@@ -31,9 +44,7 @@ func CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func UpdateUser(user *models.User) (*models.User, error) {
-	db := db.GetDBInstance()
-
+func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
 	// hash the password of the input user's password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -41,7 +52,7 @@ func UpdateUser(user *models.User) (*models.User, error) {
 	}
 	user.Password = string(hashValue)
 
-	result := db.Save(user)
+	result := ur.db.Save(user)
 	// return the user if no errors
 	if result.Error != nil {
 		return nil, result.Error
