@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"testing"
@@ -16,7 +17,10 @@ type MockMeetingDomain struct {
 
 func (m *MockMeetingDomain) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
 	args := m.Called(meeting)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).(*models.Meeting), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (m *MockMeetingDomain) UpdateMeeting(id string, meeting *models.Meeting) error {
@@ -31,17 +35,26 @@ func (m *MockMeetingDomain) DeleteMeeting(id string) error {
 
 func (m *MockMeetingDomain) GetMeeting(id string) (*models.Meeting, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).(*models.Meeting), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (m *MockMeetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).([]*models.Meeting), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (m *MockMeetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
 	args := m.Called(roomID, date)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).([]*models.Meeting), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func TestServiceCreateMeetingWithInvalidTime(t *testing.T) {
@@ -117,6 +130,51 @@ func TestServiceCreateMeetingWithConflict(t *testing.T) {
 	assert.Contains(t, err.Error(), "time slot is already booked")
 }
 
+func TestServiceCreateMeetingWithGetMeetingsError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	meeting := &models.Meeting{
+		ID:          "1",
+		Title:       "Board Meeting",
+		Description: "Annual Board Meeting",
+		RoomID:      101,
+		StartTime:   time.Now(),
+		EndTime:     time.Now().Add(2 * time.Hour),
+	}
+
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return(nil, errors.New("get meetings error"))
+
+	createdMeeting, err := ms.CreateMeeting(meeting)
+
+	assert.Error(t, err)
+	assert.Nil(t, createdMeeting)
+	assert.Contains(t, err.Error(), "get meetings error")
+}
+
+func TestServiceCreateMeetingWithCreateMeetingError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	meeting := &models.Meeting{
+		ID:          "1",
+		Title:       "Board Meeting",
+		Description: "Annual Board Meeting",
+		RoomID:      101,
+		StartTime:   time.Now(),
+		EndTime:     time.Now().Add(2 * time.Hour),
+	}
+
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("CreateMeeting", meeting).Return(nil, errors.New("create meeting error"))
+
+	createdMeeting, err := ms.CreateMeeting(meeting)
+
+	assert.Error(t, err)
+	assert.Nil(t, createdMeeting)
+	assert.Contains(t, err.Error(), "create meeting error")
+}
+
 func TestServiceUpdateMeeting(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
@@ -134,6 +192,24 @@ func TestServiceUpdateMeeting(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestServiceUpdateMeetingWithError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	id := "1"
+	meeting := &models.Meeting{
+		Title:       "Updated Board Meeting",
+		Description: "Updated Annual Board Meeting",
+	}
+
+	mockMeetingDomain.On("UpdateMeeting", id, meeting).Return(errors.New("update error"))
+
+	err := ms.UpdateMeeting(id, meeting)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "update error")
+}
+
 func TestServiceDeleteMeeting(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
@@ -145,6 +221,20 @@ func TestServiceDeleteMeeting(t *testing.T) {
 	err := ms.DeleteMeeting(id)
 
 	assert.NoError(t, err)
+}
+
+func TestServiceDeleteMeetingWithError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	id := "1"
+
+	mockMeetingDomain.On("DeleteMeeting", id).Return(errors.New("delete error"))
+
+	err := ms.DeleteMeeting(id)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "delete error")
 }
 
 func TestServiceGetMeeting(t *testing.T) {
@@ -165,6 +255,21 @@ func TestServiceGetMeeting(t *testing.T) {
 	assert.Equal(t, meeting, fetchedMeeting)
 }
 
+func TestServiceGetMeetingWithError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	id := "1"
+
+	mockMeetingDomain.On("GetMeeting", id).Return(nil, errors.New("get error"))
+
+	fetchedMeeting, err := ms.GetMeeting(id)
+
+	assert.Error(t, err)
+	assert.Nil(t, fetchedMeeting)
+	assert.Contains(t, err.Error(), "get error")
+}
+
 func TestServiceGetAllMeetings(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
@@ -176,6 +281,19 @@ func TestServiceGetAllMeetings(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedMeetings, meetings)
+}
+
+func TestServiceGetAllMeetingsWithError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+
+	mockMeetingDomain.On("GetAllMeetings").Return(nil, errors.New("get all error"))
+
+	meetings, err := ms.GetAllMeetings()
+
+	assert.Error(t, err)
+	assert.Nil(t, meetings)
+	assert.Contains(t, err.Error(), "get all error")
 }
 
 func TestServiceGetMeetingsByRoomIdAndDate(t *testing.T) {
@@ -191,4 +309,19 @@ func TestServiceGetMeetingsByRoomIdAndDate(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedMeetings, meetings)
+}
+
+func TestServiceGetMeetingsByRoomIdAndDateWithError(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+	roomID := 10
+	date := time.Now()
+
+	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", roomID, date).Return(nil, errors.New("get by room and date error"))
+
+	meetings, err := ms.GetMeetingsByRoomIdAndDate(roomID, date)
+
+	assert.Error(t, err)
+	assert.Nil(t, meetings)
+	assert.Contains(t, err.Error(), "get by room and date error")
 }
