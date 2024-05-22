@@ -6,6 +6,8 @@ import (
 	"meeting-center/src/models"
 	"time"
 
+	"encoding/json"
+
 	"github.com/go-redis/redis/v8"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -52,6 +54,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	if result.Error != nil {
 		return nil, nil, result.Error
 	}
+
 	// check if the password is correct
 	// hash the password of the input user's password
 	err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password))
@@ -74,8 +77,19 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 		}
 		cnt++
 	}
-	// save the token in the redis database
-	err = ar.redisClient.Set(ar.redisClient.Context(), token, existingUser.ID, time.Hour*24).Err()
+	// save the token in the redis database, with the user instance (in dictionary form)
+	dict := map[string]interface{}{
+		"id":       existingUser.ID,
+		"username": existingUser.Username,
+		"email":    existingUser.Email,
+		"role":     existingUser.Role,
+	}
+	jsonStr, err := json.Marshal(dict)
+	if err != nil {
+		return nil, nil, err
+	}
+	err = ar.redisClient.Set(ar.redisClient.Context(), token, string(jsonStr), time.Hour*24).Err()
+
 	if err != nil {
 		return nil, nil, err
 	}

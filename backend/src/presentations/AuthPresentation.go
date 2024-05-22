@@ -49,7 +49,10 @@ type WhoAmIResponse struct {
 	Status string `json:"status"`
 	Data   struct {
 		User struct {
-			UserID uint `json:"id"`
+			ID       uint   `json:"id"`
+			Username string `json:"username"`
+			Email    string `json:"email"`
+			Role     string `json:"role"`
 		} `json:"user"`
 	} `json:"data"`
 	Message string `json:"message"`
@@ -94,7 +97,7 @@ func (ap authPresentation) Login(c *gin.Context) {
 	loggedUser, token, err := ap.as.Login(&user)
 	if err != nil {
 		loginResponse.Status = "fail"
-		loginResponse.Data.Message = "Internal server error"
+		loginResponse.Data.Message = err.Error()
 		c.JSON(500, loginResponse)
 		return
 	}
@@ -160,16 +163,21 @@ func (ap authPresentation) WhoAmI(c *gin.Context) {
 	var whoAmIResponse WhoAmIResponse
 
 	// get user if from middleware's context
-	userID, success := c.Get("validate_user_id")
+	user, success := c.Get("validate_user")
 	if !success {
 		whoAmIResponse.Status = "fail"
 		whoAmIResponse.Message = "User not found"
 		c.JSON(400, whoAmIResponse)
 		return
 	}
+	modelUser := user.(models.User)
 
 	whoAmIResponse.Status = "success"
 	whoAmIResponse.Message = "User found"
-	whoAmIResponse.Data.User.UserID = uint(userID.(uint64))
+	whoAmIResponse.Data.User.ID = modelUser.ID
+	whoAmIResponse.Data.User.Username = modelUser.Username
+	whoAmIResponse.Data.User.Email = modelUser.Email
+	whoAmIResponse.Data.User.Role = modelUser.Role
+
 	c.JSON(200, whoAmIResponse)
 }
