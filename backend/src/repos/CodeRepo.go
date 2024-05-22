@@ -58,15 +58,9 @@ func (cr codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
 	return codeTypes, nil
 }
 
-
 func (cr codeRepo) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
-	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-
 	var codeType models.CodeType
-	err = db.Preload("CodeValues").Find(&codeType, codeTypeID).Error
+	err := cr.db.Preload("CodeValues").Find(&codeType, codeTypeID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -75,13 +69,8 @@ func (cr codeRepo) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
 }
 
 func (cr codeRepo) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
-	db, err := gorm.Open(sqlite.Open(cr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-
 	var codeValue models.CodeValue
-	err = db.First(&codeValue, codeValueID).Error
+	err := cr.db.First(&codeValue, codeValueID).Error
 	if err != nil {
 		return nil, err
 	}
