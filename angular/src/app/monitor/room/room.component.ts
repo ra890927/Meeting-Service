@@ -33,6 +33,8 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 export class RoomComponent implements OnInit{
   @ViewChild("roomNumberInput")
   roomNumberInput!: ElementRef<MatInput>;
+  @ViewChild("capacityInput")
+  capacityInput!: ElementRef<MatInput>;
   @ViewChild("detailsInput")
   detailsInput!: ElementRef<MatInput>;
   
@@ -51,6 +53,7 @@ export class RoomComponent implements OnInit{
       // { name: 'Projector Available6', selected: true, color: 'primary' },
       // { name: 'Free WiF7i', selected: true, color: 'primary' },
     ],
+    capacity: 10,
     details: 'This is a test room.'
   },
   { id: '002',
@@ -60,11 +63,13 @@ export class RoomComponent implements OnInit{
       { name: 'Free WiFi', selected: true, color: 'primary' },
       { name: 'Air Conditioning', selected: true, color: 'primary' }
     ],
+    capacity: 30,
     details: 'This is a test room2.'
   }];
   roomsEditing: rooms | undefined;
   isEditing: boolean = false;
   roomNumberControl = new FormControl();
+  capacityControl = new FormControl();
   detailsControl = new FormControl();
 
   constructor(public dialog: MatDialog) {}
@@ -79,6 +84,7 @@ export class RoomComponent implements OnInit{
           id: uuidv4(),
           roomNumber: result.roomNumber,
           tag: result.tags,
+          capacity: result.capacity,
           details: result.details
         });
         console.log(this.roomsList);
@@ -105,12 +111,14 @@ export class RoomComponent implements OnInit{
     this.isEditing = !this.isEditing;
     this.roomsEditing = rooms;
     this.roomNumberControl.setValue(rooms.roomNumber);
+    this.capacityControl.setValue(rooms.capacity);
     this.detailsControl.setValue(rooms.details);
 
     setTimeout(() => {
-      if (this.roomNumberInput && this.detailsInput) {
+      if (this.roomNumberInput && this.detailsInput && this.capacityInput) {
         this.roomNumberInput.nativeElement.value = rooms.roomNumber;
         this.roomNumberInput.nativeElement.focus();
+        this.capacityInput.nativeElement.value = rooms.capacity;
         this.detailsInput.nativeElement.value = rooms.details;
       }
     }, 0);
@@ -125,12 +133,14 @@ export class RoomComponent implements OnInit{
   save(): void {
     if (this.roomsEditing) {
       this.roomsEditing.roomNumber = this.roomNumberInput.nativeElement.value;
+      this.roomsEditing.capacity = parseInt(this.capacityInput.nativeElement.value);
       this.roomsEditing.details = this.detailsInput.nativeElement.value;
       localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
     }
     this.isEditing = false;
     this.roomsEditing = undefined;
     this.roomNumberInput.nativeElement.value = "";
+    this.capacityInput.nativeElement.value = "";
     this.detailsInput.nativeElement.value = "";
   }
 
@@ -158,6 +168,7 @@ export class AddRoom {
     { name: 'Free WiFi', selected: false, color: 'primary' },
     { name: 'Air Conditioning', selected: false, color: 'primary' }
   ];
+  capacity: number = 0;
   details: string = '';
 
   constructor(
@@ -172,6 +183,7 @@ export class AddRoom {
       this.dialogRef.close({
         roomNumber: this.roomNumber,
         tags: this.tag,
+        capacity: this.capacity,
         details: this.details
       });
     }

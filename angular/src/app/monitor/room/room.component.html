@@ -7,6 +7,7 @@
             <div class="list-header">
                 <div class="list-column room">Room</div>
                 <div class="list-column tags">Tags</div>
+                <div class="list-column capacity">Capacity</div>
                 <div class="list-column details">Details</div>
                 <div class="list-column actions">Actions</div>
             </div>
@@ -28,6 +29,11 @@
                     </ng-container>
                 </mat-chip-listbox>
                 </div>
+                <div  class="column show capacity" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
+                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show capacity">
+                    <!-- <mat-label>Capacity</mat-label> -->
+                    <input matInput #capacityInput [formControl]="capacityControl">
+                </mat-form-field>
                 <div class="column show details" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.details}}">{{rooms.details}}</div>
                 <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column show details">
                     <!-- <mat-label>Details</mat-label> -->

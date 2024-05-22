@@ -28,17 +28,20 @@ button{
 }
 
 .tagsChips {
-    width: 1400px;
-    flex: 1 0 auto;
+    width: 800px;
+    flex: 0 0 auto;
 }
 
 .tags{
-    width:1400px;
+    width: 800px;
+}
+
+.capacity{
+    width: 100px;
 }
 
 .details{
-    width: 300px;
-
+    width: 200px;
 }
 
 .actions{
@@ -58,7 +61,7 @@ button{
 
 .rooms.row .column {
     /* flex: 1; */
-    padding: 8px;
+    padding: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
