@@ -95,6 +95,285 @@ const docTemplate = `{
                 }
             }
         },
+        "/code/type": {
+            "put": {
+                "description": "Update a code type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Update a code type",
+                "parameters": [
+                    {
+                        "description": "CodeType",
+                        "name": "codeType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateCodeTypeParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateCodeTypeResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new code type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Create a new code type",
+                "parameters": [
+                    {
+                        "description": "CodeType",
+                        "name": "codeType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeTypeParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeTypeResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a code type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Delete a code type",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeType ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.DeleteCodeTypeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/code/type/getAllCodeTypes": {
+            "get": {
+                "description": "Get all code types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Get all code types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllCodeTypesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/code/type/getCodeTypeByID": {
+            "get": {
+                "description": "Get a code type by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Get a code type by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeType ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeTypeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/code/value": {
+            "put": {
+                "description": "Update a code value",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Update a code value",
+                "parameters": [
+                    {
+                        "description": "CodeValue",
+                        "name": "codeValue",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateCodeValueParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateCodeValueResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new code value",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Create a new code value",
+                "parameters": [
+                    {
+                        "description": "CodeValue",
+                        "name": "codeValue",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeValueParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateCodeValueResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a code value",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Delete a code value",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeValue ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.DeleteCodeValueResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/code/value/getCodeValueByID": {
+            "get": {
+                "description": "Get a code value by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "code"
+                ],
+                "summary": "Get a code value by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "CodeValue ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetCodeValueByIDResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user": {
             "put": {
                 "description": "Update user",
@@ -163,6 +442,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.CodeType": {
+            "type": "object",
+            "properties": {
+                "code_values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CodeValue"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "type_desc": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CodeValue": {
+            "type": "object",
+            "properties": {
+                "code_type_id": {
+                    "type": "integer"
+                },
+                "code_value": {
+                    "type": "string"
+                },
+                "code_value_desc": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -185,6 +501,178 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeTypeParam": {
+            "type": "object",
+            "required": [
+                "type_desc",
+                "type_name"
+            ],
+            "properties": {
+                "type_desc": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_type": {
+                            "type": "object",
+                            "properties": {
+                                "code_values": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/models.CodeValue"
+                                    }
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "type_desc": {
+                                    "type": "string"
+                                },
+                                "type_name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeValueParam": {
+            "type": "object",
+            "required": [
+                "code_type_id",
+                "code_value",
+                "code_value_desc"
+            ],
+            "properties": {
+                "code_type_id": {
+                    "type": "integer"
+                },
+                "code_value": {
+                    "type": "string"
+                },
+                "code_value_desc": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "type": "object",
+                            "properties": {
+                                "code_type_id": {
+                                    "type": "integer"
+                                },
+                                "code_value": {
+                                    "type": "string"
+                                },
+                                "code_value_desc": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.DeleteCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.DeleteCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetAllCodeTypesResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_types": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CodeType"
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetCodeValueByIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "$ref": "#/definitions/models.CodeValue"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -252,6 +740,100 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateCodeTypeParam": {
+            "type": "object",
+            "required": [
+                "id",
+                "type_desc",
+                "type_name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "type_desc": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateCodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_type": {
+                            "$ref": "#/definitions/models.CodeType"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateCodeValueParam": {
+            "type": "object",
+            "required": [
+                "code_type_id",
+                "code_value",
+                "code_value_desc",
+                "id"
+            ],
+            "properties": {
+                "code_type_id": {
+                    "type": "integer"
+                },
+                "code_value": {
+                    "type": "string"
+                },
+                "code_value_desc": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presentations.UpdateCodeValueResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code_value": {
+                            "type": "object",
+                            "properties": {
+                                "code_type_id": {
+                                    "type": "integer"
+                                },
+                                "code_value": {
+                                    "type": "string"
+                                },
+                                "code_value_desc": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"

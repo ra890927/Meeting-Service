@@ -18,7 +18,8 @@ type CodeRepo interface {
 
 	// R
 	GetAllCodeTypes() ([]models.CodeType, error)
-	GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error)
+	GetCodeTypeByID(codeTypeID int) (*models.CodeType, error)
+	GetCodeValueByID(codeValueID int) (*models.CodeValue, error)
 
 	// U
 	UpdateCodeType(codeType *models.CodeType) error
@@ -57,14 +58,24 @@ func (cr codeRepo) GetAllCodeTypes() ([]models.CodeType, error) {
 	return codeTypes, nil
 }
 
-func (cr codeRepo) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
-	var codeValues []models.CodeValue
-	err := cr.db.Where("code_type_id = ?", codeTypeID).Find(&codeValues).Error
+func (cr codeRepo) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
+	var codeType models.CodeType
+	err := cr.db.Preload("CodeValues").Find(&codeType, codeTypeID).Error
 	if err != nil {
-		return []models.CodeValue{}, err
+		return nil, err
 	}
 
-	return codeValues, nil
+	return &codeType, nil
+}
+
+func (cr codeRepo) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
+	var codeValue models.CodeValue
+	err := cr.db.First(&codeValue, codeValueID).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &codeValue, nil
 }
 
 func (cr codeRepo) UpdateCodeType(codeType *models.CodeType) error {

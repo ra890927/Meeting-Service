@@ -34,9 +34,14 @@ func (m *MockCodeService) GetAllCodeTypes() ([]models.CodeType, error) {
 	return args.Get(0).([]models.CodeType), args.Error(1)
 }
 
-func (m *MockCodeService) GetAllCodeValuesByType(codeTypeID int) ([]models.CodeValue, error) {
+func (m *MockCodeService) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
 	args := m.Called(codeTypeID)
-	return args.Get(0).([]models.CodeValue), args.Error(1)
+	return args.Get(0).(*models.CodeType), args.Error(1)
+}
+
+func (m *MockCodeService) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
+	args := m.Called(codeValueID)
+	return args.Get(0).(*models.CodeValue), args.Error(1)
 }
 
 func (m *MockCodeService) UpdateCodeType(codeType *models.CodeType) error {
@@ -149,22 +154,18 @@ func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 	assert.Equal(suite.T(), 200, w.Code)
 }
 
-func (suite *CodePresentationTestSuite) TestGetAllCodeValuesByType() {
+func (suite *CodePresentationTestSuite) TestGetCodeTypeByID() {
 	// Arrange
 	codeTypeID := 1
-	codeTypeIDStr := strconv.Itoa(codeTypeID)
-	suite.cs.On("GetAllCodeValuesByType", codeTypeID).Return([]models.CodeValue{}, nil)
+	suite.cs.On("GetCodeTypeByID", codeTypeID).Return(&models.CodeType{}, nil)
 
 	// Act
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.GET("/code/values", suite.CodeService.GetAllCodeValuesByType)
+	r.GET("/code/type", suite.CodeService.GetCodeTypeByID)
 
 	// create a request to pass to the handler
-	req := httptest.NewRequest("GET", "/code/values", nil)
-	q := req.URL.Query()
-	q.Add("id", codeTypeIDStr)
-	req.URL.RawQuery = q.Encode()
+	req := httptest.NewRequest("GET", "/code/type?id=1", nil)
 
 	// create a response recorder
 	w := httptest.NewRecorder()

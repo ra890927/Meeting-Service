@@ -54,6 +54,16 @@ func (m *MockCodeRepo) DeleteCodeValue(codeValueID int) error {
 	return args.Error(0)
 }
 
+func (m *MockCodeRepo) GetCodeTypeByID(codeTypeID int) (*models.CodeType, error) {
+	args := m.Called(codeTypeID)
+	return args.Get(0).(*models.CodeType), args.Error(1)
+}
+
+func (m *MockCodeRepo) GetCodeValueByID(codeValueID int) (*models.CodeValue, error) {
+	args := m.Called(codeValueID)
+	return args.Get(0).(*models.CodeValue), args.Error(1)
+}
+
 type CodeDomainTestSuite struct {
 	suite.Suite
 	cd domains.CodeDomain
@@ -111,12 +121,23 @@ func (suite *CodeDomainTestSuite) TestGetAllCodeTypes() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *CodeDomainTestSuite) TestGetAllCodeValuesByType() {
+func (suite *CodeDomainTestSuite) TestGetCodeTypeByID() {
 	// Arrange
-	suite.cr.On("GetAllCodeValuesByType", 1).Return([]models.CodeValue{}, nil)
+	suite.cr.On("GetCodeTypeByID", 1).Return(&models.CodeType{}, nil)
 
 	// Act
-	_, err := suite.cd.GetAllCodeValuesByType(1)
+	_, err := suite.cd.GetCodeTypeByID(1)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+}
+
+func (suite *CodeDomainTestSuite) TestGetCodeValueByID() {
+	// Arrange
+	suite.cr.On("GetCodeValueByID", 1).Return(&models.CodeValue{}, nil)
+
+	// Act
+	_, err := suite.cd.GetCodeValueByID(1)
 
 	// Assert
 	assert.NoError(suite.T(), err)

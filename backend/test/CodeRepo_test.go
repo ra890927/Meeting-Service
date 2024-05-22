@@ -37,7 +37,7 @@ func (suite *CodeRepoTestSuite) TearDownTest() {
 
 func (suite *CodeRepoTestSuite) TestCreateCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestCreateCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -47,7 +47,7 @@ func (suite *CodeRepoTestSuite) TestCreateCodeType() {
 
 func (suite *CodeRepoTestSuite) TestCreateCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestCreateCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -70,7 +70,7 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeTypes() {
 	originalLength := len(codeTypes)
 
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestGetAllCodeTypes",
 		TypeDesc: "This is a test type",
 	}
 	err = suite.cr.CreateCodeType(codeType)
@@ -81,9 +81,22 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeTypes() {
 	assert.Len(suite.T(), codeTypes, originalLength+1)
 }
 
-func (suite *CodeRepoTestSuite) TestGetAllCodeValuesByType() {
+func (suite *CodeRepoTestSuite) TestGetCodeTypeByID() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestGetCodeTypeByID",
+		TypeDesc: "This is a test type",
+	}
+	err := suite.cr.CreateCodeType(codeType)
+	assert.NoError(suite.T(), err)
+
+	foundCodeType, err := suite.cr.GetCodeTypeByID(codeType.ID)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), codeType.ID, foundCodeType.ID)
+}
+
+func (suite *CodeRepoTestSuite) TestGetCodeValueByID() {
+	codeType := &models.CodeType{
+		TypeName: "TestGetCodeValueByID",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -97,14 +110,14 @@ func (suite *CodeRepoTestSuite) TestGetAllCodeValuesByType() {
 	err = suite.cr.CreateCodeValue(codeValue)
 	assert.NoError(suite.T(), err)
 
-	codeValues, err := suite.cr.GetAllCodeValuesByType(codeType.ID)
+	foundCodeValue, err := suite.cr.GetCodeValueByID(codeValue.ID)
 	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), codeValues, 1)
+	assert.Equal(suite.T(), codeValue.ID, foundCodeValue.ID)
 }
 
 func (suite *CodeRepoTestSuite) TestUpdateCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestUpdateCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -117,7 +130,7 @@ func (suite *CodeRepoTestSuite) TestUpdateCodeType() {
 
 func (suite *CodeRepoTestSuite) TestUpdateCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestUpdateCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -138,7 +151,7 @@ func (suite *CodeRepoTestSuite) TestUpdateCodeValue() {
 
 func (suite *CodeRepoTestSuite) TestDeleteCodeValue() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestDeleteCodeValue",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
@@ -158,7 +171,7 @@ func (suite *CodeRepoTestSuite) TestDeleteCodeValue() {
 
 func (suite *CodeRepoTestSuite) TestDeleteCodeType() {
 	codeType := &models.CodeType{
-		TypeName: "TestType",
+		TypeName: "TestDeleteCodeType",
 		TypeDesc: "This is a test type",
 	}
 	err := suite.cr.CreateCodeType(codeType)
