@@ -4,7 +4,6 @@ import (
 	db "meeting-center/src/io"
 	"meeting-center/src/models"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -15,6 +14,7 @@ type userRepo struct {
 type UserRepo interface {
 	CreateUser(user *models.User) (*models.User, error)
 	UpdateUser(user *models.User) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 func NewUserRepo(dbArgs ...*gorm.DB) UserRepo {
@@ -28,13 +28,6 @@ func NewUserRepo(dbArgs ...*gorm.DB) UserRepo {
 }
 
 func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
-	// hash the password of the input user's password
-	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	user.Password = string(hashValue)
-
 	result := ur.db.Create(user)
 	// return the user if no errors
 	if result.Error != nil {
@@ -45,13 +38,6 @@ func (ur userRepo) CreateUser(user *models.User) (*models.User, error) {
 }
 
 func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
-	// hash the password of the input user's password
-	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	user.Password = string(hashValue)
-
 	result := ur.db.Save(user)
 	// return the user if no errors
 	if result.Error != nil {
@@ -59,4 +45,15 @@ func (ur userRepo) UpdateUser(user *models.User) (*models.User, error) {
 	}
 
 	return user, nil
+}
+
+func (ur userRepo) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	result := ur.db.Where("email = ?", email).First(&user)
+	// return the user if no errors
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
 }

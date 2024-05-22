@@ -23,6 +23,11 @@ func (m *MockUserDomain) UpdateUser(user *models.User) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
+func (m *MockUserDomain) GetUserByEmail(email string) (*models.User, error) {
+	args := m.Called(email)
+	return args.Get(0).(*models.User), nil
+}
+
 func TestServiceCreateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
@@ -34,6 +39,7 @@ func TestServiceCreateUser(t *testing.T) {
 	}
 	// mock the user domain
 	mockUserDomain := new(MockUserDomain)
+	mockUserDomain.On("GetUserByEmail", user.Email).Return(&models.User{}, nil)
 	mockUserDomain.On("CreateUser", user).Return(user)
 	us := services.NewUserService(mockUserDomain)
 
@@ -60,6 +66,7 @@ func TestServiceUpdateUser(t *testing.T) {
 	}
 	// mock the user domain
 	mockUserDomain := new(MockUserDomain)
+	mockUserDomain.On("GetUserByEmail", user.Email).Return(&models.User{}, nil)
 	mockUserDomain.On("UpdateUser", user).Return(user)
 	us := services.NewUserService(mockUserDomain)
 
