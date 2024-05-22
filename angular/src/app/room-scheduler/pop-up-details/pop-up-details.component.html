@@ -1,0 +1,26 @@
+<h2 mat-dialog-title class="form-title">Booker: Chris</h2>
+<mat-dialog-content>
+  <p>Meeting details</p>
+  <p>Time Period: {{data.startTime| date:'yyyy-M-d HH:mm' }}~{{data.endTime| date:"HH:mm"}}</p>
+  <!-- <mat-icon class = "change-time" (click)="changeTime()">edit</mat-icon> -->
+  <div class = "card-container">
+    <mat-form-field class="input-container">
+        <mat-label>What's your title</mat-label>
+        <input matInput [(ngModel)]="data.title">
+    </mat-form-field>
+    </div>
+   <div class = "card-container">
+    <mat-form-field class="input-container">
+        <mat-label>What's your description</mat-label>
+        <textarea matInput class = "description-container" [(ngModel)]="data.description"></textarea>
+    </mat-form-field>
+   </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="action-container">
+        <div class="buttons">
+            <button mat-button (click)="onNoClick()">No Thanks</button>
+            <button mat-button [mat-dialog-close]="data" cdkFocusInitial [disabled]="!data.title || !data.description">Ok</button>
+        </div>
+    </div>
+</mat-dialog-actions>

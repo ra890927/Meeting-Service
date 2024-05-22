@@ -1,14 +1,79 @@
 <div class="calendarContainer">
-    <mat-button-toggle-group name="favoriteColor" aria-label="Favorite Color">
-        <mat-button-toggle value="room1">Room1</mat-button-toggle>
-        <mat-button-toggle value="room2">Room2</mat-button-toggle>
-        <mat-button-toggle value="room3">Room3</mat-button-toggle>
-        <mat-button-toggle value="room4">Room4</mat-button-toggle>
-    </mat-button-toggle-group>
-    <full-calendar [options]="calendarOptions">
-        <ng-template #eventContent let-arg>
-        <b>{{arg.timeText}}</b>
-        <i>{{arg.event.title}}</i>
-        </ng-template>
-    </full-calendar>
+    <div class = "cards_container">
+        <div class="search_container">
+            <div class="people-container">
+                <label class="people-label">People</label>
+                <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
+                <label class="tags-label">Tags</label>
+                <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
+                    <mat-option *ngFor="let tag of availableTags" [value]="tag">
+                        {{ tag }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <!-- Date and Time Picker for Start Date -->
+            <div class="date-time-container">
+                <mat-form-field>
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field s>
+                    <mat-label>Start Time</mat-label>
+                    <input matInput [(ngModel)]="startTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
+                    <mat-hint style="color: grey">ex:07:02</mat-hint>
+                </mat-form-field>
+            </div>
+            <!-- Date and Time Picker for End Date -->
+            <div class="date-time-container">
+                <mat-form-field>
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate">
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>End Time</mat-label>
+                    <input matInput [(ngModel)]="endTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
+                    <mat-hint style="color: grey">ex:17:02</mat-hint>
+                </mat-form-field>
+            </div>
+            <div class="button-container">
+                <button class="button-style"(click)="applyFilter()">Search</button>
+            </div>
+          </div>
+        <div class = "card_container">
+            <mat-card class = "card" *ngFor="let room of filteredRooms" [ngClass]="{ 'selected': selectedRoom === room.room_name }" (click)="handleRoomChange(room.room_name)">
+                <mat-card-header>
+                <mat-card-title>{{ room.room_name }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                <p>Up to {{ room.capacity }} people</p>
+                <button *ngFor = "let code of room.rules"  class="show-details" matTooltip={{roomDescriptions[code]}}>
+                        {{code}}
+                </button>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <div *ngIf = "filteredRooms.length > 0" class="rooms">
+        <full-calendar  [options]="calendarOptions" class="found">
+            <ng-template  #eventContent let-arg>
+                <div *ngIf="isMonthView" class="month-view-event">
+                    <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || 'blue'"></span>
+                    <div class="time-text" [style.marginRight]="'5%'">{{arg.timeText}}</div>
+                    <div class="booker-text" [style.fontWeight]="'bold'" [style.marginRight]="'10%'">Booker: Chris</div>
+                    <mat-icon style="font-size: 16px; width: fit-content; height: fit-content; right: 0%;" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                </div>
+                <div *ngIf="!isMonthView" class="event-container">
+                    <div class="text-field">{{arg.timeText}}</div>
+                    <mat-icon class="button-change" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                    <div class="text-field">Booker: Chris</div>
+                    <div class="text-field">Title: {{arg.event.title}}</div>
+                </div>
+            </ng-template>
+        </full-calendar>
+    </div>
+    <div *ngIf="filteredRooms.length === 0" class="rooms not-found">No rooms available</div>
 </div>
