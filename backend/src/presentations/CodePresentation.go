@@ -32,7 +32,7 @@ type codePresentation struct {
 	cs services.CodeService
 }
 
-type CreateCodeTypeParam struct {
+type CreateCodeTypeInput struct {
 	TypeName string `json:"type_name" binding:"required"`
 	TypeDesc string `json:"type_desc" binding:"required"`
 }
@@ -48,7 +48,7 @@ type CreateCodeTypeResponse struct {
 	} `json:"data"`
 	Message string `json:"message"`
 }
-type UpdateCodeValueParam struct {
+type UpdateCodeValueInput struct {
 	ID            int    `json:"id" binding:"required"`
 	CodeTypeID    int    `json:"code_type_id" binding:"required"`
 	CodeValue     string `json:"code_value" binding:"required"`
@@ -80,7 +80,7 @@ type DeleteCodeValueResponse struct {
 	Message string   `json:"message"`
 }
 
-type CreateCodeValueParam struct {
+type CreateCodeValueInput struct {
 	CodeTypeID    int    `json:"code_type_id" binding:"required"`
 	CodeValue     string `json:"code_value" binding:"required"`
 	CodeValueDesc string `json:"code_value_desc" binding:"required"`
@@ -99,7 +99,7 @@ type CreateCodeValueResponse struct {
 	Message string `json:"message"`
 }
 
-type UpdateCodeTypeParam struct {
+type UpdateCodeTypeInput struct {
 	ID       int    `json:"id" binding:"required"`
 	TypeName string `json:"type_name" binding:"required"`
 	TypeDesc string `json:"type_desc" binding:"required"`
@@ -128,13 +128,13 @@ func NewCodePresentation(codeServiceArgs ...services.CodeService) CodePresentati
 // @Tags code
 // @Accept json
 // @Produce json
-// @Param codeType body CreateCodeTypeParam true "CodeType"
+// @Param codeType body CreateCodeTypeInput true "CodeType"
 // @Success 200 {object} CreateCodeTypeResponse
 // @Router /code/type [post]
 func (cp codePresentation) CreateCodeType(c *gin.Context) {
-	var codeTypeParam CreateCodeTypeParam
+	var codeTypeInput CreateCodeTypeInput
 	var response CreateCodeTypeResponse
-	if err := c.ShouldBindJSON(&codeTypeParam); err != nil {
+	if err := c.ShouldBindJSON(&codeTypeInput); err != nil {
 		response.Status = "fail"
 		response.Message = err.Error()
 		c.JSON(400, response)
@@ -142,8 +142,8 @@ func (cp codePresentation) CreateCodeType(c *gin.Context) {
 	}
 	// filter out TypeName, TypeDesc
 	filteredCodeType := models.CodeType{
-		TypeName: codeTypeParam.TypeName,
-		TypeDesc: codeTypeParam.TypeDesc,
+		TypeName: codeTypeInput.TypeName,
+		TypeDesc: codeTypeInput.TypeDesc,
 	}
 
 	if err := cp.cs.CreateCodeType(&filteredCodeType); err != nil {
@@ -168,13 +168,13 @@ func (cp codePresentation) CreateCodeType(c *gin.Context) {
 // @Tags code
 // @Accept json
 // @Produce json
-// @Param codeValue body CreateCodeValueParam true "CodeValue"
+// @Param codeValue body CreateCodeValueInput true "CodeValue"
 // @Success 200 {object} CreateCodeValueResponse
 // @Router /code/value [post]
 func (cp codePresentation) CreateCodeValue(c *gin.Context) {
-	var codeValueParam CreateCodeValueParam
+	var codeValueInput CreateCodeValueInput
 	var response CreateCodeValueResponse
-	if err := c.ShouldBindJSON(&codeValueParam); err != nil {
+	if err := c.ShouldBindJSON(&codeValueInput); err != nil {
 		response.Status = "fail"
 		response.Message = err.Error()
 		c.JSON(400, response)
@@ -182,9 +182,9 @@ func (cp codePresentation) CreateCodeValue(c *gin.Context) {
 	}
 	// filter out CodeTypeID, CodeValue, CodeValueDesc
 	filteredCodeValue := models.CodeValue{
-		CodeTypeID:    codeValueParam.CodeTypeID,
-		CodeValue:     codeValueParam.CodeValue,
-		CodeValueDesc: codeValueParam.CodeValueDesc,
+		CodeTypeID:    codeValueInput.CodeTypeID,
+		CodeValue:     codeValueInput.CodeValue,
+		CodeValueDesc: codeValueInput.CodeValueDesc,
 	}
 
 	if err := cp.cs.CreateCodeValue(&filteredCodeValue); err != nil {
@@ -316,13 +316,13 @@ func (cp codePresentation) GetCodeValueByID(c *gin.Context) {
 // @Tags code
 // @Accept json
 // @Produce json
-// @Param codeType body UpdateCodeTypeParam true "CodeType"
+// @Param codeType body UpdateCodeTypeInput true "CodeType"
 // @Success 200 {object} UpdateCodeTypeResponse
 // @Router /code/type [put]
 func (cp codePresentation) UpdateCodeType(c *gin.Context) {
-	var codeTypeParam UpdateCodeTypeParam
+	var codeTypeInput UpdateCodeTypeInput
 	var response UpdateCodeTypeResponse
-	if err := c.ShouldBindJSON(&codeTypeParam); err != nil {
+	if err := c.ShouldBindJSON(&codeTypeInput); err != nil {
 		response.Status = "fail"
 		response.Message = err.Error()
 		c.JSON(400, response)
@@ -330,9 +330,9 @@ func (cp codePresentation) UpdateCodeType(c *gin.Context) {
 	}
 	// filter out TypeName, TypeDesc
 	filteredCodeType := models.CodeType{
-		ID:       codeTypeParam.ID,
-		TypeName: codeTypeParam.TypeName,
-		TypeDesc: codeTypeParam.TypeDesc,
+		ID:       codeTypeInput.ID,
+		TypeName: codeTypeInput.TypeName,
+		TypeDesc: codeTypeInput.TypeDesc,
 	}
 
 	if err := cp.cs.UpdateCodeType(&filteredCodeType); err != nil {
@@ -354,13 +354,13 @@ func (cp codePresentation) UpdateCodeType(c *gin.Context) {
 // @Tags code
 // @Accept json
 // @Produce json
-// @Param codeValue body UpdateCodeValueParam true "CodeValue"
+// @Param codeValue body UpdateCodeValueInput true "CodeValue"
 // @Success 200 {object} UpdateCodeValueResponse
 // @Router /code/value [put]
 func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
-	var codeValueParam UpdateCodeValueParam
+	var codeValueInput UpdateCodeValueInput
 	var response UpdateCodeValueResponse
-	if err := c.ShouldBindJSON(&codeValueParam); err != nil {
+	if err := c.ShouldBindJSON(&codeValueInput); err != nil {
 		response.Status = "fail"
 		response.Message = err.Error()
 		c.JSON(400, response)
@@ -368,10 +368,10 @@ func (cp codePresentation) UpdateCodeValue(c *gin.Context) {
 	}
 	// filter out CodeTypeID, CodeValue, CodeValueDesc
 	filteredCodeValue := models.CodeValue{
-		ID:            codeValueParam.ID,
-		CodeTypeID:    codeValueParam.CodeTypeID,
-		CodeValue:     codeValueParam.CodeValue,
-		CodeValueDesc: codeValueParam.CodeValueDesc,
+		ID:            codeValueInput.ID,
+		CodeTypeID:    codeValueInput.CodeTypeID,
+		CodeValue:     codeValueInput.CodeValue,
+		CodeValueDesc: codeValueInput.CodeValueDesc,
 	}
 
 	if err := cp.cs.UpdateCodeValue(&filteredCodeValue); err != nil {
