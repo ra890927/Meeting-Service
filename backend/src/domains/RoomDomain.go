@@ -6,11 +6,11 @@ import (
 )
 
 type RoomDomain interface {
-	CreateRoom(room *models.Room) (*models.Room, error)
-	GetRoom(id string) (*models.Room, error)
+	CreateRoom(room *models.Room) error
+	GetRoomByID(id int) (*models.Room, error)
 	GetAllRooms() ([]*models.Room, error)
-	UpdateRoom(id string, room *models.Room) error
-	DeleteRoom(id string) error
+	UpdateRoom(room *models.Room) error
+	DeleteRoom(id int) error
 }
 
 type roomDomain struct {
@@ -29,17 +29,17 @@ func NewRoomDomain(roomRepoArgs ...repos.RoomRepo) RoomDomain {
 }
 
 // CreateRoom creates a new room using the RoomRepo
-func (rd roomDomain) CreateRoom(room *models.Room) (*models.Room, error) {
-	createdRoom, err := rd.RoomRepo.CreateRoom(room)
+func (rd roomDomain) CreateRoom(room *models.Room) error {
+	err := rd.RoomRepo.CreateRoom(room)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return createdRoom, nil
+	return nil
 }
 
 // UpdateRoom updates an existing room using the RoomRepo
-func (rd roomDomain) UpdateRoom(id string, room *models.Room) error {
-	err := rd.RoomRepo.UpdateRoom(id, room)
+func (rd roomDomain) UpdateRoom(room *models.Room) error {
+	err := rd.RoomRepo.UpdateRoom(room)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (rd roomDomain) UpdateRoom(id string, room *models.Room) error {
 }
 
 // DeleteRoom deletes a room by its ID using the RoomRepo
-func (rd roomDomain) DeleteRoom(id string) error {
+func (rd roomDomain) DeleteRoom(id int) error {
 	err := rd.RoomRepo.DeleteRoom(id)
 	if err != nil {
 		return err
@@ -55,9 +55,9 @@ func (rd roomDomain) DeleteRoom(id string) error {
 	return nil
 }
 
-// GetRoom retrieves a room by its ID using the RoomRepo
-func (rd roomDomain) GetRoom(id string) (*models.Room, error) {
-	room, err := rd.RoomRepo.GetRoom(id)
+// GetRoomByID retrieves a room by its ID using the RoomRepo
+func (rd roomDomain) GetRoomByID(id int) (*models.Room, error) {
+	room, err := rd.RoomRepo.GetRoomByID(id)
 	if err != nil {
 		return nil, err
 	}

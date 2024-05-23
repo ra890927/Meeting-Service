@@ -15,6 +15,98 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/room": {
+            "put": {
+                "description": "Update room information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Update room information",
+                "parameters": [
+                    {
+                        "description": "Room information",
+                        "name": "room",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateRoomInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateRoomResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create a new room",
+                "parameters": [
+                    {
+                        "description": "Room information",
+                        "name": "room",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateRoomInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateRoomResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/room/{id}": {
+            "delete": {
+                "description": "Delete room by room ID",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete room",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user",
@@ -115,7 +207,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentations.UpdateCodeTypeParam"
+                            "$ref": "#/definitions/presentations.UpdateCodeTypeInput"
                         }
                     }
                 ],
@@ -147,7 +239,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentations.CreateCodeTypeParam"
+                            "$ref": "#/definitions/presentations.CreateCodeTypeInput"
                         }
                     }
                 ],
@@ -266,7 +358,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentations.UpdateCodeValueParam"
+                            "$ref": "#/definitions/presentations.UpdateCodeValueInput"
                         }
                     }
                 ],
@@ -298,7 +390,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presentations.CreateCodeValueParam"
+                            "$ref": "#/definitions/presentations.CreateCodeValueInput"
                         }
                     }
                 ],
@@ -369,6 +461,49 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/presentations.GetCodeValueByIDResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/getAllRooms": {
+            "get": {
+                "description": "Get all rooms",
+                "tags": [
+                    "room"
+                ],
+                "summary": "Get all rooms",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllRoomsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/{id}": {
+            "get": {
+                "description": "Get room by ID",
+                "tags": [
+                    "room"
+                ],
+                "summary": "Get room by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetRoomByIDResponse"
                         }
                     }
                 }
@@ -505,7 +640,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.CreateCodeTypeParam": {
+        "presentations.CreateCodeTypeInput": {
             "type": "object",
             "required": [
                 "type_desc",
@@ -556,7 +691,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.CreateCodeValueParam": {
+        "presentations.CreateCodeValueInput": {
             "type": "object",
             "required": [
                 "code_type_id",
@@ -595,6 +730,65 @@ const docTemplate = `{
                                 },
                                 "id": {
                                     "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateRoomInput": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "room_name": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.CreateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "room": {
+                            "type": "object",
+                            "properties": {
+                                "capacity": {
+                                    "type": "integer"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
                                 }
                             }
                         }
@@ -658,6 +852,48 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.GetAllRoomsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "rooms": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "capacity": {
+                                        "type": "integer"
+                                    },
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "room_name": {
+                                        "type": "string"
+                                    },
+                                    "rules": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.GetCodeValueByIDResponse": {
             "type": "object",
             "properties": {
@@ -666,6 +902,45 @@ const docTemplate = `{
                     "properties": {
                         "code_value": {
                             "$ref": "#/definitions/models.CodeValue"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetRoomByIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "room": {
+                            "type": "object",
+                            "properties": {
+                                "capacity": {
+                                    "type": "integer"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
@@ -746,7 +1021,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.UpdateCodeTypeParam": {
+        "presentations.UpdateCodeTypeInput": {
             "type": "object",
             "required": [
                 "id",
@@ -784,7 +1059,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.UpdateCodeValueParam": {
+        "presentations.UpdateCodeValueInput": {
             "type": "object",
             "required": [
                 "code_type_id",
@@ -840,6 +1115,68 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.UpdateRoomInput": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "room_name": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "room": {
+                            "type": "object",
+                            "properties": {
+                                "capacity": {
+                                    "type": "integer"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.WhoAmIResponse": {
             "type": "object",
             "properties": {
@@ -849,8 +1186,17 @@ const docTemplate = `{
                         "user": {
                             "type": "object",
                             "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
                                 "id": {
                                     "type": "integer"
+                                },
+                                "role": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
                                 }
                             }
                         }

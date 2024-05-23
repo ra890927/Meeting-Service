@@ -13,22 +13,22 @@ type MockRoomRepo struct {
 	mock.Mock
 }
 
-func (m *MockRoomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
+func (m *MockRoomRepo) CreateRoom(room *models.Room) error {
 	args := m.Called(room)
-	return args.Get(0).(*models.Room), args.Error(1)
-}
-
-func (m *MockRoomRepo) UpdateRoom(id string, room *models.Room) error {
-	args := m.Called(id, room)
 	return args.Error(0)
 }
 
-func (m *MockRoomRepo) DeleteRoom(id string) error {
+func (m *MockRoomRepo) UpdateRoom(room *models.Room) error {
+	args := m.Called(room)
+	return args.Error(0)
+}
+
+func (m *MockRoomRepo) DeleteRoom(id int) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
 
-func (m *MockRoomRepo) GetRoom(id string) (*models.Room, error) {
+func (m *MockRoomRepo) GetRoomByID(id int) (*models.Room, error) {
 	args := m.Called(id)
 	return args.Get(0).(*models.Room), args.Error(1)
 }
@@ -47,25 +47,23 @@ func TestDomainCreateRoom(t *testing.T) {
 		Capacity: 11,
 	}
 
-	mockRoomRepo.On("CreateRoom", room).Return(room, nil)
-	createdRoom, err := rd.CreateRoom(room)
+	mockRoomRepo.On("CreateRoom", room).Return(nil)
+	err := rd.CreateRoom(room)
 
 	assert.NoError(t, err)
-	assert.Equal(t, room, createdRoom)
 }
 
 func TestDomainUpdateRoom(t *testing.T) {
 	mockRoomRepo := new(MockRoomRepo)
 	rd := domains.NewRoomDomain(mockRoomRepo)
-	id := "1"
 	room := &models.Room{
 		RoomName: "Updated Conference Room",
 		Type:     "Executive Meeting",
 		Capacity: 12,
 	}
 
-	mockRoomRepo.On("UpdateRoom", id, room).Return(nil)
-	err := rd.UpdateRoom(id, room)
+	mockRoomRepo.On("UpdateRoom", room).Return(nil)
+	err := rd.UpdateRoom(room)
 
 	assert.NoError(t, err)
 }
@@ -73,7 +71,7 @@ func TestDomainUpdateRoom(t *testing.T) {
 func TestDomainDeleteRoom(t *testing.T) {
 	mockRoomRepo := new(MockRoomRepo)
 	rd := domains.NewRoomDomain(mockRoomRepo)
-	id := "1"
+	id := 1
 
 	mockRoomRepo.On("DeleteRoom", id).Return(nil)
 	err := rd.DeleteRoom(id)
@@ -81,18 +79,18 @@ func TestDomainDeleteRoom(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestDomainGetRoom(t *testing.T) {
+func TestDomainGetRoomByID(t *testing.T) {
 	mockRoomRepo := new(MockRoomRepo)
 	rd := domains.NewRoomDomain(mockRoomRepo)
-	id := "1"
+	id := 1
 	room := &models.Room{
 		RoomName: "Conference Room A",
 		Type:     "Board Meeting",
 		Capacity: 10,
 	}
 
-	mockRoomRepo.On("GetRoom", id).Return(room, nil)
-	fetchedRoom, err := rd.GetRoom(id)
+	mockRoomRepo.On("GetRoomByID", id).Return(room, nil)
+	fetchedRoom, err := rd.GetRoomByID(id)
 
 	assert.NoError(t, err)
 	assert.Equal(t, room, fetchedRoom)

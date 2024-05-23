@@ -4,16 +4,16 @@ import (
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// RoomPresentation 定義了房間的展示層接口
 type RoomPresentation interface {
 	CreateRoom(c *gin.Context)
 	UpdateRoom(c *gin.Context)
 	DeleteRoom(c *gin.Context)
-	GetRoom(c *gin.Context)
+	GetRoomByID(c *gin.Context)
 	GetAllRooms(c *gin.Context)
 }
 
@@ -21,114 +21,281 @@ type roomPresentation struct {
 	RoomService services.RoomService
 }
 
-// NewRoomPresentation 創建一個新的 RoomPresentation 實例
 func NewRoomPresentation(roomServiceArgs ...services.RoomService) RoomPresentation {
 	if len(roomServiceArgs) == 1 {
-		return &roomPresentation{
+		return RoomPresentation(&roomPresentation{
 			RoomService: roomServiceArgs[0],
-		}
+		})
 	} else if len(roomServiceArgs) == 0 {
-		return &roomPresentation{
+		return RoomPresentation(&roomPresentation{
 			RoomService: services.NewRoomService(),
-		}
+		})
 	} else {
 		panic("Too many arguments")
 	}
 }
 
-// CreateRoom 處理創建房間的請求
-// @Summary 創建房間
-// @Description 創建一個新的房間
-// @Tags rooms
+type CreateRoomInput struct {
+	RoomName string `json:"room_name"`
+	Type     string `json:"type"`
+	Rules    []int  `json:"rules"`
+	Capacity int    `json:"capacity"`
+}
+
+type CreateRoomResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Room struct {
+			ID       int    `json:"id"`
+			RoomName string `json:"room_name"`
+			Type     string `json:"type"`
+			Rules    []int  `json:"rules"`
+			Capacity int    `json:"capacity"`
+		} `json:"room"`
+	} `json:"data"`
+}
+
+type UpdateRoomInput struct {
+	ID       int    `json:"id"`
+	RoomName string `json:"room_name"`
+	Type     string `json:"type"`
+	Rules    []int  `json:"rules"`
+	Capacity int    `json:"capacity" `
+}
+
+type UpdateRoomResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Room struct {
+			ID       int    `json:"id"`
+			RoomName string `json:"room_name"`
+			Type     string `json:"type"`
+			Rules    []int  `json:"rules"`
+			Capacity int    `json:"capacity"`
+		} `json:"room"`
+	} `json:"data"`
+}
+
+type GetAllRoomsResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Room []struct {
+			ID       int    `json:"id"`
+			RoomName string `json:"room_name"`
+			Type     string `json:"type"`
+			Rules    []int  `json:"rules"`
+			Capacity int    `json:"capacity"`
+		} `json:"rooms"`
+	} `json:"data"`
+}
+
+type GetRoomByIDResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Room struct {
+			ID       int    `json:"id"`
+			RoomName string `json:"room_name"`
+			Type     string `json:"type"`
+			Rules    []int  `json:"rules"`
+			Capacity int    `json:"capacity"`
+		} `json:"room"`
+	} `json:"data"`
+}
+
+// @Summary Create a new room
+// @Description Create a new room
+// @Tags admin
 // @Accept json
 // @Produce json
-// @Param room body models.Room true "房間信息"
-// @Success 200 {object} models.Room
-// @Router /rooms [post]
+// @Param room body CreateRoomInput true "Room information"
+// @Success 200 {object} CreateRoomResponse
+// @Router /admin/room [post]
 func (rp *roomPresentation) CreateRoom(c *gin.Context) {
-	var room models.Room
-	if err := c.BindJSON(&room); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+	var createRoomInput CreateRoomInput
+	var createRoomResponse CreateRoomResponse
+	if err := c.BindJSON(&createRoomInput); err != nil {
+		createRoomResponse.Status = "error"
+		createRoomResponse.Message = "Invalid request"
+		c.JSON(http.StatusBadRequest, createRoomResponse)
 		return
 	}
-	createdRoom, err := rp.RoomService.CreateRoom(&room)
+
+	room := models.Room{
+		RoomName: createRoomInput.RoomName,
+		Type:     createRoomInput.Type,
+		Rules:    createRoomInput.Rules,
+		Capacity: createRoomInput.Capacity,
+	}
+
+	err := rp.RoomService.CreateRoom(&room)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		createRoomResponse.Status = "error"
+		createRoomResponse.Message = "Failed to create room"
+		c.JSON(http.StatusInternalServerError, createRoomResponse)
 		return
 	}
-	c.JSON(http.StatusOK, createdRoom)
+
+	createRoomResponse.Status = "success"
+	createRoomResponse.Message = "Room created successfully"
+	createRoomResponse.Data.Room.ID = room.ID
+	createRoomResponse.Data.Room.RoomName = room.RoomName
+	createRoomResponse.Data.Room.Type = room.Type
+	createRoomResponse.Data.Room.Rules = room.Rules
+	createRoomResponse.Data.Room.Capacity = room.Capacity
+
+	c.JSON(http.StatusOK, createRoomResponse)
 }
 
-// UpdateRoom 處理更新房間的請求
-// @Summary 更新房間
-// @Description 更新房間信息
-// @Tags rooms
+// @Summary Update room information
+// @Description Update room information
+// @Tags admin
 // @Accept json
 // @Produce json
-// @Param id path int true "房間ID"
-// @Param room body models.Room true "房間信息"
-// @Success 200 {object} models.Room
-// @Router /rooms/{id} [put]
+// @Param room body UpdateRoomInput true "Room information"
+// @Success 200 {object} UpdateRoomResponse
+// @Router /admin/room [put]
 func (rp *roomPresentation) UpdateRoom(c *gin.Context) {
-	var room models.Room
-	id := c.Param("id")
-	if err := c.BindJSON(&room); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+	var updateRoomInput UpdateRoomInput
+	var updateRoomResponse UpdateRoomResponse
+	if err := c.BindJSON(&updateRoomInput); err != nil {
+		updateRoomResponse.Status = "error"
+		updateRoomResponse.Message = "Invalid request"
+		c.JSON(http.StatusBadRequest, updateRoomResponse)
 		return
 	}
-	err := rp.RoomService.UpdateRoom(id, &room)
+
+	room := models.Room{
+		ID:       updateRoomInput.ID,
+		RoomName: updateRoomInput.RoomName,
+		Type:     updateRoomInput.Type,
+		Rules:    updateRoomInput.Rules,
+		Capacity: updateRoomInput.Capacity,
+	}
+
+	err := rp.RoomService.UpdateRoom(&room)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		updateRoomResponse.Status = "error"
+		updateRoomResponse.Message = "Failed to update room"
+		c.JSON(http.StatusInternalServerError, updateRoomResponse)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "updated"})
+
+	updateRoomResponse.Status = "success"
+	updateRoomResponse.Message = "Room updated successfully"
+	updateRoomResponse.Data.Room.ID = room.ID
+	updateRoomResponse.Data.Room.RoomName = room.RoomName
+	updateRoomResponse.Data.Room.Type = room.Type
+	updateRoomResponse.Data.Room.Rules = room.Rules
+	updateRoomResponse.Data.Room.Capacity = room.Capacity
+
+	c.JSON(http.StatusOK, updateRoomResponse)
 }
 
-// DeleteRoom 處理刪除房間的請求
-// @Summary 刪除房間
-// @Description 刪除指定ID的房間
-// @Tags rooms
-// @Param id path int true "房間ID"
+type DeleteRoomResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+// @Summary Delete room
+// @Description Delete room by room ID
+// @Tags admin
+// @Param id path int true "Room ID"
 // @Success 200 {string} string "deleted"
-// @Router /rooms/{id} [delete]
+// @Router /admin/room/{id} [delete]
 func (rp *roomPresentation) DeleteRoom(c *gin.Context) {
-	id := c.Param("id")
-	err := rp.RoomService.DeleteRoom(id)
+	var deleteRoomResponse DeleteRoomResponse
+	roomID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		deleteRoomResponse.Status = "error"
+		deleteRoomResponse.Message = "Invalid request"
+		c.JSON(http.StatusBadRequest, deleteRoomResponse)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
-}
 
-// GetRoom 獲取指定ID的房間信息
-// @Summary 獲取房間
-// @Description 獲取指定ID的房間信息
-// @Tags rooms
-// @Param id path int true "房間ID"
-// @Success 200 {object} models.Room
-// @Router /rooms/{id} [get]
-func (rp *roomPresentation) GetRoom(c *gin.Context) {
-	id := c.Param("id")
-	room, err := rp.RoomService.GetRoom(id)
+	err = rp.RoomService.DeleteRoom(roomID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		deleteRoomResponse.Status = "error"
+		deleteRoomResponse.Message = "Failed to delete room"
+		c.JSON(http.StatusInternalServerError, deleteRoomResponse)
 		return
 	}
-	c.JSON(http.StatusOK, room)
+
+	deleteRoomResponse.Status = "success"
+	deleteRoomResponse.Message = "Room deleted successfully"
+	c.JSON(http.StatusOK, deleteRoomResponse)
 }
 
-// GetAllRooms 獲取所有房間信息
-// @Summary 獲取所有房間
-// @Description 獲取所有房間信息
-// @Tags rooms
-// @Success 200 {array} models.Room
-// @Router /rooms [get]
+// @Summary Get room by ID
+// @Description Get room by ID
+// @Tags room
+// @Param id path int true "Room ID"
+// @Success 200 {object} GetRoomByIDResponse
+// @Router /room/{id} [get]
+func (rp *roomPresentation) GetRoomByID(c *gin.Context) {
+	var getRoomByIDResponse GetRoomByIDResponse
+	roomID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		getRoomByIDResponse.Status = "error"
+		getRoomByIDResponse.Message = "Invalid request"
+		c.JSON(http.StatusBadRequest, getRoomByIDResponse)
+		return
+	}
+
+	room, err := rp.RoomService.GetRoomByID(roomID)
+	if err != nil {
+		getRoomByIDResponse.Status = "error"
+		getRoomByIDResponse.Message = "Failed to get room"
+		c.JSON(http.StatusInternalServerError, getRoomByIDResponse)
+		return
+	}
+
+	getRoomByIDResponse.Status = "success"
+	getRoomByIDResponse.Message = "Room retrieved successfully"
+	getRoomByIDResponse.Data.Room.ID = room.ID
+	getRoomByIDResponse.Data.Room.RoomName = room.RoomName
+	getRoomByIDResponse.Data.Room.Type = room.Type
+	getRoomByIDResponse.Data.Room.Rules = room.Rules
+	getRoomByIDResponse.Data.Room.Capacity = room.Capacity
+
+	c.JSON(http.StatusOK, getRoomByIDResponse)
+}
+
+// @Summary Get all rooms
+// @Description Get all rooms
+// @Tags room
+// @Success 200 {object} GetAllRoomsResponse
+// @Router /room/getAllRooms [get]
 func (rp *roomPresentation) GetAllRooms(c *gin.Context) {
 	rooms, err := rp.RoomService.GetAllRooms()
+	var getAllRoomsResponse GetAllRoomsResponse
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		getAllRoomsResponse.Status = "error"
+		getAllRoomsResponse.Message = "Failed to get rooms"
+		c.JSON(http.StatusInternalServerError, getAllRoomsResponse)
 		return
 	}
-	c.JSON(http.StatusOK, rooms)
+
+	getAllRoomsResponse.Status = "success"
+	getAllRoomsResponse.Message = "Rooms retrieved successfully"
+	for _, room := range rooms {
+		getAllRoomsResponse.Data.Room = append(getAllRoomsResponse.Data.Room, struct {
+			ID       int    `json:"id"`
+			RoomName string `json:"room_name"`
+			Type     string `json:"type"`
+			Rules    []int  `json:"rules"`
+			Capacity int    `json:"capacity"`
+		}{
+			ID:       room.ID,
+			RoomName: room.RoomName,
+			Type:     room.Type,
+			Rules:    room.Rules,
+			Capacity: room.Capacity,
+		})
+	}
+
+	c.JSON(http.StatusOK, getAllRoomsResponse)
 }
