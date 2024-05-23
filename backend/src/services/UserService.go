@@ -1,9 +1,12 @@
 package services
 
 import (
+	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
 	"net/mail"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
@@ -32,6 +35,19 @@ func (us userService) CreateUser(user *models.User) (*models.User, error) {
 		return nil, err
 	}
 
+	// Check if the user exists (by email)
+	_, err = us.userDomain.GetUserByEmail(user.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	// Hash the password
+	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(hashValue)
+
 	// Create a new user
 	createdUser, err := us.userDomain.CreateUser(user)
 
@@ -48,6 +64,26 @@ func (us userService) UpdateUser(user *models.User) (*models.User, error) {
 	_, err := mail.ParseAddress(user.Email)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if the user exists
+	userByEmail, err := us.userDomain.GetUserByEmail(user.Email)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	// patch userByEmail with the new user (where the input is not empty)
+	if user.Username != "" {
+		userByEmail.Username = user.Username
+	}
+	if user.Password != "" {
+		userByEmail.Password = user.Password
+	} else {
+		hashValue, err := bcrypt.GenerateFromPassword([]byte(userByEmail.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		userByEmail.Password = string(hashValue)
 	}
 
 	// Update a user

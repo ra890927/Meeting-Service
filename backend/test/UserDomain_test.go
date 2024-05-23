@@ -23,6 +23,11 @@ func (m *MockUserRepo) UpdateUser(user *models.User) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
+func (m *MockUserRepo) GetUserByEmail(email string) (*models.User, error) {
+	args := m.Called(email)
+	return args.Get(0).(*models.User), nil
+}
+
 func TestDomainCreateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
