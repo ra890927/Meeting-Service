@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../layout/header/header.component';
 import { RoomSchedulerComponent } from '../room-scheduler/room-scheduler.component';
-
 @Component({
   selector: 'app-reservation',
   standalone: true,
