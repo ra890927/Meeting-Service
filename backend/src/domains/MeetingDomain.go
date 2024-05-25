@@ -7,10 +7,10 @@ import (
 )
 
 type MeetingDomain interface {
-	CreateMeeting(meeting *models.Meeting) (*models.Meeting, error)
-	UpdateMeeting(id string, meeting *models.Meeting) error
-	DeleteMeeting(id string) error
-	GetMeeting(id string) (*models.Meeting, error)
+	CreateMeeting(meeting *models.Meeting) error
+	UpdateMeeting(meeting *models.Meeting) error
+	DeleteMeeting(id int) error
+	GetMeeting(id int) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
@@ -31,23 +31,23 @@ func NewMeetingDomain(meetingRepoArg ...repos.MeetingRepo) MeetingDomain {
 	}
 }
 
-func (md meetingDomain) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
-	createdMeeting, err := md.MeetingRepo.CreateMeeting(meeting)
-	if err != nil {
-		return nil, err
-	}
-	return createdMeeting, nil
-}
-
-func (md meetingDomain) UpdateMeeting(id string, meeting *models.Meeting) error {
-	err := md.MeetingRepo.UpdateMeeting(id, meeting)
+func (md meetingDomain) CreateMeeting(meeting *models.Meeting) error {
+	err := md.MeetingRepo.CreateMeeting(meeting)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (md meetingDomain) DeleteMeeting(id string) error {
+func (md meetingDomain) UpdateMeeting(meeting *models.Meeting) error {
+	err := md.MeetingRepo.UpdateMeeting(meeting)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (md meetingDomain) DeleteMeeting(id int) error {
 	err := md.MeetingRepo.DeleteMeeting(id)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (md meetingDomain) DeleteMeeting(id string) error {
 	return nil
 }
 
-func (md meetingDomain) GetMeeting(id string) (*models.Meeting, error) {
+func (md meetingDomain) GetMeeting(id int) (*models.Meeting, error) {
 	meeting, err := md.MeetingRepo.GetMeeting(id)
 	if err != nil {
 		return nil, err
@@ -64,9 +64,17 @@ func (md meetingDomain) GetMeeting(id string) (*models.Meeting, error) {
 }
 
 func (md meetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
-	return md.MeetingRepo.GetAllMeetings()
+	meetings, err := md.MeetingRepo.GetAllMeetings()
+	if err != nil {
+		return nil, err
+	}
+	return meetings, nil
 }
 
 func (md meetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	return md.MeetingRepo.GetMeetingsByRoomIdAndDate(roomID, date)
+	meetings, err := md.MeetingRepo.GetMeetingsByRoomIdAndDate(roomID, date)
+	if err != nil {
+		return nil, err
+	}
+	return meetings, nil
 }

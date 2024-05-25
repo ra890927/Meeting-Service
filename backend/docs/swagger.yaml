@@ -23,6 +23,25 @@ definitions:
       id:
         type: integer
     type: object
+  models.Room:
+    properties:
+      capacity:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      room_name:
+        type: string
+      rules:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.User:
     properties:
       created_at:
@@ -40,7 +59,7 @@ definitions:
       username:
         type: string
     type: object
-  presentations.CreateCodeTypeParam:
+  presentations.CreateCodeTypeInput:
     properties:
       type_desc:
         type: string
@@ -73,7 +92,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.CreateCodeValueParam:
+  presentations.CreateCodeValueInput:
     properties:
       code_type_id:
         type: integer
@@ -107,6 +126,60 @@ definitions:
       status:
         type: string
     type: object
+  presentations.CreateMeetingBody:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      organizer:
+        type: integer
+      participants:
+        items:
+          type: integer
+        type: array
+      room_id:
+        type: integer
+      start_time:
+        type: string
+      status_type:
+        type: string
+      title:
+        type: string
+    type: object
+  presentations.CreateUpdateGetMeetingResponse:
+    properties:
+      data:
+        properties:
+          meeting:
+            properties:
+              description:
+                type: string
+              end_time:
+                type: string
+              id:
+                type: integer
+              organizer:
+                type: integer
+              participants:
+                items:
+                  type: integer
+                type: array
+              room_id:
+                type: integer
+              start_time:
+                type: string
+              status_type:
+                type: string
+              title:
+                type: string
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.DeleteCodeTypeResponse:
     properties:
       data:
@@ -125,6 +198,13 @@ definitions:
       status:
         type: string
     type: object
+  presentations.DeleteMeetingResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.GetAllCodeTypesResponse:
     properties:
       data:
@@ -132,6 +212,41 @@ definitions:
           code_types:
             items:
               $ref: '#/definitions/models.CodeType'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetAllMeetingsResponse:
+    properties:
+      data:
+        properties:
+          meetings:
+            items:
+              properties:
+                description:
+                  type: string
+                end_time:
+                  type: string
+                id:
+                  type: integer
+                organizer:
+                  type: integer
+                participants:
+                  items:
+                    type: integer
+                  type: array
+                room_id:
+                  type: integer
+                start_time:
+                  type: string
+                status_type:
+                  type: string
+                title:
+                  type: string
+              type: object
             type: array
         type: object
       message:
@@ -195,7 +310,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.UpdateCodeTypeParam:
+  presentations.UpdateCodeTypeInput:
     properties:
       id:
         type: integer
@@ -220,7 +335,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.UpdateCodeValueParam:
+  presentations.UpdateCodeValueInput:
     properties:
       code_type_id:
         type: integer
@@ -257,14 +372,43 @@ definitions:
       status:
         type: string
     type: object
+  presentations.UpdateMeetingBody:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: integer
+      organizer:
+        type: integer
+      participants:
+        items:
+          type: integer
+        type: array
+      room_id:
+        type: integer
+      start_time:
+        type: string
+      status_type:
+        type: string
+      title:
+        type: string
+    type: object
   presentations.WhoAmIResponse:
     properties:
       data:
         properties:
           user:
             properties:
+              email:
+                type: string
               id:
                 type: integer
+              role:
+                type: string
+              username:
+                type: string
             type: object
         type: object
       message:
@@ -361,7 +505,7 @@ paths:
         name: codeType
         required: true
         schema:
-          $ref: '#/definitions/presentations.CreateCodeTypeParam'
+          $ref: '#/definitions/presentations.CreateCodeTypeInput'
       produces:
       - application/json
       responses:
@@ -382,7 +526,7 @@ paths:
         name: codeType
         required: true
         schema:
-          $ref: '#/definitions/presentations.UpdateCodeTypeParam'
+          $ref: '#/definitions/presentations.UpdateCodeTypeInput'
       produces:
       - application/json
       responses:
@@ -460,7 +604,7 @@ paths:
         name: codeValue
         required: true
         schema:
-          $ref: '#/definitions/presentations.CreateCodeValueParam'
+          $ref: '#/definitions/presentations.CreateCodeValueInput'
       produces:
       - application/json
       responses:
@@ -481,7 +625,7 @@ paths:
         name: codeValue
         required: true
         schema:
-          $ref: '#/definitions/presentations.UpdateCodeValueParam'
+          $ref: '#/definitions/presentations.UpdateCodeValueInput'
       produces:
       - application/json
       responses:
@@ -513,6 +657,208 @@ paths:
       summary: Get a code value by ID
       tags:
       - code
+  /meeting:
+    post:
+      consumes:
+      - application/json
+      description: Create a meeting
+      parameters:
+      - description: Meeting details
+        in: body
+        name: meeting
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateMeetingBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Create a meeting
+      tags:
+      - Meeting
+    put:
+      consumes:
+      - application/json
+      description: Update a meeting
+      parameters:
+      - description: Meeting details
+        in: body
+        name: meeting
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateMeetingBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Update a meeting
+      tags:
+      - Meeting
+  /meeting/{id}:
+    delete:
+      description: Delete a meeting
+      parameters:
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.DeleteMeetingResponse'
+      summary: Delete a meeting
+      tags:
+      - Meeting
+    get:
+      description: Get a meeting
+      parameters:
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Get a meeting
+      tags:
+      - Meeting
+  /meeting/getAllMeetings:
+    get:
+      description: Get all meetings
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get all meetings
+      tags:
+      - Meeting
+  /meeting/getMeetingsByRoomIdAndDate:
+    get:
+      description: Get meetings by room ID and date
+      parameters:
+      - description: Room ID
+        in: query
+        name: room_id
+        required: true
+        type: integer
+      - description: Date
+        in: query
+        name: date
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get meetings by room ID and date
+      tags:
+      - Meeting
+  /rooms:
+    get:
+      description: 獲取所有房間信息
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Room'
+            type: array
+      summary: 獲取所有房間
+      tags:
+      - rooms
+    post:
+      consumes:
+      - application/json
+      description: 創建一個新的房間
+      parameters:
+      - description: 房間信息
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/models.Room'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+      summary: 創建房間
+      tags:
+      - rooms
+  /rooms/{id}:
+    delete:
+      description: 刪除指定ID的房間
+      parameters:
+      - description: 房間ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: deleted
+          schema:
+            type: string
+      summary: 刪除房間
+      tags:
+      - rooms
+    get:
+      description: 獲取指定ID的房間信息
+      parameters:
+      - description: 房間ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+      summary: 獲取房間
+      tags:
+      - rooms
+    put:
+      consumes:
+      - application/json
+      description: 更新房間信息
+      parameters:
+      - description: 房間ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 房間信息
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/models.Room'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+      summary: 更新房間
+      tags:
+      - rooms
   /user:
     post:
       consumes:

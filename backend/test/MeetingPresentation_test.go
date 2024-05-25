@@ -18,22 +18,30 @@ type mockMeetingService struct {
 	mock.Mock
 }
 
-func (m *mockMeetingService) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
-	args := m.Called(meeting)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+func addFakeUserMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user := models.User{ID: 1}
+		c.Set("validate_user", user)
+		c.Next()
+	}
 }
 
-func (m *mockMeetingService) UpdateMeeting(id string, meeting *models.Meeting) error {
-	args := m.Called(id, meeting)
+func (m *mockMeetingService) CreateMeeting(operator *models.User, meeting *models.Meeting) error {
+	args := m.Called(operator, meeting)
 	return args.Error(0)
 }
 
-func (m *mockMeetingService) DeleteMeeting(id string) error {
-	args := m.Called(id)
+func (m *mockMeetingService) UpdateMeeting(operator *models.User, meeting *models.Meeting) error {
+	args := m.Called(operator, meeting)
 	return args.Error(0)
 }
 
-func (m *mockMeetingService) GetMeeting(id string) (*models.Meeting, error) {
+func (m *mockMeetingService) DeleteMeeting(operator *models.User, id int) error {
+	args := m.Called(operator, id)
+	return args.Error(0)
+}
+
+func (m *mockMeetingService) GetMeeting(id int) (*models.Meeting, error) {
 	args := m.Called(id)
 	return args.Get(0).(*models.Meeting), args.Error(1)
 }
@@ -49,18 +57,17 @@ func (m *mockMeetingService) GetMeetingsByRoomIdAndDate(roomID int, date time.Ti
 }
 func TestCreateMeeting(t *testing.T) {
 	meeting := models.Meeting{
-		ID:          "1",
 		Title:       "Board Meeting",
 		Description: "Annual Board Meeting",
 	}
-
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("CreateMeeting", &meeting).Return(&meeting, nil)
+	mockMeetingService.On("CreateMeeting", &models.User{ID: 1}, &meeting).Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.POST("/meeting", mp.CreateMeeting)
+
+	r.POST("/meeting", addFakeUserMiddleware(), mp.CreateMeeting)
 
 	jsonData, _ := json.Marshal(meeting)
 	req := httptest.NewRequest("POST", "/meeting", bytes.NewBuffer(jsonData))
@@ -74,21 +81,21 @@ func TestCreateMeeting(t *testing.T) {
 
 func TestUpdateMeeting(t *testing.T) {
 	meeting := models.Meeting{
-		ID:          "1",
+		ID:          1,
 		Title:       "Updated Board Meeting",
 		Description: "Updated Annual Board Meeting",
 	}
 
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("UpdateMeeting", "1", &meeting).Return(nil)
+	mockMeetingService.On("UpdateMeeting", &models.User{ID: 1}, &meeting).Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.PUT("/meeting/:id", mp.UpdateMeeting)
+	r.PUT("/meeting", addFakeUserMiddleware(), mp.UpdateMeeting)
 
 	jsonData, _ := json.Marshal(meeting)
-	req := httptest.NewRequest("PUT", "/meeting/1", bytes.NewBuffer(jsonData))
+	req := httptest.NewRequest("PUT", "/meeting", bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
@@ -99,12 +106,12 @@ func TestUpdateMeeting(t *testing.T) {
 
 func TestDeleteMeeting(t *testing.T) {
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("DeleteMeeting", "1").Return(nil)
+	mockMeetingService.On("DeleteMeeting", &models.User{ID: 1}, 1).Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.DELETE("/meeting/:id", mp.DeleteMeeting)
+	r.DELETE("/meeting/:id", addFakeUserMiddleware(), mp.DeleteMeeting)
 
 	req := httptest.NewRequest("DELETE", "/meeting/1", nil)
 
@@ -116,13 +123,13 @@ func TestDeleteMeeting(t *testing.T) {
 
 func TestGetMeeting(t *testing.T) {
 	meeting := models.Meeting{
-		ID:          "1",
+		ID:          1,
 		Title:       "Board Meeting",
 		Description: "Annual Board Meeting",
 	}
 
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("GetMeeting", "1").Return(&meeting, nil)
+	mockMeetingService.On("GetMeeting", 1).Return(&meeting, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
@@ -138,7 +145,7 @@ func TestGetMeeting(t *testing.T) {
 }
 
 func TestGetAllMeetings(t *testing.T) {
-	meetings := []*models.Meeting{{ID: "1", Title: "Board Meeting", Description: "Annual Board Meeting"}}
+	meetings := []*models.Meeting{{ID: 1, Title: "Board Meeting", Description: "Annual Board Meeting"}}
 	mockMeetingService := new(mockMeetingService)
 	mockMeetingService.On("GetAllMeetings").Return(meetings, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
@@ -156,7 +163,7 @@ func TestGetAllMeetings(t *testing.T) {
 }
 
 func TestGetMeetingsByRoomIdAndDate(t *testing.T) {
-	meetings := []*models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
+	meetings := []*models.Meeting{{ID: 2, Title: "Team Meeting", Description: "Quarterly Planning"}}
 	roomID := 101
 	date := time.Now()
 	mockMeetingService := new(mockMeetingService)

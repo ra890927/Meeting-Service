@@ -2,16 +2,17 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
 	"time"
 )
 
 type MeetingService interface {
-	CreateMeeting(meeting *models.Meeting) (*models.Meeting, error)
-	UpdateMeeting(id string, meeting *models.Meeting) error
-	DeleteMeeting(id string) error
-	GetMeeting(id string) (*models.Meeting, error)
+	CreateMeeting(operator *models.User, meeting *models.Meeting) error
+	UpdateMeeting(operator *models.User, meeting *models.Meeting) error
+	DeleteMeeting(operator *models.User, id int) error
+	GetMeeting(id int) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
@@ -20,59 +21,94 @@ type meetingService struct {
 	MeetingDomain domains.MeetingDomain
 }
 
-func NewMeetingService(roomRepoArg ...domains.MeetingDomain) MeetingService {
-	if len(roomRepoArg) == 1 {
-		return MeetingService(&meetingService{
-			MeetingDomain: roomRepoArg[0],
-		})
+func NewMeetingService(roomDomainArg ...domains.MeetingDomain) MeetingService {
+	if len(roomDomainArg) == 1 {
+		return MeetingService(&meetingService{MeetingDomain: roomDomainArg[0]})
+	} else if len(roomDomainArg) == 0 {
+		return MeetingService(&meetingService{MeetingDomain: domains.NewMeetingDomain()})
 	} else {
-		return MeetingService(&meetingService{
-			MeetingDomain: domains.NewMeetingDomain(),
-		})
+		panic("too many arguments")
 	}
 }
 
-func (ms meetingService) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
-	// Validate time
-	if !meeting.StartTime.Before(meeting.EndTime) {
-		return nil, errors.New("StartTime must be before EndTime")
+// check if the meeting time is valid and not overlapping with other meetings
+func (ms meetingService) checkValidMeetingTime(targetMeeting *models.Meeting) error {
+	if !targetMeeting.StartTime.Before(targetMeeting.EndTime) {
+		return errors.New("end time should be after start time")
 	}
+	fmt.Println(targetMeeting.Title)
 
-	// Check for overlapping meetings
-	existingMeetings, err := ms.GetMeetingsByRoomIdAndDate(meeting.RoomID, meeting.StartTime)
+	existingMeetings, err := ms.MeetingDomain.GetMeetingsByRoomIdAndDate(targetMeeting.RoomID, targetMeeting.StartTime)
 	if err != nil {
-		return nil, err
+		return errors.New("error when getting existing meetings")
 	}
+	fmt.Println(existingMeetings)
 	for _, m := range existingMeetings {
-		if meeting.StartTime.Before(m.EndTime) && meeting.EndTime.After(m.StartTime) {
-			return nil, errors.New("time slot is already booked")
+		// except the target meeting itself
+		if m.ID == targetMeeting.ID {
+			continue
+		}
+
+		// check if the meeting overlaps with existing meetings
+		if targetMeeting.StartTime.Before(m.EndTime) && m.StartTime.Before(targetMeeting.EndTime) {
+			return errors.New("meeting overlaps with existing meeting")
 		}
 	}
-
-	createdMeeting, err := ms.MeetingDomain.CreateMeeting(meeting)
-	if err != nil {
-		return nil, err
-	}
-	return createdMeeting, nil
+	return nil
 }
 
-func (ms meetingService) UpdateMeeting(id string, meeting *models.Meeting) error {
-	err := ms.MeetingDomain.UpdateMeeting(id, meeting)
+func (ms meetingService) CreateMeeting(operator *models.User, meeting *models.Meeting) error {
+	// modyfing the OrganizerID to the operator's ID
+	meeting.OrganizerID = operator.ID
+
+	err := ms.checkValidMeetingTime(meeting)
+	if err != nil {
+		return err
+	}
+
+	err = ms.MeetingDomain.CreateMeeting(meeting)
+	if err != nil {
+		return errors.New("error when creating meeting")
+	}
+	return nil
+}
+
+func (ms meetingService) UpdateMeeting(operator *models.User, meeting *models.Meeting) error {
+	// check if the operator is the creator of the meeting
+	if operator.ID != meeting.OrganizerID {
+		return errors.New("only the organizer can update the meeting")
+	}
+
+	err := ms.checkValidMeetingTime(meeting)
+	if err != nil {
+		return err
+	}
+
+	err = ms.MeetingDomain.UpdateMeeting(meeting)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ms meetingService) DeleteMeeting(id string) error {
-	err := ms.MeetingDomain.DeleteMeeting(id)
+func (ms meetingService) DeleteMeeting(operator *models.User, id int) error {
+	// only the organizer can delete the meeting
+	meeting, err := ms.MeetingDomain.GetMeeting(id)
+	if err != nil {
+		return err
+	}
+	if operator.ID != meeting.OrganizerID {
+		return errors.New("only the organizer can delete the meeting")
+	}
+
+	err = ms.MeetingDomain.DeleteMeeting(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ms meetingService) GetMeeting(id string) (*models.Meeting, error) {
+func (ms meetingService) GetMeeting(id int) (*models.Meeting, error) {
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
 		return nil, err
