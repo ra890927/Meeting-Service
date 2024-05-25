@@ -85,6 +85,7 @@ export class RoomSchedulerComponent implements OnInit{
   startTime: string =  '';
   endDate: Date= new Date();
   endTime: string = ''; 
+  isSearchContainerOpen = false;
   roomDescriptions: { [code: string]: string } = {'projector':'This room is equipped with a projector, which can be used for presentations or visual displays.','food':'can eat in the room.'};//get from api
   calendarOptions: CalendarOptions = {
     plugins: [
@@ -258,6 +259,9 @@ export class RoomSchedulerComponent implements OnInit{
         ...this.calendarOptions,
         events: eventsToDisplay
       };
+  }
+  toggleSearchContainer() {
+    this.isSearchContainerOpen = !this.isSearchContainerOpen;
   }
 }
 

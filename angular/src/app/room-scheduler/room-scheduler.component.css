@@ -214,3 +214,34 @@ input{
     cursor: pointer;
 }
 /* search bar */
+.search-switch{
+    width: 300px;
+    height: fit-content;
+    display: flex;
+    justify-content:left;
+    align-items:center;
+}
+.search-toggle-btn {
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    transform: perspective(5px) rotateX(1deg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .search-toggle-btn.show {
+    background-color: #ff0000;
+    color: #fff;
+  }
+  
+  .search-toggle-btn.hide {
+    background-color: #4CAF50;
+    color: #fff;
+  }

@@ -1,6 +1,11 @@
 <div class="calendarContainer">
     <div class = "cards_container">
-        <div class="search_container">
+        <div class = "search-switch">
+            <button class="search-toggle-btn" (click)="toggleSearchContainer()" [ngClass]="{ 'show': isSearchContainerOpen, 'hide': !isSearchContainerOpen }">
+                {{ isSearchContainerOpen ? 'Hide Search' : 'Show Search' }}
+            </button>
+        </div>
+        <div *ngIf="isSearchContainerOpen" class="search_container">
             <div class="people-container">
                 <label class="people-label">People</label>
                 <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
