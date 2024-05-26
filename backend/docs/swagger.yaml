@@ -158,7 +158,7 @@ definitions:
               end_time:
                 type: string
               id:
-                type: integer
+                type: string
               organizer:
                 type: integer
               participants:
@@ -231,7 +231,7 @@ definitions:
                 end_time:
                   type: string
                 id:
-                  type: integer
+                  type: string
                 organizer:
                   type: integer
                 participants:
@@ -379,7 +379,7 @@ definitions:
       end_time:
         type: string
       id:
-        type: integer
+        type: string
       organizer:
         type: integer
       participants:

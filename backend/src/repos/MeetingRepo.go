@@ -11,8 +11,8 @@ import (
 type MeetingRepo interface {
 	CreateMeeting(meeting *models.Meeting) error
 	UpdateMeeting(meeting *models.Meeting) error
-	DeleteMeeting(id int) error
-	GetMeeting(id int) (*models.Meeting, error)
+	DeleteMeeting(id string) error
+	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
@@ -47,17 +47,17 @@ func (mr meetingRepo) UpdateMeeting(meeting *models.Meeting) error {
 	return nil
 }
 
-func (mr meetingRepo) DeleteMeeting(id int) error {
-	result := mr.db.Delete(&models.Meeting{}, id)
+func (mr meetingRepo) DeleteMeeting(id string) error {
+	result := mr.db.Where("id = ?", id).Delete(&models.Meeting{})
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func (mr meetingRepo) GetMeeting(id int) (*models.Meeting, error) {
+func (mr meetingRepo) GetMeeting(id string) (*models.Meeting, error) {
 	var meeting models.Meeting
-	result := mr.db.First(&meeting, id)
+	result := mr.db.Where("id = ?", id).First(&meeting)
 	if result.Error != nil {
 		return nil, result.Error
 	}

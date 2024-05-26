@@ -11,8 +11,8 @@ import (
 type MeetingService interface {
 	CreateMeeting(operator *models.User, meeting *models.Meeting) error
 	UpdateMeeting(operator *models.User, meeting *models.Meeting) error
-	DeleteMeeting(operator *models.User, id int) error
-	GetMeeting(id int) (*models.Meeting, error)
+	DeleteMeeting(operator *models.User, id string) error
+	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
@@ -74,12 +74,18 @@ func (ms meetingService) CreateMeeting(operator *models.User, meeting *models.Me
 }
 
 func (ms meetingService) UpdateMeeting(operator *models.User, meeting *models.Meeting) error {
+	// find out the original meeting
+	originalMeeting, err := ms.MeetingDomain.GetMeeting(meeting.ID)
+	if err != nil {
+		return errors.New("meeting not found")
+	}
+
 	// check if the operator is the creator of the meeting
-	if operator.ID != meeting.OrganizerID {
+	if operator.ID != originalMeeting.OrganizerID {
 		return errors.New("only the organizer can update the meeting")
 	}
 
-	err := ms.checkValidMeetingTime(meeting)
+	err = ms.checkValidMeetingTime(meeting)
 	if err != nil {
 		return err
 	}
@@ -91,7 +97,7 @@ func (ms meetingService) UpdateMeeting(operator *models.User, meeting *models.Me
 	return nil
 }
 
-func (ms meetingService) DeleteMeeting(operator *models.User, id int) error {
+func (ms meetingService) DeleteMeeting(operator *models.User, id string) error {
 	// only the organizer can delete the meeting
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
@@ -108,7 +114,7 @@ func (ms meetingService) DeleteMeeting(operator *models.User, id int) error {
 	return nil
 }
 
-func (ms meetingService) GetMeeting(id int) (*models.Meeting, error) {
+func (ms meetingService) GetMeeting(id string) (*models.Meeting, error) {
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
 		return nil, err

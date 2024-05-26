@@ -9,8 +9,8 @@ import (
 type MeetingDomain interface {
 	CreateMeeting(meeting *models.Meeting) error
 	UpdateMeeting(meeting *models.Meeting) error
-	DeleteMeeting(id int) error
-	GetMeeting(id int) (*models.Meeting, error)
+	DeleteMeeting(id string) error
+	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
 }
@@ -47,7 +47,7 @@ func (md meetingDomain) UpdateMeeting(meeting *models.Meeting) error {
 	return nil
 }
 
-func (md meetingDomain) DeleteMeeting(id int) error {
+func (md meetingDomain) DeleteMeeting(id string) error {
 	err := md.MeetingRepo.DeleteMeeting(id)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (md meetingDomain) DeleteMeeting(id int) error {
 	return nil
 }
 
-func (md meetingDomain) GetMeeting(id int) (*models.Meeting, error) {
+func (md meetingDomain) GetMeeting(id string) (*models.Meeting, error) {
 	meeting, err := md.MeetingRepo.GetMeeting(id)
 	if err != nil {
 		return nil, err

@@ -984,7 +984,7 @@
                                     "type": "string"
                                 },
                                 "id": {
-                                    "type": "integer"
+                                    "type": "string"
                                 },
                                 "organizer": {
                                     "type": "integer"
@@ -1098,7 +1098,7 @@
                                         "type": "string"
                                     },
                                     "id": {
-                                        "type": "integer"
+                                        "type": "string"
                                     },
                                     "organizer": {
                                         "type": "integer"
@@ -1326,7 +1326,7 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "organizer": {
                     "type": "integer"

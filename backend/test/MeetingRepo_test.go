@@ -65,6 +65,7 @@ func (suite *MeetingRepoTestSuite) TestUpdateMeeting() {
 
 func (suite *MeetingRepoTestSuite) TestDeleteMeeting() {
 	meeting := &models.Meeting{
+		ID:        "1",
 		StartTime: time.Now().Add(-time.Hour),
 		EndTime:   time.Now().Add(time.Hour),
 	}
@@ -77,6 +78,7 @@ func (suite *MeetingRepoTestSuite) TestDeleteMeeting() {
 
 func (suite *MeetingRepoTestSuite) TestGetMeeting() {
 	meeting := &models.Meeting{
+		ID:        "1",
 		StartTime: time.Now().Add(-time.Hour),
 		EndTime:   time.Now().Add(time.Hour),
 	}

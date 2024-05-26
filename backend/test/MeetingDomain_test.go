@@ -24,12 +24,12 @@ func (m *MockMeetingRepo) UpdateMeeting(meeting *models.Meeting) error {
 	return args.Error(0)
 }
 
-func (m *MockMeetingRepo) DeleteMeeting(id int) error {
+func (m *MockMeetingRepo) DeleteMeeting(id string) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
 
-func (m *MockMeetingRepo) GetMeeting(id int) (*models.Meeting, error) {
+func (m *MockMeetingRepo) GetMeeting(id string) (*models.Meeting, error) {
 	args := m.Called(id)
 	return args.Get(0).(*models.Meeting), args.Error(1)
 }
@@ -60,7 +60,7 @@ func TestDomainCreateMeeting(t *testing.T) {
 
 func TestDomainUpdateMeeting(t *testing.T) {
 	meeting := &models.Meeting{
-		ID:          1,
+		ID:          "1",
 		Title:       "Updated Board Meeting",
 		Description: "Updated Annual Board Meeting",
 	}
@@ -74,7 +74,7 @@ func TestDomainUpdateMeeting(t *testing.T) {
 }
 
 func TestDomainDeleteMeeting(t *testing.T) {
-	id := 1
+	id := "1"
 
 	mockMeetingRepo := new(MockMeetingRepo)
 	mockMeetingRepo.On("DeleteMeeting", id).Return(nil)
@@ -85,7 +85,7 @@ func TestDomainDeleteMeeting(t *testing.T) {
 }
 
 func TestDomainGetMeeting(t *testing.T) {
-	id := 1
+	id := "1"
 	meeting := &models.Meeting{
 		Title:       "Board Meeting",
 		Description: "Annual Board Meeting",

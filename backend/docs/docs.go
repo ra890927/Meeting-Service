@@ -992,7 +992,7 @@ const docTemplate = `{
                                     "type": "string"
                                 },
                                 "id": {
-                                    "type": "integer"
+                                    "type": "string"
                                 },
                                 "organizer": {
                                     "type": "integer"
@@ -1106,7 +1106,7 @@ const docTemplate = `{
                                         "type": "string"
                                     },
                                     "id": {
-                                        "type": "integer"
+                                        "type": "string"
                                     },
                                     "organizer": {
                                         "type": "integer"
@@ -1334,7 +1334,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "organizer": {
                     "type": "integer"

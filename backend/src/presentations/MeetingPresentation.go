@@ -39,7 +39,7 @@ type CreateUpdateGetMeetingResponse struct {
 	Message string `json:"message"`
 	Data    struct {
 		Meeting struct {
-			ID           int       `json:"id"`
+			ID           string    `json:"id"`
 			RoomID       int       `json:"room_id"`
 			Title        string    `json:"title"`
 			OrganizerID  uint      `json:"organizer"`
@@ -53,7 +53,7 @@ type CreateUpdateGetMeetingResponse struct {
 }
 
 type UpdateMeetingBody struct {
-	ID           int       `json:"id"`
+	ID           string    `json:"id"`
 	RoomID       int       `json:"room_id"`
 	Title        string    `json:"title"`
 	Description  string    `json:"description"`
@@ -74,7 +74,7 @@ type GetAllMeetingsResponse struct {
 	Message string `json:"message"`
 	Data    struct {
 		Meetings []struct {
-			ID           int       `json:"id"`
+			ID           string    `json:"id"`
 			RoomID       int       `json:"room_id"`
 			Title        string    `json:"title"`
 			OrganizerID  uint      `json:"organizer"`
@@ -219,15 +219,15 @@ func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
 func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 	operator := c.MustGet("validate_user").(models.User)
 	var response DeleteMeetingResponse
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	id := c.Param("id")
+	if id == "" {
 		response.Status = "error"
 		response.Message = "Invalid request"
 		c.JSON(400, response)
 		return
 	}
 
-	err = mp.meetingService.DeleteMeeting(&operator, id)
+	err := mp.meetingService.DeleteMeeting(&operator, id)
 	if err != nil {
 		response.Status = "error"
 		response.Message = err.Error()
@@ -244,9 +244,9 @@ func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 // @Success 200 {object} CreateUpdateGetMeetingResponse
 // @Router /meeting/{id} [get]
 func (mp meetingPresentation) GetMeeting(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
 	var response CreateUpdateGetMeetingResponse
-	if err != nil {
+	if id == "" {
 		response.Status = "error"
 		response.Message = "Invalid request"
 		c.JSON(400, response)
@@ -294,7 +294,7 @@ func (mp meetingPresentation) GetAllMeetings(c *gin.Context) {
 	response.Message = "Meetings retrieved"
 	for _, meeting := range meetings {
 		var meetingResponse struct {
-			ID           int       `json:"id"`
+			ID           string    `json:"id"`
 			RoomID       int       `json:"room_id"`
 			Title        string    `json:"title"`
 			OrganizerID  uint      `json:"organizer"`
@@ -339,7 +339,6 @@ func (mp meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
 	}
 	roomIdInt, _ := strconv.Atoi(roomID)
 	parsedDate, _ := time.Parse("2006-01-02", date)
-	fmt.Println(roomIdInt, parsedDate)
 	meetings, err := mp.meetingService.GetMeetingsByRoomIdAndDate(roomIdInt, parsedDate)
 	if err != nil {
 		response.Status = "error"
@@ -354,7 +353,7 @@ func (mp meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
 	response.Message = "Meetings retrieved"
 	for _, meeting := range meetings {
 		var meetingResponse struct {
-			ID           int       `json:"id"`
+			ID           string    `json:"id"`
 			RoomID       int       `json:"room_id"`
 			Title        string    `json:"title"`
 			OrganizerID  uint      `json:"organizer"`
