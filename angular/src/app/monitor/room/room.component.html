@@ -13,6 +13,7 @@
                 <div class="list-column actions">Actions</div>
             </div>
         </mat-list-item>
+        
         <mat-list-item *ngFor="let rooms of roomsList">
             <div class="rooms row">
                 <div class="column room" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
@@ -20,74 +21,46 @@
                     <!-- <mat-label>Room Number</mat-label> -->
                     <input matInput #roomNumberInput [formControl]="roomNumberControl">
                 </mat-form-field>
-                <div class="tagContainer">
+
                 <!-- Tags (Chips) -->
-                <!-- <mat-chip-listbox class="tagsChips" aria-label="Room tags" [multiple]="true">
-                    <ng-container *ngFor="let tag of rooms.tag">
-                        <mat-chip-option *ngIf="isEditing || tag.selected" [selected]="tag.selected" [color]="tag.color" [disabled]="!isEditing || roomsEditing?.id !== rooms.id" (click)="toggleTagSelection(tag)">
-                        {{tag.name}}
-                        </mat-chip-option>
-                    </ng-container>
-                    <mat-chip-option [selected]="true">
-                        Orange
-                        <button matChipRemove aria-label="Remove orange">
-                          <mat-icon>cancel</mat-icon>
-                        </button>
-                      </mat-chip-option>
-                </mat-chip-listbox> -->
-                <!-- <form> -->
-                    <!-- <mat-form-field class="example-chip-list tags"> -->
-                      <!-- <mat-label>Tags</mat-label> -->
+                <div class="tagContainer">
+                    <!-- add button -->
                     <div class="add-tag-button">
-                    <button *ngIf="isEditing && roomsEditing?.id === rooms.id" mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-                        <mat-icon>add_circle</mat-icon>
-                    </button>
+                        <button *ngIf="isEditing && roomsEditing?.id === rooms.id" mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+                            <mat-icon>add_circle</mat-icon>
+                        </button>
                     </div>
-                        
+                    <!-- choose tags -->
                     <mat-menu #menu="matMenu">
                         @for (tag of allTags; track tag) {
-                            <button *ngIf="!rooms.fruits.includes(tag)" mat-menu-item (click)="selected_button($event, rooms, tag)">{{tag}}</button>
-           
+                            <button *ngIf="!rooms.fruits.includes(tag)" mat-menu-item (click)="selected($event, rooms, tag)">{{tag}}</button>
                         }
                     </mat-menu>
-
-                    <mat-chip-grid #chipGrid aria-label="Fruit selection">
-                        @for (fruit of rooms.fruits; track fruit) {
-                          <mat-chip-row (removed)="remove(fruit, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
-                            <!-- <mat-chip-row *ngFor="let fruit of rooms.fruits" (removed)="remove(fruit, rooms)"> -->
-                            {{fruit}}
-                            <button *ngIf="isEditing && roomsEditing?.id === rooms.id" matChipRemove [attr.aria-label]="'remove ' + fruit">
-                              <mat-icon>cancel</mat-icon>
-                            </button>
-                          </mat-chip-row>
-                        }
-                    </mat-chip-grid>
-
-                      <!-- <mat-form-field>
-                      <input matInput placeholder="New Tag..." #fruitInput [formControl]="tagCtrl"
-                        [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        (matChipInputTokenEnd)="add($event, rooms)"/>
-                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event, rooms)">
-                        @for (fruit of filteredFruits | async; track fruit) {
-                          <mat-option [value]="fruit">{{fruit}}</mat-option>
-                        }
-                      </mat-autocomplete>
-                    </mat-form-field> -->
-                    <!-- </mat-form-field> -->
-                  <!-- </form> -->
-               
+                    <!-- display tags -->
+                    @for (tag of rooms.fruits; track tag) {
+                        <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
+                        <!-- <mat-chip-row *ngFor="let tag of rooms.fruits" (removed)="remove(tag, rooms)"> -->
+                        {{tag}}
+                        <button *ngIf="isEditing && roomsEditing?.id === rooms.id" matChipRemove [attr.aria-label]="'remove ' + tag">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                        </mat-chip-row>
+                    }
                 </div>
+
+                <!-- Capacity -->
                 <div  class="column capacity" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
                 <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column  capacity">
-                    <!-- <mat-label>Capacity</mat-label> -->
                     <input matInput #capacityInput [formControl]="capacityControl">
                 </mat-form-field>
+
+                <!-- Details -->
                 <div class="column details" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.details}}">{{rooms.details}}</div>
                 <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column details">
-                    <!-- <mat-label>Details</mat-label> -->
                     <input matInput #detailsInput [formControl]="detailsControl">
                   </mat-form-field>
+                  
+                <!-- Actions -->
                 <div class="column controls actions">
                     <mat-icon *ngIf="!isEditing || roomsEditing?.id !== rooms.id" class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
                     <mat-icon *ngIf="isEditing && roomsEditing?.id === rooms.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>

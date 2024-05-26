@@ -6,11 +6,28 @@
             <input matInput [(ngModel)]="roomNumber">
         </mat-form-field>
 
-        <!-- <p>Tags</p> -->
-        <mat-chip-listbox class="tags" aria-label="Room tags" [multiple]="true">
-            <mat-chip-option *ngFor="let tag of tag" [selected]="tag.selected" [color]="tag.color" (click)="toggleTagSelection(tag)">
-            {{tag.name}}
-            </mat-chip-option>
+        <div class="add-tag-button">
+            <span>Tags</span>
+            <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+                <mat-icon>add_circle</mat-icon>
+            </button>
+        </div>
+                
+        <mat-menu #menu="matMenu">
+            @for (tag of allTags; track tag) {
+                <button *ngIf="!fruits.includes(tag)" mat-menu-item (click)="selected($event, tag)">{{tag}}</button>
+
+            }
+        </mat-menu>
+        <mat-chip-listbox>
+            @for (tag of fruits; track tag) {
+                <mat-chip-row (removed)="remove(tag)">
+                {{tag}}
+                <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+                </mat-chip-row>
+            }
         </mat-chip-listbox>
 
         <mat-form-field>

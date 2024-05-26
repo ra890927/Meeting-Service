@@ -37,6 +37,11 @@
 .add-tag-button{
     margin-right: 10px;
 }
+
+mat-chip-row{
+    margin: 5px;
+}
+
 .disabled-chip {
     pointer-events: none;
     opacity: 0.8;

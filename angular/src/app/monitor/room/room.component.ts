@@ -11,14 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { v4 as uuidv4 } from 'uuid'; // generate random id
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { AsyncPipe } from '@angular/common';
-import {MatAutocompleteSelectedEvent, MatAutocompleteModule} from '@angular/material/autocomplete';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {LiveAnnouncer} from '@angular/cdk/a11y';
 import { MatMenuModule } from '@angular/material/menu';
-import { cellClick } from '@syncfusion/ej2-angular-schedule';
 
 @Component({
   selector: 'app-room',
@@ -35,8 +29,6 @@ import { cellClick } from '@syncfusion/ej2-angular-schedule';
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
-    MatAutocompleteModule,
-    AsyncPipe,
     MatMenuModule
   ],
   templateUrl: './room.component.html',
@@ -53,29 +45,12 @@ export class RoomComponent implements OnInit{
   roomsList: rooms[] = [{ 
     id: '001',
     roomNumber: 'lab639',
-    tag: [
-      { name: 'Projector Available', selected: true, color: 'primary' },
-      { name: 'Free WiFi', selected: true, color: 'primary' },
-      { name: 'Air Conditioning', selected: false, color: 'primary' } ,
-      // { name: 'Projector Available1', selected: true, color: 'primary' },
-      // { name: 'Free WiF2i', selected: true, color: 'primary' },
-      // { name: 'Air Conditioning3', selected: false, color: 'primary' },
-      // { name: 'Free WiFi4', selected: true, color: 'primary' },
-      // { name: 'Air Conditioning5', selected: false, color: 'primary' } ,
-      // { name: 'Projector Available6', selected: true, color: 'primary' },
-      // { name: 'Free WiF7i', selected: true, color: 'primary' },
-    ],
     fruits: ['Food Allowed'],
     capacity: 10,
     details: 'This is a test room.'
   },
   { id: '002',
     roomNumber: 'lab637',
-    tag: [
-      { name: 'Projector Available', selected: false, color: 'primary' },
-      { name: 'Free WiFi', selected: true, color: 'primary' },
-      { name: 'Air Conditioning', selected: true, color: 'primary' }
-    ],
     fruits: ['Food Allowed', 'Projector Available', 'Free WiFi'],
     capacity: 30,
     details: 'This is a test room2.'
@@ -87,12 +62,6 @@ export class RoomComponent implements OnInit{
   detailsControl = new FormControl();
 
   constructor(public dialog: MatDialog) {
-    // for search filter in autocomplete
-    this.filteredFruits = this.tagCtrl.valueChanges.pipe(
-      startWith(null),
-      map((fruit: string | null) => (fruit ? this._filter(fruit) : this.allTags.slice())),
-    );
-
   }
 
   openDialog() {
@@ -104,7 +73,6 @@ export class RoomComponent implements OnInit{
         this.roomsList.push({
           id: uuidv4(),
           roomNumber: result.roomNumber,
-          tag: result.tags,
           fruits: result.fruits,
           capacity: result.capacity,
           details: result.details
@@ -148,10 +116,6 @@ export class RoomComponent implements OnInit{
     localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
   }
 
-  toggleTagSelection(tag: { name: string, selected: boolean, color: string }) {
-    tag.selected = !tag.selected;
-  }
-
   save(): void {
     if (this.roomsEditing) {
       this.roomsEditing.roomNumber = this.roomNumberInput.nativeElement.value;
@@ -166,34 +130,12 @@ export class RoomComponent implements OnInit{
     this.detailsInput.nativeElement.value = "";
   }
 
-  separatorKeysCodes: number[] = [ENTER, COMMA]; // for chips input search filter
-  tagCtrl = new FormControl('');
-  filteredFruits: Observable<string[]>;
   filteredTags: string[] = [];
   allTags: string[] = ['Projector Available', 'Free WiFi', 'Air Conditioning', 'Food Allowed', 'Whiteboard'];
-
 
   @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement> | undefined;
 
   announcer = inject(LiveAnnouncer);
-
-  // if press separator key, then add event triggered
-  add(event: MatChipInputEvent, rooms: rooms): void {
-    const value = (event.value || '').trim(); // trim the unwanted spaces
-
-    if (value && !rooms.fruits.includes(value)) {
-      rooms.fruits.push(value);
-      if (!this.allTags.includes(value)) {
-        this.allTags.push(value);
-      }
-    }
-
-    // Clear the input value
-    event.chipInput!.clear();
-
-    this.tagCtrl.setValue(null);
-    console.log(rooms.fruits);
-  }
 
   remove(fruit: string, rooms: rooms): void {
     const index = rooms.fruits.indexOf(fruit);
@@ -206,33 +148,10 @@ export class RoomComponent implements OnInit{
     console.log(rooms.fruits);
   }
 
-  selected(event: MatAutocompleteSelectedEvent, rooms: rooms): void {
-    
-    console.log(rooms.roomNumber);
-    if(!rooms.fruits.includes(event.option.viewValue)){
-      rooms.fruits.push(event.option.viewValue);
-    }
-    if (this.fruitInput) {
-      this.fruitInput.nativeElement.value = '';
-    }
-    this.tagCtrl.setValue(null);
-    console.log(rooms.fruits);
-    
-  }
-
-  selected_button(event: Event, rooms: rooms, fruit: string): void {
+  selected(event: Event, rooms: rooms, fruit: string): void {
     if (!rooms.fruits.includes(fruit)) {
       rooms.fruits.push(fruit);
     }
-  }
-  
-
-  
-  // for search filter in autocomplete
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.allTags.filter(fruit => fruit.toLowerCase().includes(filterValue));
   }
 
 }
@@ -249,31 +168,38 @@ export class RoomComponent implements OnInit{
     MatButtonModule,
     MatChipsModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    MatMenuModule,
+    MatIconModule
   ],
 })
 export class AddRoom {
   roomNumber: string = '';
-  tag: { name: string, selected: boolean, color: string }[] = [
-    { name: 'Projector Available', selected: false, color: 'primary' },
-    { name: 'Free WiFi', selected: false, color: 'primary' },
-    { name: 'Air Conditioning', selected: false, color: 'primary' },
-  ];
+  fruits: string[] = [];
   capacity: number = 0;
   details: string = '';
+  allTags: string[] = ['Projector Available', 'Free WiFi', 'Air Conditioning', 'Food Allowed', 'Whiteboard'];
 
   constructor(
     public dialogRef: MatDialogRef<AddRoom>,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 
-    toggleTagSelection(tag: { name: string, selected: boolean, color: string }) {
-      tag.selected = !tag.selected;
+    selected(event: Event, tag: string): void {
+      this.fruits.push(tag);
+    }
+
+    remove(tag: string): void {
+      const index = this.fruits.indexOf(tag);
+  
+      if (index >= 0) { // check if the fruit is in the list
+        this.fruits.splice(index, 1);
+      }
     }
 
     onSave(): void {
       this.dialogRef.close({
         roomNumber: this.roomNumber,
-        tags: this.tag,
+        fruits: this.fruits,
         capacity: this.capacity,
         details: this.details
       });

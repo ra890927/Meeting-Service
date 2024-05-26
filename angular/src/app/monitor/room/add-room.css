@@ -4,20 +4,22 @@
     margin: 10px;
 }
 
+.add-tag-button{
+    display: flex;
+    align-items: center;
+}
+
+mat-chip-listbox{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    flex-wrap: wrap;
+    width: 400px;
+
+}
+
 .buttonContainer {
     display: flex;
     justify-content: space-between;
     margin: 0px 10px;
 }
-
-.tags{
-    margin-bottom: 20px;
-    max-width: 300px;
-}
-/* 
-mat-chip-listbox{
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-
-} */
