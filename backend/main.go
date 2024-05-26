@@ -29,12 +29,13 @@ func main() {
 	v1 := r.Group("/api/v1")
 	{
 		roomPresentation := presentations.NewRoomPresentation()
+		userPresentation := presentations.NewUserPresentation()
 
 		eg := v1.Group("/user")
 		{
-			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
-			eg.PUT("", userPresentation.UpdateUser)
+			eg.PUT("", middlewares.AuthRequire(), userPresentation.UpdateUser)
+			eg.GET("/getAllUsers", userPresentation.GetAllUsers)
 		}
 		eg = v1.Group("/auth")
 		{
