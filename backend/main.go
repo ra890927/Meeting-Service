@@ -28,6 +28,7 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
+		meeingPresentation := presentations.NewMeetingPresentation()
 		eg := v1.Group("/user")
 		{
 			userPresentation := presentations.NewUserPresentation()
@@ -56,6 +57,16 @@ func main() {
 			eg.POST("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeValue)
 			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
 			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)
+		}
+		eg = v1.Group("/meeting")
+		{
+			eg.GET("/getAllMeetings", meeingPresentation.GetAllMeetings)
+			eg.GET("/:id", meeingPresentation.GetMeeting)
+			eg.GET("/getMeetingsByRoomIdAndDate", meeingPresentation.GetMeetingsByRoomIdAndDate)
+			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
+			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
+			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)
+
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
