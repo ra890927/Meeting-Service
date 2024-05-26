@@ -40,7 +40,7 @@ definitions:
       username:
         type: string
     type: object
-  presentations.CreateCodeTypeParam:
+  presentations.CreateCodeTypeInput:
     properties:
       type_desc:
         type: string
@@ -73,7 +73,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.CreateCodeValueParam:
+  presentations.CreateCodeValueInput:
     properties:
       code_type_id:
         type: integer
@@ -100,6 +100,44 @@ definitions:
                 type: string
               id:
                 type: integer
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.CreateRoomInput:
+    properties:
+      capacity:
+        type: integer
+      room_name:
+        type: string
+      rules:
+        items:
+          type: integer
+        type: array
+      type:
+        type: string
+    type: object
+  presentations.CreateRoomResponse:
+    properties:
+      data:
+        properties:
+          room:
+            properties:
+              capacity:
+                type: integer
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
+                items:
+                  type: integer
+                type: array
+              type:
+                type: string
             type: object
         type: object
       message:
@@ -139,12 +177,64 @@ definitions:
       status:
         type: string
     type: object
+  presentations.GetAllRoomsResponse:
+    properties:
+      data:
+        properties:
+          rooms:
+            items:
+              properties:
+                capacity:
+                  type: integer
+                id:
+                  type: integer
+                room_name:
+                  type: string
+                rules:
+                  items:
+                    type: integer
+                  type: array
+                type:
+                  type: string
+              type: object
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.GetCodeValueByIDResponse:
     properties:
       data:
         properties:
           code_value:
             $ref: '#/definitions/models.CodeValue'
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetRoomByIDResponse:
+    properties:
+      data:
+        properties:
+          room:
+            properties:
+              capacity:
+                type: integer
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
+                items:
+                  type: integer
+                type: array
+              type:
+                type: string
+            type: object
         type: object
       message:
         type: string
@@ -195,7 +285,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.UpdateCodeTypeParam:
+  presentations.UpdateCodeTypeInput:
     properties:
       id:
         type: integer
@@ -220,7 +310,7 @@ definitions:
       status:
         type: string
     type: object
-  presentations.UpdateCodeValueParam:
+  presentations.UpdateCodeValueInput:
     properties:
       code_type_id:
         type: integer
@@ -257,14 +347,60 @@ definitions:
       status:
         type: string
     type: object
+  presentations.UpdateRoomInput:
+    properties:
+      capacity:
+        type: integer
+      id:
+        type: integer
+      room_name:
+        type: string
+      rules:
+        items:
+          type: integer
+        type: array
+      type:
+        type: string
+    type: object
+  presentations.UpdateRoomResponse:
+    properties:
+      data:
+        properties:
+          room:
+            properties:
+              capacity:
+                type: integer
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
+                items:
+                  type: integer
+                type: array
+              type:
+                type: string
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.WhoAmIResponse:
     properties:
       data:
         properties:
           user:
             properties:
+              email:
+                type: string
               id:
                 type: integer
+              role:
+                type: string
+              username:
+                type: string
             type: object
         type: object
       message:
@@ -278,6 +414,66 @@ info:
   title: Meeting Center API
   version: "1.0"
 paths:
+  /admin/room:
+    post:
+      consumes:
+      - application/json
+      description: Create a new room
+      parameters:
+      - description: Room information
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateRoomInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateRoomResponse'
+      summary: Create a new room
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update room information
+      parameters:
+      - description: Room information
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateRoomInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.UpdateRoomResponse'
+      summary: Update room information
+      tags:
+      - admin
+  /admin/room/{id}:
+    delete:
+      description: Delete room by room ID
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: deleted
+          schema:
+            type: string
+      summary: Delete room
+      tags:
+      - admin
   /auth/login:
     post:
       consumes:
@@ -361,7 +557,7 @@ paths:
         name: codeType
         required: true
         schema:
-          $ref: '#/definitions/presentations.CreateCodeTypeParam'
+          $ref: '#/definitions/presentations.CreateCodeTypeInput'
       produces:
       - application/json
       responses:
@@ -382,7 +578,7 @@ paths:
         name: codeType
         required: true
         schema:
-          $ref: '#/definitions/presentations.UpdateCodeTypeParam'
+          $ref: '#/definitions/presentations.UpdateCodeTypeInput'
       produces:
       - application/json
       responses:
@@ -460,7 +656,7 @@ paths:
         name: codeValue
         required: true
         schema:
-          $ref: '#/definitions/presentations.CreateCodeValueParam'
+          $ref: '#/definitions/presentations.CreateCodeValueInput'
       produces:
       - application/json
       responses:
@@ -481,7 +677,7 @@ paths:
         name: codeValue
         required: true
         schema:
-          $ref: '#/definitions/presentations.UpdateCodeValueParam'
+          $ref: '#/definitions/presentations.UpdateCodeValueInput'
       produces:
       - application/json
       responses:
@@ -513,6 +709,34 @@ paths:
       summary: Get a code value by ID
       tags:
       - code
+  /room/{id}:
+    get:
+      description: Get room by ID
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetRoomByIDResponse'
+      summary: Get room by ID
+      tags:
+      - room
+  /room/getAllRooms:
+    get:
+      description: Get all rooms
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllRoomsResponse'
+      summary: Get all rooms
+      tags:
+      - room
   /user:
     post:
       consumes:

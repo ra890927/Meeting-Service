@@ -6,40 +6,40 @@ import (
 )
 
 type RoomDomain interface {
-	CreateRoom(room *models.Room) (*models.Room, error)
-	GetRoom(id string) (*models.Room, error)
+	CreateRoom(room *models.Room) error
+	GetRoomByID(id int) (*models.Room, error)
 	GetAllRooms() ([]*models.Room, error)
-	UpdateRoom(id string, room *models.Room) error
-	DeleteRoom(id string) error
+	UpdateRoom(room *models.Room) error
+	DeleteRoom(id int) error
 }
 
 type roomDomain struct {
-	RoomRepo repos.RoomRepo
+	roomRepo repos.RoomRepo
 }
 
 // NewRoomDomain constructs a new RoomDomain. Optionally a specific RoomRepo can be injected.
 func NewRoomDomain(roomRepoArgs ...repos.RoomRepo) RoomDomain {
 	if len(roomRepoArgs) == 1 {
-		return RoomDomain(&roomDomain{RoomRepo: roomRepoArgs[0]})
+		return RoomDomain(&roomDomain{roomRepo: roomRepoArgs[0]})
 	} else if len(roomRepoArgs) == 0 {
-		return RoomDomain(&roomDomain{RoomRepo: repos.NewRoomRepo()})
+		return RoomDomain(&roomDomain{roomRepo: repos.NewRoomRepo()})
 	} else {
 		panic("Too many arguments")
 	}
 }
 
 // CreateRoom creates a new room using the RoomRepo
-func (rd roomDomain) CreateRoom(room *models.Room) (*models.Room, error) {
-	createdRoom, err := rd.RoomRepo.CreateRoom(room)
+func (rd roomDomain) CreateRoom(room *models.Room) error {
+	err := rd.roomRepo.CreateRoom(room)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return createdRoom, nil
+	return nil
 }
 
 // UpdateRoom updates an existing room using the RoomRepo
-func (rd roomDomain) UpdateRoom(id string, room *models.Room) error {
-	err := rd.RoomRepo.UpdateRoom(id, room)
+func (rd roomDomain) UpdateRoom(room *models.Room) error {
+	err := rd.roomRepo.UpdateRoom(room)
 	if err != nil {
 		return err
 	}
@@ -47,17 +47,17 @@ func (rd roomDomain) UpdateRoom(id string, room *models.Room) error {
 }
 
 // DeleteRoom deletes a room by its ID using the RoomRepo
-func (rd roomDomain) DeleteRoom(id string) error {
-	err := rd.RoomRepo.DeleteRoom(id)
+func (rd roomDomain) DeleteRoom(id int) error {
+	err := rd.roomRepo.DeleteRoom(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// GetRoom retrieves a room by its ID using the RoomRepo
-func (rd roomDomain) GetRoom(id string) (*models.Room, error) {
-	room, err := rd.RoomRepo.GetRoom(id)
+// GetRoomByID retrieves a room by its ID using the RoomRepo
+func (rd roomDomain) GetRoomByID(id int) (*models.Room, error) {
+	room, err := rd.roomRepo.GetRoomByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (rd roomDomain) GetRoom(id string) (*models.Room, error) {
 }
 
 func (rd roomDomain) GetAllRooms() ([]*models.Room, error) {
-	rooms, err := rd.RoomRepo.GetAllRooms()
+	rooms, err := rd.roomRepo.GetAllRooms()
 	if err != nil {
 		return nil, err
 	}

@@ -28,6 +28,8 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
+		roomPresentation := presentations.NewRoomPresentation()
+
 		eg := v1.Group("/user")
 		{
 			userPresentation := presentations.NewUserPresentation()
@@ -56,6 +58,21 @@ func main() {
 			eg.POST("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeValue)
 			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
 			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)
+		}
+		eg = v1.Group("/room")
+		{
+			eg.GET("/getAllRooms", roomPresentation.GetAllRooms)
+			eg.GET("/:id", roomPresentation.GetRoomByID)
+		}
+		eg = v1.Group("/admin")
+		eg.Use(middlewares.AuthRequire(), middlewares.AdminRequire())
+		{
+			sub := eg.Group("/room")
+			{
+				sub.POST("", roomPresentation.CreateRoom)
+				sub.PUT("", roomPresentation.UpdateRoom)
+				sub.DELETE("/:id", roomPresentation.DeleteRoom)
+			}
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
