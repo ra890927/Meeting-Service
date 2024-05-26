@@ -18,17 +18,17 @@ type RoomPresentation interface {
 }
 
 type roomPresentation struct {
-	RoomService services.RoomService
+	roomService services.RoomService
 }
 
 func NewRoomPresentation(roomServiceArgs ...services.RoomService) RoomPresentation {
 	if len(roomServiceArgs) == 1 {
 		return RoomPresentation(&roomPresentation{
-			RoomService: roomServiceArgs[0],
+			roomService: roomServiceArgs[0],
 		})
 	} else if len(roomServiceArgs) == 0 {
 		return RoomPresentation(&roomPresentation{
-			RoomService: services.NewRoomService(),
+			roomService: services.NewRoomService(),
 		})
 	} else {
 		panic("Too many arguments")
@@ -114,7 +114,7 @@ type GetRoomByIDResponse struct {
 // @Param room body CreateRoomInput true "Room information"
 // @Success 200 {object} CreateRoomResponse
 // @Router /admin/room [post]
-func (rp *roomPresentation) CreateRoom(c *gin.Context) {
+func (rp roomPresentation) CreateRoom(c *gin.Context) {
 	var createRoomInput CreateRoomInput
 	var createRoomResponse CreateRoomResponse
 	if err := c.BindJSON(&createRoomInput); err != nil {
@@ -131,7 +131,7 @@ func (rp *roomPresentation) CreateRoom(c *gin.Context) {
 		Capacity: createRoomInput.Capacity,
 	}
 
-	err := rp.RoomService.CreateRoom(&room)
+	err := rp.roomService.CreateRoom(&room)
 	if err != nil {
 		createRoomResponse.Status = "error"
 		createRoomResponse.Message = "Failed to create room"
@@ -158,7 +158,7 @@ func (rp *roomPresentation) CreateRoom(c *gin.Context) {
 // @Param room body UpdateRoomInput true "Room information"
 // @Success 200 {object} UpdateRoomResponse
 // @Router /admin/room [put]
-func (rp *roomPresentation) UpdateRoom(c *gin.Context) {
+func (rp roomPresentation) UpdateRoom(c *gin.Context) {
 	var updateRoomInput UpdateRoomInput
 	var updateRoomResponse UpdateRoomResponse
 	if err := c.BindJSON(&updateRoomInput); err != nil {
@@ -176,7 +176,7 @@ func (rp *roomPresentation) UpdateRoom(c *gin.Context) {
 		Capacity: updateRoomInput.Capacity,
 	}
 
-	err := rp.RoomService.UpdateRoom(&room)
+	err := rp.roomService.UpdateRoom(&room)
 	if err != nil {
 		updateRoomResponse.Status = "error"
 		updateRoomResponse.Message = "Failed to update room"
@@ -206,7 +206,7 @@ type DeleteRoomResponse struct {
 // @Param id path int true "Room ID"
 // @Success 200 {string} string "deleted"
 // @Router /admin/room/{id} [delete]
-func (rp *roomPresentation) DeleteRoom(c *gin.Context) {
+func (rp roomPresentation) DeleteRoom(c *gin.Context) {
 	var deleteRoomResponse DeleteRoomResponse
 	roomID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -216,7 +216,7 @@ func (rp *roomPresentation) DeleteRoom(c *gin.Context) {
 		return
 	}
 
-	err = rp.RoomService.DeleteRoom(roomID)
+	err = rp.roomService.DeleteRoom(roomID)
 	if err != nil {
 		deleteRoomResponse.Status = "error"
 		deleteRoomResponse.Message = "Failed to delete room"
@@ -235,7 +235,7 @@ func (rp *roomPresentation) DeleteRoom(c *gin.Context) {
 // @Param id path int true "Room ID"
 // @Success 200 {object} GetRoomByIDResponse
 // @Router /room/{id} [get]
-func (rp *roomPresentation) GetRoomByID(c *gin.Context) {
+func (rp roomPresentation) GetRoomByID(c *gin.Context) {
 	var getRoomByIDResponse GetRoomByIDResponse
 	roomID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -245,7 +245,7 @@ func (rp *roomPresentation) GetRoomByID(c *gin.Context) {
 		return
 	}
 
-	room, err := rp.RoomService.GetRoomByID(roomID)
+	room, err := rp.roomService.GetRoomByID(roomID)
 	if err != nil {
 		getRoomByIDResponse.Status = "error"
 		getRoomByIDResponse.Message = "Failed to get room"
@@ -269,8 +269,8 @@ func (rp *roomPresentation) GetRoomByID(c *gin.Context) {
 // @Tags room
 // @Success 200 {object} GetAllRoomsResponse
 // @Router /room/getAllRooms [get]
-func (rp *roomPresentation) GetAllRooms(c *gin.Context) {
-	rooms, err := rp.RoomService.GetAllRooms()
+func (rp roomPresentation) GetAllRooms(c *gin.Context) {
+	rooms, err := rp.roomService.GetAllRooms()
 	var getAllRoomsResponse GetAllRoomsResponse
 	if err != nil {
 		getAllRoomsResponse.Status = "error"

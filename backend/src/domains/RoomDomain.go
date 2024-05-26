@@ -14,15 +14,15 @@ type RoomDomain interface {
 }
 
 type roomDomain struct {
-	RoomRepo repos.RoomRepo
+	roomRepo repos.RoomRepo
 }
 
 // NewRoomDomain constructs a new RoomDomain. Optionally a specific RoomRepo can be injected.
 func NewRoomDomain(roomRepoArgs ...repos.RoomRepo) RoomDomain {
 	if len(roomRepoArgs) == 1 {
-		return RoomDomain(&roomDomain{RoomRepo: roomRepoArgs[0]})
+		return RoomDomain(&roomDomain{roomRepo: roomRepoArgs[0]})
 	} else if len(roomRepoArgs) == 0 {
-		return RoomDomain(&roomDomain{RoomRepo: repos.NewRoomRepo()})
+		return RoomDomain(&roomDomain{roomRepo: repos.NewRoomRepo()})
 	} else {
 		panic("Too many arguments")
 	}
@@ -30,7 +30,7 @@ func NewRoomDomain(roomRepoArgs ...repos.RoomRepo) RoomDomain {
 
 // CreateRoom creates a new room using the RoomRepo
 func (rd roomDomain) CreateRoom(room *models.Room) error {
-	err := rd.RoomRepo.CreateRoom(room)
+	err := rd.roomRepo.CreateRoom(room)
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func (rd roomDomain) CreateRoom(room *models.Room) error {
 
 // UpdateRoom updates an existing room using the RoomRepo
 func (rd roomDomain) UpdateRoom(room *models.Room) error {
-	err := rd.RoomRepo.UpdateRoom(room)
+	err := rd.roomRepo.UpdateRoom(room)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (rd roomDomain) UpdateRoom(room *models.Room) error {
 
 // DeleteRoom deletes a room by its ID using the RoomRepo
 func (rd roomDomain) DeleteRoom(id int) error {
-	err := rd.RoomRepo.DeleteRoom(id)
+	err := rd.roomRepo.DeleteRoom(id)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (rd roomDomain) DeleteRoom(id int) error {
 
 // GetRoomByID retrieves a room by its ID using the RoomRepo
 func (rd roomDomain) GetRoomByID(id int) (*models.Room, error) {
-	room, err := rd.RoomRepo.GetRoomByID(id)
+	room, err := rd.roomRepo.GetRoomByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (rd roomDomain) GetRoomByID(id int) (*models.Room, error) {
 }
 
 func (rd roomDomain) GetAllRooms() ([]*models.Room, error) {
-	rooms, err := rd.RoomRepo.GetAllRooms()
+	rooms, err := rd.roomRepo.GetAllRooms()
 	if err != nil {
 		return nil, err
 	}
