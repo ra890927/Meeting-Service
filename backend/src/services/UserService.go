@@ -37,8 +37,8 @@ func (us userService) CreateUser(user *models.User) (*models.User, error) {
 	}
 
 	// Check if the user exists
-	_, err = us.userDomain.GetUserByEmail(user.Email)
-	if err == nil {
+	existingUser, _ := us.userDomain.GetUserByEmail(user.Email)
+	if existingUser.ID != 0 {
 		return nil, errors.New("user already exists")
 	}
 

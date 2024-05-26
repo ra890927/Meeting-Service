@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"testing"
@@ -28,6 +29,16 @@ func (m *MockUserDomain) GetUserByEmail(email string) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
+func (m *MockUserDomain) GetAllUsers() ([]models.User, error) {
+	args := m.Called()
+	return args.Get(0).([]models.User), nil
+}
+
+func (m *MockUserDomain) GetUserByID(id uint) (*models.User, error) {
+	args := m.Called(id)
+	return args.Get(0).(*models.User), nil
+}
+
 func TestServiceCreateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
@@ -39,7 +50,7 @@ func TestServiceCreateUser(t *testing.T) {
 	}
 	// mock the user domain
 	mockUserDomain := new(MockUserDomain)
-	mockUserDomain.On("GetUserByEmail", user.Email).Return(&models.User{}, nil)
+	mockUserDomain.On("GetUserByEmail", user.Email).Return(&models.User{}, errors.New("user not found"))
 	mockUserDomain.On("CreateUser", user).Return(user)
 	us := services.NewUserService(mockUserDomain)
 
@@ -59,6 +70,7 @@ func TestServiceUpdateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
 	user := &models.User{
+		ID:       1,
 		Username: "test-username-updated",
 		Email:    "test@test.com",
 		Password: "test-password-updated",
@@ -66,12 +78,12 @@ func TestServiceUpdateUser(t *testing.T) {
 	}
 	// mock the user domain
 	mockUserDomain := new(MockUserDomain)
-	mockUserDomain.On("GetUserByEmail", user.Email).Return(&models.User{}, nil)
+	mockUserDomain.On("GetUserByID", user.ID).Return(user, nil)
 	mockUserDomain.On("UpdateUser", user).Return(user)
 	us := services.NewUserService(mockUserDomain)
 
 	// Act
-	updatedUser, err := us.UpdateUser(user)
+	updatedUser, err := us.UpdateUser(user, user)
 
 	// Assert
 	assert.NoError(t, err)

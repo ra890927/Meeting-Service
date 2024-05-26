@@ -13,6 +13,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func addFakeUserMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user := models.User{ID: 1}
+		c.Set("validate_user", user)
+		c.Next()
+	}
+}
+
 type mockUserService struct {
 	mock.Mock
 }
@@ -22,9 +30,14 @@ func (m *mockUserService) CreateUser(user *models.User) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
-func (m *mockUserService) UpdateUser(user *models.User) (*models.User, error) {
-	args := m.Called(user)
+func (m *mockUserService) UpdateUser(operator *models.User, user *models.User) (*models.User, error) {
+	args := m.Called(operator, user)
 	return args.Get(0).(*models.User), nil
+}
+
+func (m *mockUserService) GetAllUsers() ([]models.User, error) {
+	args := m.Called()
+	return args.Get(0).([]models.User), nil
 }
 
 func TestRegisterUser(t *testing.T) {
@@ -32,7 +45,6 @@ func TestRegisterUser(t *testing.T) {
 		Username: "test-user",
 		Email:    "test@test.com",
 		Password: "test-password",
-		Role:     "test-role",
 	}
 	// Mock the user service
 	mockUserService := new(mockUserService)
@@ -59,6 +71,7 @@ func TestRegisterUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	// Arrange
 	user := models.User{
+		ID:       1,
 		Username: "test-user-updated",
 		Email:    "test@test.com",
 		Password: "test-password-updated",
@@ -66,16 +79,16 @@ func TestUpdateUser(t *testing.T) {
 	}
 	// - Mock the user service
 	mockUserService := new(mockUserService)
-	mockUserService.On("UpdateUser", &user).Return(&user, nil)
+	mockUserService.On("UpdateUser", &models.User{ID: 1}, &user).Return(&user, nil)
 	up := presentations.NewUserPresentation(mockUserService)
 
 	// - Set the mode to test
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.PUT("/user", up.UpdateUser)
+	r.PUT("/user", addFakeUserMiddleware(), up.UpdateUser)
 
 	// - Create a request
-	jsonDataString := `{"username":"test-user-updated","email":"test@test.com","password":"test-password-updated","role":"test-role-updated"}`
+	jsonDataString := `{"id":1, "username":"test-user-updated","email":"test@test.com","password":"test-password-updated","role":"test-role-updated"}`
 	jsonData := []byte(jsonDataString)
 	req := httptest.NewRequest("PUT", "/user", bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")

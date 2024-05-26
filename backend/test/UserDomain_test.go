@@ -28,6 +28,16 @@ func (m *MockUserRepo) GetUserByEmail(email string) (*models.User, error) {
 	return args.Get(0).(*models.User), nil
 }
 
+func (m *MockUserRepo) GetAllUsers() ([]models.User, error) {
+	args := m.Called()
+	return args.Get(0).([]models.User), nil
+}
+
+func (m *MockUserRepo) GetUserByID(id uint) (*models.User, error) {
+	args := m.Called(id)
+	return args.Get(0).(*models.User), nil
+}
+
 func TestDomainCreateUser(t *testing.T) {
 	// Arrange
 	// new user for testing input
