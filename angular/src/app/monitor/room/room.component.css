@@ -3,18 +3,23 @@
     margin: 20px;
 }
 
-button{
-    margin-top: 20px;
-
+.example-chip-list{
+    width: 800px;
 }
 
-.list-header, .list-row {
+/* button{
+    margin-top: 20px;
+
+} */
+
+.list-header{
     display: flex;
 }
 
 .list-column {
     padding: 8px;
     text-align: left;
+
 }
 
 .room {
@@ -25,7 +30,17 @@ button{
     overflow-y: auto;
     overflow-x: auto;
     display: flex;
+    align-items: center;
+    width: 800px;
 }
+
+.add-tag-button{
+    margin-right: 10px;
+}
+.disabled-chip {
+    pointer-events: none;
+    opacity: 0.8;
+  }
 
 .tagsChips {
     width: 800px;
@@ -37,7 +52,7 @@ button{
 }
 
 .capacity{
-    width: 100px;
+    width: 80px;
 }
 
 .details{
@@ -53,19 +68,25 @@ button{
     background-color: #f5f1f1;
 }
 
+::ng-deep :root{
+    --mdc-list-list-item-one-line-container-height: 70px;
+}
+  
 .rooms.row {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    /* height: 70px; */
 }
 
 .rooms.row .column {
-    /* flex: 1; */
+    /* flex: 1;  */
     padding: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    position: relative; 
+    position: relative;
+    /* height: 70px; */
 }
 
 .edit {

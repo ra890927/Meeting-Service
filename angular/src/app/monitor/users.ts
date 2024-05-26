@@ -11,6 +11,7 @@ export class rooms {
     roomNumber: string = '';
     tag: { name: string, selected: boolean, color: string }[] = [
     ];
+    fruits: string[]=[];
     capacity: number = 0;
     details: string = '';
 }

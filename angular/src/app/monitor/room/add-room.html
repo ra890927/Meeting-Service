@@ -6,15 +6,16 @@
             <input matInput [(ngModel)]="roomNumber">
         </mat-form-field>
 
+        <!-- <p>Tags</p> -->
         <mat-chip-listbox class="tags" aria-label="Room tags" [multiple]="true">
             <mat-chip-option *ngFor="let tag of tag" [selected]="tag.selected" [color]="tag.color" (click)="toggleTagSelection(tag)">
             {{tag.name}}
             </mat-chip-option>
         </mat-chip-listbox>
-        
+
         <mat-form-field>
             <mat-label>Capacity</mat-label>
-            <input matInput [(ngModel)]="capacity">
+            <input matInput type="number" [(ngModel)]="capacity" min="1">
         </mat-form-field>
 
         <mat-form-field>
