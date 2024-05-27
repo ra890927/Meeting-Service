@@ -431,6 +431,8 @@ definitions:
         type: integer
       password:
         type: string
+      role:
+        type: string
       username:
         type: string
     type: object
@@ -519,6 +521,28 @@ paths:
           schema:
             type: string
       summary: Delete room
+      tags:
+      - admin
+  /admin/user:
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateUserBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.RegisterUpdateUserResponse'
+      summary: Update user
       tags:
       - admin
   /auth/login:
@@ -804,27 +828,6 @@ paths:
           schema:
             $ref: '#/definitions/presentations.RegisterUpdateUserResponse'
       summary: Register a new user
-      tags:
-      - User
-    put:
-      consumes:
-      - application/json
-      description: Update user
-      parameters:
-      - description: User object
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/presentations.UpdateUserBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.RegisterUpdateUserResponse'
-      summary: Update user
       tags:
       - User
   /user/getAllUsers:

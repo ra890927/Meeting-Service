@@ -156,12 +156,12 @@ func (up userPresentation) GetAllUsers(c *gin.Context) {
 
 // @Summary Update user
 // @Description Update user
-// @Tags User
+// @Tags admin
 // @Accept json
 // @Produce json
 // @Param user body UpdateUserBody true "User object"
 // @Success 200 {object} RegisterUpdateUserResponse
-// @Router /user [put]
+// @Router /admin/user [put]
 func (up userPresentation) UpdateUser(c *gin.Context) {
 	operator := c.MustGet("validate_user").(models.User)
 	var updateUserBody UpdateUserBody

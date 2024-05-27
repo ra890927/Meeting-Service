@@ -34,7 +34,6 @@ func main() {
 		eg := v1.Group("/user")
 		{
 			eg.POST("", userPresentation.RegisterUser)
-			eg.PUT("", middlewares.AuthRequire(), userPresentation.UpdateUser)
 			eg.GET("/getAllUsers", userPresentation.GetAllUsers)
 		}
 		eg = v1.Group("/auth")
@@ -68,7 +67,11 @@ func main() {
 		eg = v1.Group("/admin")
 		eg.Use(middlewares.AuthRequire(), middlewares.AdminRequire())
 		{
-			sub := eg.Group("/room")
+			sub := eg.Group("/user")
+			{
+				sub.PUT("", userPresentation.UpdateUser)
+			}
+			sub = eg.Group("/room")
 			{
 				sub.POST("", roomPresentation.CreateRoom)
 				sub.PUT("", roomPresentation.UpdateRoom)
