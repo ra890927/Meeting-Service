@@ -9,13 +9,15 @@
 }
 
 .input-container{
-    margin: 10px;
+    margin: 5px;
     width: 100%;
+}
+.description{
+    height:40%;
 }
 .description-container{
     resize: none;
     width: 100%;
-    height: 100px;
     padding: 10px;
     font-size: 1.2em;
 }
@@ -28,4 +30,9 @@
 .buttons{
     position: relative;
     padding: 0.25em 1em;
+}
+
+.user-email{
+    font-size: 0.8em;
+    color: grey;
 }

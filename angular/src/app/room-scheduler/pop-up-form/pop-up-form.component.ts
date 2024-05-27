@@ -1,5 +1,11 @@
-import { Component, Inject} from '@angular/core';
-import { DatePipe } from '@angular/common';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { Component, ElementRef, ViewChild, inject,Inject} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {MatAutocompleteSelectedEvent, MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import { DatePipe, AsyncPipe } from '@angular/common';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -10,17 +16,24 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { co, ex } from '@fullcalendar/core/internal-common';
+import {LiveAnnouncer} from '@angular/cdk/a11y';
 export interface DialogData {
   title: string;
   description: string;
   startTime: string;
   endTime: string;
+  participants: User[];
 }
-
+export interface User {
+  name: string;
+  email: string;
+}
 @Component({
   selector: 'app-pop-up-form',
   standalone: true,
@@ -31,16 +44,61 @@ export interface DialogData {
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,DatePipe, MatIconModule],
+    MatDialogClose,
+    DatePipe, 
+    MatIconModule,
+    MatSelectModule,
+    CommonModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    AsyncPipe,ReactiveFormsModule],
   templateUrl: './pop-up-form.component.html',
   styleUrl: './pop-up-form.component.css'
 })
 export class PopUpFormComponent {
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  participantCtrl = new FormControl();
+  filteredParticipants: Observable<User[]>;
+  availableUsers:User[] = [
+    {name: 'John Doe', email: 'dasdsada@gmail.com' },
+    {name: 'Jane Smith', email: 'czxcxzczc@gmail.com' },
+    {name: 'Bob Johnson', email: 'qweqweqweq@gmail.com' },
+  ];
+  @ViewChild('participantInput') participantInput: ElementRef<HTMLInputElement>|undefined;
+  announcer = inject(LiveAnnouncer);
   constructor(
     public dialogRef: MatDialogRef<PopUpFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-  ) {}
+  ) {
+    this.filteredParticipants = this.participantCtrl.valueChanges.pipe(
+      startWith(null),
+      map((participant: string | null) => participant ? this._filter(participant) : this.availableUsers.slice()));
+  }
+  
+  remove(participant: User): void {
+    const index = this.data.participants.indexOf(participant);
+    if (index >= 0) {
+      this.data.participants.splice(index, 1);
+      this.announcer.announce('Participant removed');
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.data.participants.push(event.option.value);
+    if(this.participantInput)
+      this.participantInput.nativeElement.value = '';
+    this.participantCtrl.setValue(null);
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }
+  private _filter(value: string): User[] {
+    console.log(this.data.participants);
+    if (typeof value !== 'string') {
+      return [];
+    }
+    const filterValue = value.toLowerCase();
+    return this.availableUsers.filter(participant => participant.name.toLowerCase().includes(filterValue) || participant.email.toLowerCase().includes(filterValue));
+  }
+
 }

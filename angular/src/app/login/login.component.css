@@ -71,6 +71,12 @@
 .form-container{
     width: 100%;
 }
+.error{
+    width: 100%;
+    color: red;
+    font-size: 1em;
+    text-align: right;
+}
 
 .buttons{
     display: flex;

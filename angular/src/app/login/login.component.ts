@@ -6,9 +6,10 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl,FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../API/auth.service';
+import { co } from '@fullcalendar/core/internal-common';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -30,22 +31,24 @@ export class LoginComponent {
   userNameInput!: ElementRef<MatInput>;
   @ViewChild("passwordInput")
   passwordInput!: ElementRef<MatInput>;
-
+  submitted = false;
+  loginError = false;
+  connectionError = false;
   ngOnInit(): void {
+    if (localStorage.getItem('token')) {
+      this.navigate('/home');//navigate to home page
+    }
   }
   //reactive form
   // username validation
   userName = new FormControl('', [
     Validators.required,
     Validators.minLength(4),
-    Validators.pattern('^[a-zA-Z0-9]+$')
   ]);
 
   // password validation
   password = new FormControl('', [
     Validators.required,
-    Validators.minLength(8),
-    Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
   ]);
 
   formData = new FormGroup({
@@ -53,20 +56,40 @@ export class LoginComponent {
     password: this.password
   });
 
+  get f(): { [key: string]: AbstractControl } {
+    return this.formData.controls;
+  }
   // login function
   login() {
+    this.loginError = false;
+    this.connectionError = false;
     if (this.formData.valid) {
       const {userName, password} = this.formData.value;
+
       if(userName && password){
-        this.authService.login(userName, password).subscribe((res) => {
+        this.authService.login(userName, password).subscribe(
+        (res) => {
           if (res.status === '200') {
             //set the token and user details in local storage
             localStorage.setItem('token', res.body.token);
             localStorage.setItem('user', JSON.stringify(res.body.user));
             this.navigate('/home');//navigate to home page
+          }else{
+            console.log('Login failed');
+            this.loginError = true;
+            return
           }
-        });
+        },
+        (error) => {
+            console.error('An error occurred:', error);
+            this.connectionError = true; // 設置連線錯誤標誌
+            // 您可以在這裡顯示適當的錯誤消息
+        }
+        );
       } 
+    }else{
+      this.submitted = true;
+      console.log('Invalid form');
     }
   }
 

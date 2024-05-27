@@ -1,52 +1,52 @@
 <div class="calendarContainer">
     <div class = "cards_container">
         <div class = "search-switch">
-            <button class="search-toggle-btn" (click)="toggleSearchContainer()" [ngClass]="{ 'show': isSearchContainerOpen, 'hide': !isSearchContainerOpen }">
-                {{ isSearchContainerOpen ? 'Hide Search' : 'Show Search' }}
-            </button>
+            <mat-icon class="search-icon"  (click)="toggleSearchContainer()" [ngClass]="{ 'search': isSearchContainerOpen, 'search_off': !isSearchContainerOpen }">
+                {{ isSearchContainerOpen ? 'search_off' : 'search' }}
+            </mat-icon>
         </div>
         <div *ngIf="isSearchContainerOpen" class="search_container">
-            <div class="people-container">
-                <label class="people-label">People</label>
-                <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
-                <label class="tags-label">Tags</label>
-                <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
-                    <mat-option *ngFor="let tag of availableTags" [value]="tag">
-                        {{ tag }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <!-- Date and Time Picker for Start Date -->
-            <div class="date-time-container">
-                <mat-form-field>
-                    <mat-label>Start Date</mat-label>
-                    <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate">
-                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-                    <mat-datepicker #startDatePicker></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field s>
-                    <mat-label>Start Time</mat-label>
-                    <input matInput [(ngModel)]="startTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
-                    <mat-hint style="color: grey">ex:07:02</mat-hint>
-                </mat-form-field>
-            </div>
-            <!-- Date and Time Picker for End Date -->
-            <div class="date-time-container">
-                <mat-form-field>
-                    <mat-label>End Date</mat-label>
-                    <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate">
-                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-                    <mat-datepicker #endDatePicker></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>End Time</mat-label>
-                    <input matInput [(ngModel)]="endTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
-                    <mat-hint style="color: grey">ex:17:02</mat-hint>
-                </mat-form-field>
-            </div>
-            <div class="button-container">
-                <button class="button-style"(click)="applyFilter()">Search</button>
-            </div>
+                <div class="people-container">
+                    <label class="people-label">People</label>
+                    <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
+                    <label class="tags-label">Tags</label>
+                    <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
+                        <mat-option *ngFor="let tag of availableTags" [value]="tag">
+                            {{ tag }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <!-- Date and Time Picker for Start Date -->
+                <div class="date-time-container">
+                    <mat-form-field>
+                        <mat-label>Start Date</mat-label>
+                        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate">
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field s>
+                        <mat-label>Start Time</mat-label>
+                        <input matInput [(ngModel)]="startTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
+                        <mat-hint style="color: grey">ex:07:02</mat-hint>
+                    </mat-form-field>
+                </div>
+                <!-- Date and Time Picker for End Date -->
+                <div class="date-time-container">
+                    <mat-form-field>
+                        <mat-label>End Date</mat-label>
+                        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate">
+                        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endDatePicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>End Time</mat-label>
+                        <input matInput [(ngModel)]="endTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
+                        <mat-hint style="color: grey">ex:17:02</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="button-container">
+                    <button class="button-style"(click)="applyFilter()">Search</button>
+                </div>
           </div>
         <div class = "card_container">
             <mat-card class = "card" *ngFor="let room of filteredRooms" [ngClass]="{ 'selected': selectedRoom === room.room_name }" (click)="handleRoomChange(room.room_name)">
@@ -67,9 +67,9 @@
             <ng-template  #eventContent let-arg>
                 <div *ngIf="isMonthView" class="month-view-event">
                     <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || 'blue'"></span>
-                    <div class="time-text" [style.marginRight]="'5%'">{{arg.timeText}}</div>
-                    <div class="booker-text" [style.fontWeight]="'bold'" [style.marginRight]="'10%'">Booker: Chris</div>
-                    <mat-icon style="font-size: 16px; width: fit-content; height: fit-content; right: 0%;" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                    <div class="time-text">{{arg.timeText}}</div>
+                    <div class="booker-text" [style.fontWeight]="'bold'">Chris</div>
+                    <mat-icon style="font-size: 16px; width: fit-content; height: fit-content;position:absolute; right: 0%; " (click)="deleteEvent(arg.event, $event)">close</mat-icon>
                 </div>
                 <div *ngIf="!isMonthView" class="event-container">
                     <div class="text-field">{{arg.timeText}}</div>
