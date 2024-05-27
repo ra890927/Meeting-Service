@@ -7,15 +7,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
-
-type MockGormDB struct {
-	mock.Mock
-}
 
 type UserRepoTestSuite struct {
 	suite.Suite
