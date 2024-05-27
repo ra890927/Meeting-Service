@@ -67,7 +67,7 @@ func (us userService) GetAllUsers() ([]models.User, error) {
 	// Get all users
 	users, err := us.userDomain.GetAllUsers()
 	if err != nil {
-		return nil, errors.New("error getting all users")
+		return []models.User{}, errors.New("error getting all users")
 	}
 
 	return users, nil

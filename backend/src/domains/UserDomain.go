@@ -55,7 +55,7 @@ func (ud userDomain) GetAllUsers() ([]models.User, error) {
 	// Get all users
 	allUsers, err := ud.userRepo.GetAllUsers()
 	if err != nil {
-		return nil, err
+		return []models.User{}, err
 	}
 
 	return allUsers, nil

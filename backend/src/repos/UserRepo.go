@@ -54,7 +54,7 @@ func (ur userRepo) GetAllUsers() ([]models.User, error) {
 	result := ur.db.Find(&users)
 	// return the users if no errors
 	if result.Error != nil {
-		return nil, result.Error
+		return []models.User{}, result.Error
 	}
 
 	return users, nil
