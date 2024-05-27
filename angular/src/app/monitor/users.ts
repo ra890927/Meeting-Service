@@ -9,7 +9,9 @@ export class users {
 export class rooms {
     id: string = '';
     roomNumber: string = '';
-    fruits: string[]=[];
+    tags: string[]=[];
     capacity: number = 0;
     details: string = '';
 }
+
+export const allTags: string[] = ['Projector Available', 'Free WiFi', 'Air Conditioning', 'Food Allowed', 'Whiteboard'];

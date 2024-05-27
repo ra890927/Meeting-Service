@@ -1,0 +1,36 @@
+<div class="parentDiv"> 
+    <div class="inputDiv">
+        <button mat-raised-button color="primary" (click)="openDialog()">Add Tag</button>  
+    </div>
+</div>
+
+<mat-card>
+    <mat-list>
+        <mat-list-item>
+            <div class="list-header">
+                <div class="list-column name">Tag Name</div>
+                <div class="list-column actions">Actions</div>
+            </div>
+        </mat-list-item>
+
+        <mat-list-item *ngFor="let tag of allTags; last as last">
+            <div class="tags row">
+                <div class="column name" *ngIf="!isEditing || tagEditing !== tag">{{tag}}</div>
+                <mat-form-field *ngIf="isEditing && tagEditing === tag" class="column name">
+                    <!-- <mat-label>Room Number</mat-label> -->
+                    <input matInput #tagNameInput [formControl]="tagNameControl">
+                </mat-form-field>
+                <div class="column controls actions">
+                    <mat-icon *ngIf="!isEditing || tagEditing !== tag" class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon>
+                    <mat-icon *ngIf="isEditing && tagEditing === tag" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                    <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(tag)">delete</mat-icon>
+                </div>
+            </div>
+            <div class="divider-div">
+            <mat-divider class="custom-divider" [inset]="true" *ngIf="!last"></mat-divider>
+            </div>
+        </mat-list-item>
+        
+
+    </mat-list>
+</mat-card>

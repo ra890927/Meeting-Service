@@ -3,9 +3,6 @@
     margin: 20px;
 }
 
-.example-chip-list{
-    width: 800px;
-}
 
 /* button{
     margin-top: 20px;
@@ -45,11 +42,6 @@ mat-chip-row{
 .disabled-chip {
     pointer-events: none;
     opacity: 0.8;
-  }
-
-.tagsChips {
-    width: 800px;
-    flex: 0 0 auto;
 }
 
 .tags{
@@ -74,7 +66,7 @@ mat-chip-row{
 }
 
 ::ng-deep :root{
-    --mdc-list-list-item-one-line-container-height: 70px;
+    --mdc-list-list-item-one-line-container-height: 60px;
 }
   
 .rooms.row {

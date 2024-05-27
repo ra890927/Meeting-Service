@@ -15,12 +15,12 @@
                 
         <mat-menu #menu="matMenu">
             @for (tag of allTags; track tag) {
-                <button *ngIf="!fruits.includes(tag)" mat-menu-item (click)="selected($event, tag)">{{tag}}</button>
+                <button *ngIf="!tags.includes(tag)" mat-menu-item (click)="selected(tag)">{{tag}}</button>
 
             }
         </mat-menu>
         <mat-chip-listbox>
-            @for (tag of fruits; track tag) {
+            @for (tag of tags; track tag) {
                 <mat-chip-row (removed)="remove(tag)">
                 {{tag}}
                 <button matChipRemove [attr.aria-label]="'remove ' + tag">

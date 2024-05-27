@@ -1,0 +1,11 @@
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 10px;
+}

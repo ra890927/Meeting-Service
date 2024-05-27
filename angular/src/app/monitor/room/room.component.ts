@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { rooms } from '../users';
+import { rooms, allTags } from '../users';
 import { Component, ElementRef, ViewChild, Inject, OnInit, inject} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,10 +8,9 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { v4 as uuidv4 } from 'uuid'; // generate random id
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import {LiveAnnouncer} from '@angular/cdk/a11y';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
@@ -26,10 +25,10 @@ import { MatMenuModule } from '@angular/material/menu';
     MatInputModule,
     MatButtonModule,
     MatChipsModule,
+    MatMenuModule,
     ReactiveFormsModule,
     CommonModule,
-    FormsModule,
-    MatMenuModule
+    FormsModule
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
@@ -45,13 +44,13 @@ export class RoomComponent implements OnInit{
   roomsList: rooms[] = [{ 
     id: '001',
     roomNumber: 'lab639',
-    fruits: ['Food Allowed'],
+    tags: ['Food Allowed'],
     capacity: 10,
     details: 'This is a test room.'
   },
   { id: '002',
     roomNumber: 'lab637',
-    fruits: ['Food Allowed', 'Projector Available', 'Free WiFi'],
+    tags: ['Food Allowed', 'Projector Available', 'Free WiFi'],
     capacity: 30,
     details: 'This is a test room2.'
   }];
@@ -60,6 +59,9 @@ export class RoomComponent implements OnInit{
   roomNumberControl = new FormControl();
   capacityControl = new FormControl();
   detailsControl = new FormControl();
+
+  filteredTags: string[] = [];
+  allTags = allTags;
 
   constructor(public dialog: MatDialog) {
   }
@@ -73,13 +75,11 @@ export class RoomComponent implements OnInit{
         this.roomsList.push({
           id: uuidv4(),
           roomNumber: result.roomNumber,
-          fruits: result.fruits,
+          tags: result.tags,
           capacity: result.capacity,
           details: result.details
         });
-        console.log(this.roomsList);
         localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
-        console.log(localStorage.setItem("roomsList", JSON.stringify(this.roomsList)))
         
       } else {
         console.log('The dialog was closed without any data');
@@ -90,6 +90,20 @@ export class RoomComponent implements OnInit{
   ngOnInit(): void {
     const roomsJson = localStorage.getItem("roomsList");
     if (roomsJson) this.roomsList = JSON.parse(roomsJson);
+  }
+
+  remove(tag: string, rooms: rooms): void {
+    const index = rooms.tags.indexOf(tag);
+    if (index >= 0) { // check if the fruit is in the list
+      rooms.tags.splice(index, 1);
+    }
+    console.log(rooms.tags);
+  }
+
+  selected(rooms: rooms, tag: string): void {
+    if (!rooms.tags.includes(tag)) {
+      rooms.tags.push(tag);
+    }
   }
   
   delete(rooms: rooms): void {
@@ -130,30 +144,6 @@ export class RoomComponent implements OnInit{
     this.detailsInput.nativeElement.value = "";
   }
 
-  filteredTags: string[] = [];
-  allTags: string[] = ['Projector Available', 'Free WiFi', 'Air Conditioning', 'Food Allowed', 'Whiteboard'];
-
-  @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement> | undefined;
-
-  announcer = inject(LiveAnnouncer);
-
-  remove(fruit: string, rooms: rooms): void {
-    const index = rooms.fruits.indexOf(fruit);
-
-    if (index >= 0) { // check if the fruit is in the list
-      rooms.fruits.splice(index, 1);
-
-      this.announcer.announce(`Removed ${fruit}`);
-    }
-    console.log(rooms.fruits);
-  }
-
-  selected(event: Event, rooms: rooms, fruit: string): void {
-    if (!rooms.fruits.includes(fruit)) {
-      rooms.fruits.push(fruit);
-    }
-  }
-
 }
 
 @Component({
@@ -175,31 +165,31 @@ export class RoomComponent implements OnInit{
 })
 export class AddRoom {
   roomNumber: string = '';
-  fruits: string[] = [];
+  tags: string[] = [];
   capacity: number = 0;
   details: string = '';
-  allTags: string[] = ['Projector Available', 'Free WiFi', 'Air Conditioning', 'Food Allowed', 'Whiteboard'];
+  allTags = allTags;
 
   constructor(
     public dialogRef: MatDialogRef<AddRoom>,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 
-    selected(event: Event, tag: string): void {
-      this.fruits.push(tag);
+    selected(tag: string): void {
+      this.tags.push(tag);
     }
 
     remove(tag: string): void {
-      const index = this.fruits.indexOf(tag);
+      const index = this.tags.indexOf(tag);
   
       if (index >= 0) { // check if the fruit is in the list
-        this.fruits.splice(index, 1);
+        this.tags.splice(index, 1);
       }
     }
 
     onSave(): void {
       this.dialogRef.close({
         roomNumber: this.roomNumber,
-        fruits: this.fruits,
+        tags: this.tags,
         capacity: this.capacity,
         details: this.details
       });

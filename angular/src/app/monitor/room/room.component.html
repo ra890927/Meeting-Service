@@ -33,13 +33,13 @@
                     <!-- choose tags -->
                     <mat-menu #menu="matMenu">
                         @for (tag of allTags; track tag) {
-                            <button *ngIf="!rooms.fruits.includes(tag)" mat-menu-item (click)="selected($event, rooms, tag)">{{tag}}</button>
+                            <button *ngIf="!rooms.tags.includes(tag)" mat-menu-item (click)="selected(rooms, tag)">{{tag}}</button>
                         }
                     </mat-menu>
                     <!-- display tags -->
-                    @for (tag of rooms.fruits; track tag) {
+                    @for (tag of rooms.tags; track tag) {
                         <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
-                        <!-- <mat-chip-row *ngFor="let tag of rooms.fruits" (removed)="remove(tag, rooms)"> -->
+                        <!-- <mat-chip-row *ngFor="let tag of rooms.tags" (removed)="remove(tag, rooms)"> -->
                         {{tag}}
                         <button *ngIf="isEditing && roomsEditing?.id === rooms.id" matChipRemove [attr.aria-label]="'remove ' + tag">
                             <mat-icon>cancel</mat-icon>

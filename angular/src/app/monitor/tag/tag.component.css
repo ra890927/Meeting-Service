@@ -1,0 +1,88 @@
+.parentDiv{
+    display: flex;
+    justify-content: center;
+}
+
+.inputDiv {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-start;
+    width: 500px;
+}
+
+.list-header{
+    display: flex;
+    justify-content: center;
+}
+
+.list-column {
+    padding: 8px 20px;
+    /* text-align: left; */
+}
+
+.list-header .list-column {
+    font-weight: bold;
+    background-color: #f5f1f1;
+}
+
+.tags.row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.tags.row .column {
+    /* flex: 1; */
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative; 
+}
+
+
+.name {
+    width: 400px;
+    padding: auto;
+}
+
+.actions {
+    width: 60px;
+    text-align: center;
+}
+
+.edit {
+    color: goldenrod;
+}
+.save {
+    color: goldenrod;
+}
+.delete {
+    color: red;
+}
+
+.controls {
+    cursor: pointer;
+}
+.controls:hover {
+    color: purple;
+}
+
+.divider-div{
+    display: flex;
+    justify-content: center;
+}
+
+.custom-divider {
+    width: 500px;
+}
+
+
+.mat-divider.mat-divider-inset {
+    margin-left: 0px;
+}
+
+.mat-mdc-list-item .mat-divider-inset, .mat-mdc-list-option .mat-divider-inset {
+    position: relative;
+}

@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>New Tag</h1>
+<div mat-dialog-content>
+    <div class="inputContainer">
+        <mat-form-field>
+            <mat-label>Tag Name</mat-label>
+            <input matInput [(ngModel)]="tagName">
+        </mat-form-field>
+        
+    </div>
+    <div class="buttonContainer">
+        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Add</button>
+    </div>
+
+</div>
