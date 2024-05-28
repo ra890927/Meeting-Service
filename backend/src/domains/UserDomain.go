@@ -6,11 +6,11 @@ import (
 )
 
 type UserDomain interface {
-	CreateUser(user *models.User) (*models.User, error)
-	UpdateUser(user *models.User) (*models.User, error)
+	CreateUser(user *models.User) error
+	UpdateUser(user *models.User) error
 	GetAllUsers() ([]models.User, error)
-	GetUserByEmail(email string) (*models.User, error)
-	GetUserByID(id uint) (*models.User, error)
+	GetUserByEmail(email string) (models.User, error)
+	GetUserByID(id uint) (models.User, error)
 }
 
 type userDomain struct {
@@ -27,28 +27,28 @@ func NewUserDomain(userRepoArgs ...repos.UserRepo) UserDomain {
 	}
 }
 
-func (ud userDomain) CreateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) CreateUser(user *models.User) error {
 	// Create a new user
-	createdUser, err := ud.userRepo.CreateUser(user)
+	err := ud.userRepo.CreateUser(user)
 
 	// return the user if no errors
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return createdUser, nil
+	return nil
 }
 
-func (ud userDomain) UpdateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) UpdateUser(user *models.User) error {
 	// Update a user
-	updatedUser, err := ud.userRepo.UpdateUser(user)
+	err := ud.userRepo.UpdateUser(user)
 
 	// return the user if no errors
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return updatedUser, nil
+	return nil
 }
 
 func (ud userDomain) GetAllUsers() ([]models.User, error) {
@@ -61,26 +61,26 @@ func (ud userDomain) GetAllUsers() ([]models.User, error) {
 	return allUsers, nil
 }
 
-func (ud userDomain) GetUserByEmail(email string) (*models.User, error) {
+func (ud userDomain) GetUserByEmail(email string) (models.User, error) {
 	// Get a user by email
 	userByEmail, err := ud.userRepo.GetUserByEmail(email)
 
 	// return the user if no errors
 	if err != nil {
-		return nil, err
+		return models.User{}, err
 	}
 
 	return userByEmail, nil
 }
 
-func (ud userDomain) GetUserByID(id uint) (*models.User, error) {
+func (ud userDomain) GetUserByID(id uint) (models.User, error) {
 	// Get a user by ID
-	userByID, err := ud.userRepo.GetUserByID(id)
+	user, err := ud.userRepo.GetUserByID(id)
 
 	// return the user if no errors
 	if err != nil {
-		return nil, err
+		return models.User{}, err
 	}
 
-	return userByID, nil
+	return user, nil
 }
