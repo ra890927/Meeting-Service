@@ -770,6 +770,23 @@ paths:
       summary: Get all meetings
       tags:
       - Meeting
+  /meeting/getMeetingsByParticipantId:
+    get:
+      description: Get meetings by participant ID
+      parameters:
+      - description: Participant ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get meetings by participant ID
+      tags:
+      - Meeting
   /rooms:
     get:
       description: 獲取所有房間信息

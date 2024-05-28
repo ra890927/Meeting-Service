@@ -17,6 +17,7 @@ type MeetingPresentation interface {
 	GetMeeting(c *gin.Context)
 	GetAllMeetings(c *gin.Context)
 	GetMeetingsByRoomIdAndDatePeriod(c *gin.Context)
+	GetMeetingsByParticipantId(c *gin.Context)
 }
 
 type meetingPresentation struct {
@@ -351,6 +352,79 @@ func (mp meetingPresentation) GetMeetingsByRoomIdAndDatePeriod(c *gin.Context) {
 	}
 
 	meetings, err := mp.meetingService.GetMeetingsByRoomIdAndDatePeriod(roomIdInt, parsedDateFrom, parsedDateTo)
+	if err != nil {
+		response.Status = "error"
+		response.Message = "Internal server error"
+		c.JSON(500, response)
+		return
+	}
+
+	response.Status = "success"
+	response.Message = "Meetings retrieved"
+	for _, meeting := range meetings {
+		var meetingResponse struct {
+			ID           string    `json:"id"`
+			RoomID       int       `json:"room_id"`
+			Title        string    `json:"title"`
+			OrganizerID  uint      `json:"organizer"`
+			Participants []uint    `json:"participants"`
+			Description  string    `json:"description"`
+			StartTime    time.Time `json:"start_time"`
+			EndTime      time.Time `json:"end_time"`
+			StatusType   string    `json:"status_type"`
+		}
+		meetingResponse.ID = meeting.ID
+		meetingResponse.RoomID = meeting.RoomID
+		meetingResponse.Title = meeting.Title
+		meetingResponse.Description = meeting.Description
+		meetingResponse.OrganizerID = meeting.OrganizerID
+		meetingResponse.Participants = meeting.Participants
+		meetingResponse.StartTime = meeting.StartTime
+		meetingResponse.EndTime = meeting.EndTime
+		meetingResponse.StatusType = meeting.StatusType
+		response.Data.Meetings = append(response.Data.Meetings, meetingResponse)
+	}
+	if len(response.Data.Meetings) == 0 {
+		response.Data.Meetings = []struct {
+			ID           string    `json:"id"`
+			RoomID       int       `json:"room_id"`
+			Title        string    `json:"title"`
+			OrganizerID  uint      `json:"organizer"`
+			Participants []uint    `json:"participants"`
+			Description  string    `json:"description"`
+			StartTime    time.Time `json:"start_time"`
+			EndTime      time.Time `json:"end_time"`
+			StatusType   string    `json:"status_type"`
+		}{}
+	}
+	c.JSON(200, response)
+}
+
+// @Summary Get meetings by participant ID
+// @Description Get meetings by participant ID
+// @Tags Meeting
+// @Param id query int true "Participant ID"
+// @Success 200 {object} GetAllMeetingsResponse
+// @Router /meeting/getMeetingsByParticipantId [get]
+func (mp meetingPresentation) GetMeetingsByParticipantId(c *gin.Context) {
+	var response GetAllMeetingsResponse
+	participantID, success := c.GetQuery("id")
+	if !success {
+		response.Status = "error"
+		response.Message = "Invalid request"
+		c.JSON(400, response)
+		return
+	}
+	participantIdInt, err1 := strconv.Atoi(participantID)
+	if err1 != nil {
+		response.Status = "error"
+		response.Message = "Invalid request"
+		c.JSON(400, response)
+		return
+	}
+	participantIdUint := uint(participantIdInt)
+
+	meetings, err := mp.meetingService.GetMeetingsByParticipantId(participantIdUint)
 	if err != nil {
 		response.Status = "error"
 		response.Message = "Internal server error"

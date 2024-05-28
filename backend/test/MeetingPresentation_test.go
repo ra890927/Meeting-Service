@@ -55,6 +55,12 @@ func (m *mockMeetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFr
 	args := m.Called(roomID, dateFrom, dateTo)
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
+
+func (m *mockMeetingService) GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error) {
+	args := m.Called(participantID)
+	return args.Get(0).([]*models.Meeting), args.Error(1)
+}
+
 func TestCreateMeeting(t *testing.T) {
 	meeting := models.Meeting{
 		Title:       "Board Meeting",
@@ -175,6 +181,24 @@ func TestGetMeetingsByRoomIdAndDate(t *testing.T) {
 	r.GET("/meetingsByRoomAndDate", mp.GetMeetingsByRoomIdAndDatePeriod)
 
 	req := httptest.NewRequest("GET", "/meetingsByRoomAndDate?room_id=101&date_from=2021-01-01&date_to=2021-01-01", nil)
+
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+}
+
+func TestGetMeetingsByParticipantId(t *testing.T) {
+	meetings := []*models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
+	mockMeetingService := new(mockMeetingService)
+	mockMeetingService.On("GetMeetingsByParticipantId", uint(1)).Return(meetings, nil)
+	mp := presentations.NewMeetingPresentation(mockMeetingService)
+
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.GET("/meetingsByParticipantId", mp.GetMeetingsByParticipantId)
+
+	req := httptest.NewRequest("GET", "/meetingsByParticipantId?id=1", nil)
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)

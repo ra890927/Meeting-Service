@@ -496,6 +496,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/meeting/getMeetingsByParticipantId": {
+            "get": {
+                "description": "Get meetings by participant ID",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get meetings by participant ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Participant ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/meeting/{id}": {
             "get": {
                 "description": "Get a meeting",

@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/datatypes"
 )
 
 type MockMeetingDomain struct {
@@ -269,4 +270,23 @@ func TestServiceGetMeetingsByRoomIdAndDatePeriod(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedMeetings, meetings)
+}
+
+func TestServiceGetMeetingsByParticipantId(t *testing.T) {
+	mockMeetingDomain := new(MockMeetingDomain)
+	ms := services.NewMeetingService(mockMeetingDomain)
+	participantID := uint(1)
+	expectedMeetings := []*models.Meeting{
+		{
+			ID:           "2",
+			Participants: datatypes.JSONSlice[uint]{participantID},
+		},
+	}
+
+	mockMeetingDomain.On("GetAllMeetings").Return(expectedMeetings, nil)
+
+	meetings, err := ms.GetMeetingsByParticipantId(participantID)
+
+	assert.NoError(t, err)
+	assert.Len(t, meetings, len(expectedMeetings))
 }
