@@ -6,6 +6,7 @@ import { ReservationComponent } from './reservation/reservation.component';
 import { RoomSchedulerComponent } from './room-scheduler/room-scheduler.component';
 import { MonitorComponent } from './monitor/monitor.component';
 import { UserSchedulerComponent } from './user-scheduler/user-scheduler.component';
+import { ProfileComponent } from './profile/profile.component';
 
 export const routes: Routes = [
     { path:  "", component: HomepageComponent},
@@ -14,5 +15,5 @@ export const routes: Routes = [
     { path: "reservation", component: ReservationComponent},
     { path: "room-scheduler", component: RoomSchedulerComponent},
     { path: "monitor", component: MonitorComponent},
-    { path: "user-scheduler", component: UserSchedulerComponent},
+    { path: "profile", component: ProfileComponent},
 ];
