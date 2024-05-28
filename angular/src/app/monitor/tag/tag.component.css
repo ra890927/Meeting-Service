@@ -10,6 +10,12 @@
     width: 500px;
 }
 
+.scrollable-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    /* border: 1px solid #ccc; 可選：設置邊框以更好地顯示滾動區域 */
+}
+
 .list-header{
     display: flex;
     justify-content: center;
