@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"meeting-center/src/models"
 	. "meeting-center/src/repos"
 	"testing"
@@ -97,7 +96,6 @@ func (suite *UserRepoTestSuite) TestGetAllUsers() {
 
 	foundUsers, err := suite.ur.GetAllUsers()
 	assert.NoError(suite.T(), err)
-	fmt.Println(len(orifinalFoundUsers), len(foundUsers), len(users))
 	assert.Len(suite.T(), foundUsers, len(orifinalFoundUsers)+len(users))
 }
 
