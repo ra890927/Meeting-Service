@@ -14,6 +14,7 @@ type MeetingService interface {
 	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
 	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
+	GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error)
 }
 
 type meetingService struct {
@@ -164,4 +165,24 @@ func (ms meetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, date_from 
 	}
 	meetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
 	return meetings, nil
+}
+
+func (ms meetingService) GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error) {
+	// TODO: find a method to get all meetings by participant ID in repo layer
+	meetings, err := ms.MeetingDomain.GetAllMeetings()
+	if err != nil {
+		return []*models.Meeting{}, errors.New("error when fetching meetings")
+	}
+
+	var participantMeetings []*models.Meeting
+	for _, m := range meetings {
+		for _, p := range m.Participants {
+			if p == participantID {
+				participantMeetings = append(participantMeetings, m)
+				break
+			}
+		}
+	}
+
+	return participantMeetings, nil
 }
