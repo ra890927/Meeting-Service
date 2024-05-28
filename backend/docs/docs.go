@@ -15,6 +15,98 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/room": {
+            "put": {
+                "description": "Update room information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Update room information",
+                "parameters": [
+                    {
+                        "description": "Room information",
+                        "name": "room",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateRoomInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateRoomResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Create a new room",
+                "parameters": [
+                    {
+                        "description": "Room information",
+                        "name": "room",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateRoomInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateRoomResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/room/{id}": {
+            "delete": {
+                "description": "Delete room by room ID",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete room",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Login a user",
@@ -374,165 +466,34 @@ const docTemplate = `{
                 }
             }
         },
-        "/meeting": {
-            "put": {
-                "description": "Update a meeting",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
+        "/room/getAllRooms": {
+            "get": {
+                "description": "Get all rooms",
                 "tags": [
-                    "Meeting"
+                    "room"
                 ],
-                "summary": "Update a meeting",
-                "parameters": [
-                    {
-                        "description": "Meeting details",
-                        "name": "meeting",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/presentations.UpdateMeetingBody"
-                        }
-                    }
-                ],
+                "summary": "Get all rooms",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a meeting",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Create a meeting",
-                "parameters": [
-                    {
-                        "description": "Meeting details",
-                        "name": "meeting",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/presentations.CreateMeetingBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
+                            "$ref": "#/definitions/presentations.GetAllRoomsResponse"
                         }
                     }
                 }
             }
         },
-        "/meeting/GetMeetingsByRoomIdAndDatePeriod": {
+        "/room/{id}": {
             "get": {
-                "description": "Get meetings by room ID and date",
+                "description": "Get room by ID",
                 "tags": [
-                    "Meeting"
+                    "room"
                 ],
-                "summary": "Get meetings by room ID and date",
+                "summary": "Get room by ID",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "Room ID",
-                        "name": "room_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Date",
-                        "name": "date_from",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Date",
-                        "name": "date_to",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/meeting/getAllMeetings": {
-            "get": {
-                "description": "Get all meetings",
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Get all meetings",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/meeting/getMeetingsByParticipantId": {
-            "get": {
-                "description": "Get meetings by participant ID",
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Get meetings by participant ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Participant ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/meeting/{id}": {
-            "get": {
-                "description": "Get a meeting",
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Get a meeting",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Meeting ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -542,172 +503,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a meeting",
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Delete a meeting",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Meeting ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.DeleteMeetingResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/rooms": {
-            "get": {
-                "description": "獲取所有房間信息",
-                "tags": [
-                    "rooms"
-                ],
-                "summary": "獲取所有房間",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Room"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "創建一個新的房間",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "rooms"
-                ],
-                "summary": "創建房間",
-                "parameters": [
-                    {
-                        "description": "房間信息",
-                        "name": "room",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Room"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Room"
-                        }
-                    }
-                }
-            }
-        },
-        "/rooms/{id}": {
-            "get": {
-                "description": "獲取指定ID的房間信息",
-                "tags": [
-                    "rooms"
-                ],
-                "summary": "獲取房間",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "房間ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Room"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "更新房間信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "rooms"
-                ],
-                "summary": "更新房間",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "房間ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "房間信息",
-                        "name": "room",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Room"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Room"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "刪除指定ID的房間",
-                "tags": [
-                    "rooms"
-                ],
-                "summary": "刪除房間",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "房間ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "deleted",
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/presentations.GetRoomByIDResponse"
                         }
                     }
                 }
@@ -976,75 +772,51 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.CreateMeetingBody": {
+        "presentations.CreateRoomInput": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "end_time": {
-                    "type": "string"
-                },
-                "organizer": {
+                "capacity": {
                     "type": "integer"
                 },
-                "participants": {
+                "room_name": {
+                    "type": "string"
+                },
+                "rules": {
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
-                "room_id": {
-                    "type": "integer"
-                },
-                "start_time": {
-                    "type": "string"
-                },
-                "status_type": {
-                    "type": "string"
-                },
-                "title": {
+                "type": {
                     "type": "string"
                 }
             }
         },
-        "presentations.CreateUpdateGetMeetingResponse": {
+        "presentations.CreateRoomResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "object",
                     "properties": {
-                        "meeting": {
+                        "room": {
                             "type": "object",
                             "properties": {
-                                "description": {
-                                    "type": "string"
-                                },
-                                "end_time": {
-                                    "type": "string"
-                                },
-                                "id": {
-                                    "type": "string"
-                                },
-                                "organizer": {
+                                "capacity": {
                                     "type": "integer"
                                 },
-                                "participants": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
                                     "type": "array",
                                     "items": {
                                         "type": "integer"
                                     }
                                 },
-                                "room_id": {
-                                    "type": "integer"
-                                },
-                                "start_time": {
-                                    "type": "string"
-                                },
-                                "status_type": {
-                                    "type": "string"
-                                },
-                                "title": {
+                                "type": {
                                     "type": "string"
                                 }
                             }
@@ -1120,45 +892,33 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.GetAllMeetingsResponse": {
+        "presentations.GetAllRoomsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "object",
                     "properties": {
-                        "meetings": {
+                        "rooms": {
                             "type": "array",
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "description": {
-                                        "type": "string"
-                                    },
-                                    "end_time": {
-                                        "type": "string"
-                                    },
-                                    "id": {
-                                        "type": "string"
-                                    },
-                                    "organizer": {
+                                    "capacity": {
                                         "type": "integer"
                                     },
-                                    "participants": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "room_name": {
+                                        "type": "string"
+                                    },
+                                    "rules": {
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
                                         }
                                     },
-                                    "room_id": {
-                                        "type": "integer"
-                                    },
-                                    "start_time": {
-                                        "type": "string"
-                                    },
-                                    "status_type": {
-                                        "type": "string"
-                                    },
-                                    "title": {
+                                    "type": {
                                         "type": "string"
                                     }
                                 }
@@ -1182,6 +942,45 @@ const docTemplate = `{
                     "properties": {
                         "code_value": {
                             "$ref": "#/definitions/models.CodeValue"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetRoomByIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "room": {
+                            "type": "object",
+                            "properties": {
+                                "capacity": {
+                                    "type": "integer"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
@@ -1356,37 +1155,64 @@ const docTemplate = `{
                 }
             }
         },
-        "presentations.UpdateMeetingBody": {
+        "presentations.UpdateRoomInput": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "end_time": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organizer": {
+                "capacity": {
                     "type": "integer"
                 },
-                "participants": {
+                "id": {
+                    "type": "integer"
+                },
+                "room_name": {
+                    "type": "string"
+                },
+                "rules": {
                     "type": "array",
                     "items": {
                         "type": "integer"
                     }
                 },
-                "room_id": {
-                    "type": "integer"
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.UpdateRoomResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "room": {
+                            "type": "object",
+                            "properties": {
+                                "capacity": {
+                                    "type": "integer"
+                                },
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "room_name": {
+                                    "type": "string"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 },
-                "start_time": {
+                "message": {
                     "type": "string"
                 },
-                "status_type": {
-                    "type": "string"
-                },
-                "title": {
+                "status": {
                     "type": "string"
                 }
             }

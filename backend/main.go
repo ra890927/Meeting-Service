@@ -25,11 +25,17 @@ func main() {
 	// Create a new presentation
 
 	r := gin.Default()
+	// CORS middleware
+	r.Use(middlewares.CORSMiddleware())
+
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
 		meeingPresentation := presentations.NewMeetingPresentation()
-		eg := v1.Group("/user")
+		roomPresentation := presentations.NewRoomPresentation()
+
+
+    eg := v1.Group("/user")
 		{
 			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
@@ -67,7 +73,21 @@ func main() {
 			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
 			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
 			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)
-
+    }
+		eg = v1.Group("/room")
+		{
+			eg.GET("/getAllRooms", roomPresentation.GetAllRooms)
+			eg.GET("/:id", roomPresentation.GetRoomByID)
+		}
+		eg = v1.Group("/admin")
+		eg.Use(middlewares.AuthRequire(), middlewares.AdminRequire())
+		{
+			sub := eg.Group("/room")
+			{
+				sub.POST("", roomPresentation.CreateRoom)
+				sub.PUT("", roomPresentation.UpdateRoom)
+				sub.DELETE("/:id", roomPresentation.DeleteRoom)
+			}
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

@@ -12,11 +12,11 @@ type roomRepo struct {
 }
 
 type RoomRepo interface {
-	CreateRoom(room *models.Room) (*models.Room, error)
-	UpdateRoom(id string, room *models.Room) error
-	DeleteRoom(id string) error
-	GetRoom(id string) (*models.Room, error)
-	GetAllRooms() ([]*models.Room, error) // 新增方法
+	CreateRoom(room *models.Room) error
+	UpdateRoom(room *models.Room) error
+	DeleteRoom(id int) error
+	GetRoomByID(id int) (*models.Room, error)
+	GetAllRooms() ([]*models.Room, error)
 }
 
 func NewRoomRepo(dbArgs ...*gorm.DB) RoomRepo {
@@ -30,17 +30,17 @@ func NewRoomRepo(dbArgs ...*gorm.DB) RoomRepo {
 }
 
 // CreateRoom creates a new room in the database
-func (rr roomRepo) CreateRoom(room *models.Room) (*models.Room, error) {
+func (rr roomRepo) CreateRoom(room *models.Room) error {
 	result := rr.db.Create(room)
 	if result.Error != nil {
-		return nil, result.Error
+		return result.Error
 	}
-	return room, nil
+	return nil
 }
 
 // UpdateRoom updates an existing room in the database
-func (rr roomRepo) UpdateRoom(id string, room *models.Room) error {
-	result := rr.db.Model(&models.Room{}).Where("id = ?", id).Updates(room)
+func (rr roomRepo) UpdateRoom(room *models.Room) error {
+	result := rr.db.Model(&models.Room{}).Where("id = ?", room.ID).Updates(room)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -48,16 +48,18 @@ func (rr roomRepo) UpdateRoom(id string, room *models.Room) error {
 }
 
 // DeleteRoom deletes a room from the database
-func (rr roomRepo) DeleteRoom(id string) error {
+func (rr roomRepo) DeleteRoom(id int) error {
 	result := rr.db.Delete(&models.Room{}, id)
 	if result.Error != nil {
 		return result.Error
+	} else if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
 	}
 	return nil
 }
 
-// GetRoom retrieves a room from the database
-func (rr roomRepo) GetRoom(id string) (*models.Room, error) {
+// GetRoomByID retrieves a room from the database
+func (rr roomRepo) GetRoomByID(id int) (*models.Room, error) {
 	var room models.Room
 	result := rr.db.First(&room, id)
 	if result.Error != nil {

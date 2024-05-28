@@ -126,52 +126,36 @@ definitions:
       status:
         type: string
     type: object
-  presentations.CreateMeetingBody:
+  presentations.CreateRoomInput:
     properties:
-      description:
-        type: string
-      end_time:
-        type: string
-      organizer:
+      capacity:
         type: integer
-      participants:
+      room_name:
+        type: string
+      rules:
         items:
           type: integer
         type: array
-      room_id:
-        type: integer
-      start_time:
-        type: string
-      status_type:
-        type: string
-      title:
+      type:
         type: string
     type: object
-  presentations.CreateUpdateGetMeetingResponse:
+  presentations.CreateRoomResponse:
     properties:
       data:
         properties:
-          meeting:
+          room:
             properties:
-              description:
-                type: string
-              end_time:
-                type: string
-              id:
-                type: string
-              organizer:
+              capacity:
                 type: integer
-              participants:
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
                 items:
                   type: integer
                 type: array
-              room_id:
-                type: integer
-              start_time:
-                type: string
-              status_type:
-                type: string
-              title:
+              type:
                 type: string
             type: object
         type: object
@@ -219,32 +203,24 @@ definitions:
       status:
         type: string
     type: object
-  presentations.GetAllMeetingsResponse:
+  presentations.GetAllRoomsResponse:
     properties:
       data:
         properties:
-          meetings:
+          rooms:
             items:
               properties:
-                description:
-                  type: string
-                end_time:
-                  type: string
-                id:
-                  type: string
-                organizer:
+                capacity:
                   type: integer
-                participants:
+                id:
+                  type: integer
+                room_name:
+                  type: string
+                rules:
                   items:
                     type: integer
                   type: array
-                room_id:
-                  type: integer
-                start_time:
-                  type: string
-                status_type:
-                  type: string
-                title:
+                type:
                   type: string
               type: object
             type: array
@@ -260,6 +236,31 @@ definitions:
         properties:
           code_value:
             $ref: '#/definitions/models.CodeValue'
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetRoomByIDResponse:
+    properties:
+      data:
+        properties:
+          room:
+            properties:
+              capacity:
+                type: integer
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
+                items:
+                  type: integer
+                type: array
+              type:
+                type: string
+            type: object
         type: object
       message:
         type: string
@@ -372,27 +373,44 @@ definitions:
       status:
         type: string
     type: object
-  presentations.UpdateMeetingBody:
+  presentations.UpdateRoomInput:
     properties:
-      description:
-        type: string
-      end_time:
-        type: string
-      id:
-        type: string
-      organizer:
+      capacity:
         type: integer
-      participants:
+      id:
+        type: integer
+      room_name:
+        type: string
+      rules:
         items:
           type: integer
         type: array
-      room_id:
-        type: integer
-      start_time:
+      type:
         type: string
-      status_type:
+    type: object
+  presentations.UpdateRoomResponse:
+    properties:
+      data:
+        properties:
+          room:
+            properties:
+              capacity:
+                type: integer
+              id:
+                type: integer
+              room_name:
+                type: string
+              rules:
+                items:
+                  type: integer
+                type: array
+              type:
+                type: string
+            type: object
+        type: object
+      message:
         type: string
-      title:
+      status:
         type: string
     type: object
   presentations.WhoAmIResponse:
@@ -422,6 +440,66 @@ info:
   title: Meeting Center API
   version: "1.0"
 paths:
+  /admin/room:
+    post:
+      consumes:
+      - application/json
+      description: Create a new room
+      parameters:
+      - description: Room information
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateRoomInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateRoomResponse'
+      summary: Create a new room
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Update room information
+      parameters:
+      - description: Room information
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateRoomInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.UpdateRoomResponse'
+      summary: Update room information
+      tags:
+      - admin
+  /admin/room/{id}:
+    delete:
+      description: Delete room by room ID
+      parameters:
+      - description: Room ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: deleted
+          schema:
+            type: string
+      summary: Delete room
+      tags:
+      - admin
   /auth/login:
     post:
       consumes:
@@ -657,191 +735,11 @@ paths:
       summary: Get a code value by ID
       tags:
       - code
-  /meeting:
-    post:
-      consumes:
-      - application/json
-      description: Create a meeting
-      parameters:
-      - description: Meeting details
-        in: body
-        name: meeting
-        required: true
-        schema:
-          $ref: '#/definitions/presentations.CreateMeetingBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
-      summary: Create a meeting
-      tags:
-      - Meeting
-    put:
-      consumes:
-      - application/json
-      description: Update a meeting
-      parameters:
-      - description: Meeting details
-        in: body
-        name: meeting
-        required: true
-        schema:
-          $ref: '#/definitions/presentations.UpdateMeetingBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
-      summary: Update a meeting
-      tags:
-      - Meeting
-  /meeting/{id}:
-    delete:
-      description: Delete a meeting
-      parameters:
-      - description: Meeting ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.DeleteMeetingResponse'
-      summary: Delete a meeting
-      tags:
-      - Meeting
+  /room/{id}:
     get:
-      description: Get a meeting
-      parameters:
-      - description: Meeting ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
-      summary: Get a meeting
-      tags:
-      - Meeting
-  /meeting/GetMeetingsByRoomIdAndDatePeriod:
-    get:
-      description: Get meetings by room ID and date
+      description: Get room by ID
       parameters:
       - description: Room ID
-        in: query
-        name: room_id
-        required: true
-        type: integer
-      - description: Date
-        in: query
-        name: date_from
-        required: true
-        type: string
-      - description: Date
-        in: query
-        name: date_to
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
-      summary: Get meetings by room ID and date
-      tags:
-      - Meeting
-  /meeting/getAllMeetings:
-    get:
-      description: Get all meetings
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
-      summary: Get all meetings
-      tags:
-      - Meeting
-  /meeting/getMeetingsByParticipantId:
-    get:
-      description: Get meetings by participant ID
-      parameters:
-      - description: Participant ID
-        in: query
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
-      summary: Get meetings by participant ID
-      tags:
-      - Meeting
-  /rooms:
-    get:
-      description: 獲取所有房間信息
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Room'
-            type: array
-      summary: 獲取所有房間
-      tags:
-      - rooms
-    post:
-      consumes:
-      - application/json
-      description: 創建一個新的房間
-      parameters:
-      - description: 房間信息
-        in: body
-        name: room
-        required: true
-        schema:
-          $ref: '#/definitions/models.Room'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Room'
-      summary: 創建房間
-      tags:
-      - rooms
-  /rooms/{id}:
-    delete:
-      description: 刪除指定ID的房間
-      parameters:
-      - description: 房間ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: deleted
-          schema:
-            type: string
-      summary: 刪除房間
-      tags:
-      - rooms
-    get:
-      description: 獲取指定ID的房間信息
-      parameters:
-      - description: 房間ID
         in: path
         name: id
         required: true
@@ -850,36 +748,21 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Room'
-      summary: 獲取房間
+            $ref: '#/definitions/presentations.GetRoomByIDResponse'
+      summary: Get room by ID
       tags:
-      - rooms
-    put:
-      consumes:
-      - application/json
-      description: 更新房間信息
-      parameters:
-      - description: 房間ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: 房間信息
-        in: body
-        name: room
-        required: true
-        schema:
-          $ref: '#/definitions/models.Room'
-      produces:
-      - application/json
+      - room
+  /room/getAllRooms:
+    get:
+      description: Get all rooms
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Room'
-      summary: 更新房間
+            $ref: '#/definitions/presentations.GetAllRoomsResponse'
+      summary: Get all rooms
       tags:
-      - rooms
+      - room
   /user:
     post:
       consumes:

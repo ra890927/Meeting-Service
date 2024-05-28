@@ -102,7 +102,7 @@ func (ap authPresentation) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", *token, 3600, "/", "", false, true)
+	c.SetCookie("token", *token, 3600*24, "/", "", false, true)
 
 	// Return the logged user
 	loginResponse.Status = "success"
