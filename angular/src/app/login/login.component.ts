@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { FooterComponent } from '../layout/footer/footer.component';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ import { NgIf } from '@angular/common';
     MatSelectModule,
     MatButtonModule,
     ReactiveFormsModule,
+    FooterComponent,
     NgIf
   ],
   templateUrl: './login.component.html',

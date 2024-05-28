@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { NgIf } from '@angular/common';
+import { FooterComponent } from '../layout/footer/footer.component';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +19,8 @@ import { NgIf } from '@angular/common';
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
-    NgIf
+    NgIf,
+    FooterComponent
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
