@@ -16,11 +16,7 @@
                     <!-- <mat-label>User Name</mat-label> -->
                     <input matInput [formControl]="userNameControl">
                 </mat-form-field>
-                <div class="column"  *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.email}}">{{users.email}}</div>
-                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
-                    <!-- <mat-label>Email</mat-label> -->
-                    <input matInput [formControl]="emailControl">
-                </mat-form-field>
+                <div class="column" data-title="{{users.email}}">{{users.email}}</div>
                 <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
                 <div class="column" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.details}}">{{users.details}}</div>
                 <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">

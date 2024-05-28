@@ -35,7 +35,6 @@ export class UserComponent {
   isEditing: boolean = false;
 
   userNameControl = new FormControl();
-  emailControl = new FormControl();
   detailsControl = new FormControl();
 
   ngOnInit(): void {
@@ -77,7 +76,6 @@ export class UserComponent {
     this.isEditing = !this.isEditing;
     this.usersEditing = users;
     this.userNameControl.setValue(users.userName);
-    this.emailControl.setValue(users.email);
     this.detailsControl.setValue(users.details);
     
     localStorage.setItem("usersList", JSON.stringify(this.usersList));
@@ -86,14 +84,12 @@ export class UserComponent {
   save(): void {
     if (this.usersEditing) {
       this.usersEditing.userName = this.userNameControl.value;
-      this.usersEditing.email = this.emailControl.value;
       this.usersEditing.details = this.detailsControl.value;
       localStorage.setItem("usersList", JSON.stringify(this.usersList));
     }
     this.isEditing = false;
     this.usersEditing = undefined;
     this.userNameControl.setValue('');
-    this.emailControl.setValue('');
     this.detailsControl.setValue('');
   }
 
