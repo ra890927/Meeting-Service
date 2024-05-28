@@ -64,6 +64,7 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
      MatIconModule,
      PopUpDeleteConfirmComponent,
      MatDatepickerModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './room-scheduler.component.html',
   styleUrl: './room-scheduler.component.css',
 })

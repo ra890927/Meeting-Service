@@ -236,4 +236,3 @@ export class UserSchedulerComponent {
     return this.detailsInfo.find((event) => event.id === id);
   }
 }
-

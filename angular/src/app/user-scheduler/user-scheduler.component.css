@@ -7,22 +7,57 @@
     display: flex;
     width: 100%;
     height: 80vh;
-    border: black 1px solid;
 }
 
 .profile-event-container{
     display: flex;
+    flex-direction: column;
     width: 30%;
     height: 100%;
     justify-content: center;
-    border: black 1px solid;
+    align-items: center;
 }
+.user-profile{
+    display: flex;
+    width: 60%;
+    height:10%;
+    justify-content: center;
+}
+.user-profile-container{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+    position: relative;
+    bottom: 10px;
+    background-color: burlywood;
+    opacity: 0.8;
+    border-radius: 20px;
+}
+.user-profile-header{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    color: brown;
+    font-size: 2em;
 
+}
+.user-profile-body{
+    display: flex;
+    position: relative;
+    left: 20%;
+    top:20%;
+    flex-direction: column;
+    width: 100%;
+    height: 80%;
+}
 .event-list{
     display: flex;
     flex-direction: column;
     width: 60%;
-    height: 100%;
+    height: 90%;
     border-radius: 20px;
     overflow-y: hidden;
     background-color: silver;
@@ -93,7 +128,6 @@
     align-items: center;
     width: 70%;
     height: 100%;
-    border: black 1px solid;
 }
 
 .calendar{
