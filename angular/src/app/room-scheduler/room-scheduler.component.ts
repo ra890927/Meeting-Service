@@ -23,6 +23,7 @@ import { S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import { MatDatepicker } from '@angular/material/datepicker';
 //need to save in a interface file
 interface Room {
   room_name: string;
@@ -64,6 +65,7 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
      MatIconModule,
      PopUpDeleteConfirmComponent,
      MatDatepickerModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './room-scheduler.component.html',
   styleUrl: './room-scheduler.component.css',
 })
@@ -282,7 +284,6 @@ export class RoomSchedulerComponent implements OnInit{
   handleRoomChange(room: string) {
       this.selectedRoom = room;
       let eventsToDisplay: any[] = [];
-      console.log("change" + room);
       eventsToDisplay = this.filterEvents(this.roomTable[room]);
       this.calendarOptions = {
         ...this.calendarOptions,
