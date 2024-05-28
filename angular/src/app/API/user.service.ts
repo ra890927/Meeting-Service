@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+interface User {
+  id: number;
+  username: string;
+  email: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -17,12 +22,16 @@ export class UserService {
     localStorage.setItem('user', JSON.stringify(user));
   }
   // get user data
-  public getUser(): any {
-    return JSON.parse(localStorage.getItem('user') || '{}');
+  public getUser(): User|null{
+    const user = window.sessionStorage.getItem('user');
+    if (user) {
+      return JSON.parse(user);
+    }
+    return null;
   }
   //check if user is logged in
   public isLoggedIn(): boolean {
-    const user = localStorage.getItem('user');
+    const user = window.sessionStorage.getItem('user');
     if (user) {
       return true;
     }

@@ -94,8 +94,9 @@ export class PopUpDetailsComponent {
     this.dialogRef.close();
   }
   onOkClick(): void {
+    console.log("in there");
     this.data.participants = this.tempParticipants;
-    this.dialogRef.close(this.data);
+    console.log(this.data.participants);
   }
   private _filter(value: string): User[] {
     if (typeof value !== 'string') {

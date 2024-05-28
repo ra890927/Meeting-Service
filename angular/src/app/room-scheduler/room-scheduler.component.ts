@@ -18,19 +18,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
-import { INITIAL_EVENTS, createEventId, SECOND_EVENTS} from './event-utils';//test use
+import {createEventId} from './event-utils';//test use
 import { S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
 //need to save in a interface file
 interface Room {
   room_name: string;
@@ -71,11 +63,9 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
      MatButtonModule,
      MatIconModule,
      PopUpDeleteConfirmComponent,
-     MatDatepickerModule,
-     ReactiveFormsModule],
+     MatDatepickerModule],
   templateUrl: './room-scheduler.component.html',
   styleUrl: './room-scheduler.component.css',
-  providers: [provideNativeDateAdapter()]
 })
 export class RoomSchedulerComponent implements OnInit{
   constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog) {
@@ -267,6 +257,7 @@ export class RoomSchedulerComponent implements OnInit{
       if (data && data.title !== undefined && data.title !== '') {
         clickInfo.event.setProp('title', data.title);
         clickInfo.event.setExtendedProp('description', data.description);
+        clickInfo.event.setExtendedProp('participants', data.participants);
         //add put request
       }
     });

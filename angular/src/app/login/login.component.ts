@@ -35,8 +35,8 @@ export class LoginComponent {
   loginError = false;
   connectionError = false;
   ngOnInit(): void {
-    if (localStorage.getItem('token')) {
-      this.navigate('/home');//navigate to home page
+    if (window.sessionStorage.getItem('token')) {
+      this.navigate('/profile');//navigate to home page
     }
   }
   //reactive form
@@ -69,11 +69,11 @@ export class LoginComponent {
       if(userName && password){
         this.authService.login(userName, password).subscribe(
         (res) => {
-          if (res.status === '200') {
+          if (res.status === 'success') {
             //set the token and user details in local storage
-            localStorage.setItem('token', res.body.token);
-            localStorage.setItem('user', JSON.stringify(res.body.user));
-            this.navigate('/home');//navigate to home page
+            window.sessionStorage.setItem('token', res.data.token);
+            window.sessionStorage.setItem('user', JSON.stringify(res.data.user));
+            this.navigate('/user-scheduler');//navigate to profile page
           }else{
             console.log('Login failed');
             this.loginError = true;
