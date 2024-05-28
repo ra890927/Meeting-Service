@@ -25,6 +25,9 @@ func main() {
 	// Create a new presentation
 
 	r := gin.Default()
+	// CORS middleware
+	r.Use(middlewares.CORSMiddleware())
+
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
