@@ -73,7 +73,6 @@ mat-chip-row{
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    /* height: 70px; */
 }
 
 .rooms.row .column {
@@ -83,7 +82,6 @@ mat-chip-row{
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
-    /* height: 70px; */
 }
 
 .edit {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { rooms, allTags } from '../users';
-import { Component, ElementRef, ViewChild, Inject, OnInit, inject} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -34,12 +34,6 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrl: './room.component.css'
 })
 export class RoomComponent implements OnInit{
-  @ViewChild("roomNumberInput")
-  roomNumberInput!: ElementRef<MatInput>;
-  @ViewChild("capacityInput")
-  capacityInput!: ElementRef<MatInput>;
-  @ViewChild("detailsInput")
-  detailsInput!: ElementRef<MatInput>;
   
   roomsList: rooms[] = [{ 
     id: '001',
@@ -117,31 +111,22 @@ export class RoomComponent implements OnInit{
     this.roomNumberControl.setValue(rooms.roomNumber);
     this.capacityControl.setValue(rooms.capacity);
     this.detailsControl.setValue(rooms.details);
-
-    setTimeout(() => {
-      if (this.roomNumberInput && this.detailsInput && this.capacityInput) {
-        this.roomNumberInput.nativeElement.value = rooms.roomNumber;
-        this.roomNumberInput.nativeElement.focus();
-        this.capacityInput.nativeElement.value = rooms.capacity;
-        this.detailsInput.nativeElement.value = rooms.details;
-      }
-    }, 0);
     
     localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
   }
 
   save(): void {
     if (this.roomsEditing) {
-      this.roomsEditing.roomNumber = this.roomNumberInput.nativeElement.value;
-      this.roomsEditing.capacity = parseInt(this.capacityInput.nativeElement.value);
-      this.roomsEditing.details = this.detailsInput.nativeElement.value;
+      this.roomsEditing.roomNumber = this.roomNumberControl.value;
+      this.roomsEditing.capacity = parseInt(this.capacityControl.value, 10);
+      this.roomsEditing.details = this.detailsControl.value;
       localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
     }
     this.isEditing = false;
     this.roomsEditing = undefined;
-    this.roomNumberInput.nativeElement.value = "";
-    this.capacityInput.nativeElement.value = "";
-    this.detailsInput.nativeElement.value = "";
+    this.roomNumberControl.setValue('');
+    this.capacityControl.setValue('');
+    this.detailsControl.setValue('');
   }
 
 }

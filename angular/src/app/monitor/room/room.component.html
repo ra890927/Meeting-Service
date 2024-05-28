@@ -16,54 +16,76 @@
         
         <mat-list-item *ngFor="let rooms of roomsList">
             <div class="rooms row">
-                <div class="column room" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
-                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column room">
-                    <!-- <mat-label>Room Number</mat-label> -->
-                    <input matInput #roomNumberInput [formControl]="roomNumberControl">
-                </mat-form-field>
+                <!-- Room Number -->
+                @if (!isEditing || roomsEditing?.id !== rooms.id) {    
+                    <div class="column room" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
+                }
+                @if (isEditing && roomsEditing?.id === rooms.id){
+                    <mat-form-field class="column room">
+                        <!-- <mat-label>Room Number</mat-label> -->
+                        <input matInput [formControl]="roomNumberControl">
+                    </mat-form-field>
+                }
 
                 <!-- Tags (Chips) -->
                 <div class="tagContainer">
                     <!-- add button -->
                     <div class="add-tag-button">
-                        <button *ngIf="isEditing && roomsEditing?.id === rooms.id" mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-                            <mat-icon>add_circle</mat-icon>
-                        </button>
+                        @if (isEditing && roomsEditing?.id === rooms.id) {
+                            <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+                                <mat-icon>add_circle</mat-icon>
+                            </button>
+                        }
                     </div>
                     <!-- choose tags -->
                     <mat-menu #menu="matMenu">
                         @for (tag of allTags; track tag) {
-                            <button *ngIf="!rooms.tags.includes(tag)" mat-menu-item (click)="selected(rooms, tag)">{{tag}}</button>
+                            @if (!rooms.tags.includes(tag)) {
+                                <button mat-menu-item (click)="selected(rooms, tag)">{{tag}}</button>
+                            }
                         }
                     </mat-menu>
                     <!-- display tags -->
                     @for (tag of rooms.tags; track tag) {
                         <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
-                        <!-- <mat-chip-row *ngFor="let tag of rooms.tags" (removed)="remove(tag, rooms)"> -->
                         {{tag}}
-                        <button *ngIf="isEditing && roomsEditing?.id === rooms.id" matChipRemove [attr.aria-label]="'remove ' + tag">
-                            <mat-icon>cancel</mat-icon>
-                        </button>
+                        @if (isEditing && roomsEditing?.id === rooms.id){
+                            <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        }
                         </mat-chip-row>
                     }
                 </div>
 
                 <!-- Capacity -->
-                <div  class="column capacity" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
-                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column  capacity">
-                    <input matInput #capacityInput [formControl]="capacityControl">
-                </mat-form-field>
+                @if (!isEditing || roomsEditing?.id !== rooms.id) {
+                    <div class="column capacity" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
+                }
+                @else {
+                    <mat-form-field class="column capacity">
+                        <input matInput [formControl]="capacityControl">
+                    </mat-form-field>
+                }
 
                 <!-- Details -->
-                <div class="column details" *ngIf="!isEditing || roomsEditing?.id !== rooms.id" data-title="{{rooms.details}}">{{rooms.details}}</div>
-                <mat-form-field *ngIf="isEditing && roomsEditing?.id === rooms.id" class="column details">
-                    <input matInput #detailsInput [formControl]="detailsControl">
-                  </mat-form-field>
+                @if (!isEditing || roomsEditing?.id !== rooms.id) {
+                    <div class="column details" data-title="{{rooms.details}}">{{rooms.details}}</div>
+                }
+                @else {
+                    <mat-form-field class="column details">
+                        <input matInput [formControl]="detailsControl">
+                    </mat-form-field>
+                }
                   
                 <!-- Actions -->
                 <div class="column controls actions">
-                    <mat-icon *ngIf="!isEditing || roomsEditing?.id !== rooms.id" class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
-                    <mat-icon *ngIf="isEditing && roomsEditing?.id === rooms.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                    @if (!isEditing || roomsEditing?.id !== rooms.id){
+                        <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
+                    }
+                    @else {
+                        <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                    }
                     <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(rooms)">delete</mat-icon>
                 </div> 
             </div>
