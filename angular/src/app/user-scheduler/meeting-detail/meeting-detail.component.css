@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.detail-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 10%;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+.detail-header-title{
+    font-size: 20px;
+    font-weight: 600;
+}
+.detail-content{
+    padding: 20px;
+    overflow-y: scroll;
+    height: 80% ;
+}
+.detail-content::-webkit-scrollbar {
+    display: none;
+}
+.detail-content-row{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.detail-content-row-label{
+    font-size: 16px;
+    font-weight: 600;
+    margin-right: 20px;
+}
+.detail-content-row-value{
+    font-size: 16px;
+    color: #666;
+}
+.rules{
+    text-decoration: none;
+    border:none;
+    background-color: #666;
+    color: white;
+    font-size: 10px;
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-left: 20px;
+    border-radius: 30px;
+}
+.participants{
+    display: flex;
+}
+
+.participant{
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 2px 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 30px;
+}
+.username{
+    font-weight: 600;
+    margin-right: 5px;
+}
+.email{
+    font-size: 12px;
+    color: #666;
+}
+.textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    text-decoration: none;
+    outline: none;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    resize: none;
+  }
+.action-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 10%;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface{
+    overflow-y: hidden !important;
+}

@@ -1,0 +1,38 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.form-title{
+    font-size: 2em;
+    margin: 10px;
+}
+
+.input-container{
+    margin: 5px;
+    width: 100%;
+}
+.description{
+    height:40%;
+}
+.description-container{
+    resize: none;
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2em;
+}
+.action-container{
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    padding: 10px;
+}
+.buttons{
+    position: relative;
+    padding: 0.25em 1em;
+}
+
+.user-email{
+    font-size: 0.8em;
+    color: grey;
+}

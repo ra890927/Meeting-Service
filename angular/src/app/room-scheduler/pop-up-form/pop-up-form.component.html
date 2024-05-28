@@ -1,0 +1,52 @@
+<h2 mat-dialog-title class="form-title">Booker: Chris</h2>
+<mat-dialog-content>
+  <p>Meeting details</p>
+  <p>Time Period: {{data.startTime| date:'yyyy-M-d HH:mm' }}~{{data.endTime| date:"HH:mm"}}</p>
+  <!-- <mat-icon class = "change-time" (click)="changeTime()">edit</mat-icon> -->
+  <div class = "card-container">
+    <mat-form-field class="input-container">
+        <mat-label>What's your title</mat-label>
+        <input matInput [(ngModel)]="data.title">
+    </mat-form-field>
+    </div>
+   <div class = "card-container">
+    <mat-form-field class="input-container description">
+        <mat-label>What's your description</mat-label>
+        <textarea matInput class = "description-container" [(ngModel)]="data.description"></textarea>
+    </mat-form-field>
+   </div>
+   <div class = "card-container">
+    <mat-form-field class="input-container">
+        <mat-label>Participants</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Participants">
+            @for ( participant of data.participants; track participant ){
+                <mat-chip-row (removed) = "remove(participant)">
+                    {{participant.email}}
+                    <button matChipRemove [attr.aria-label]="'Remove ' + participant.name" >
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+            }
+        </mat-chip-grid>
+        <input placeholder="Add Participant" #participantInput [formControl]="participantCtrl"
+            [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"/>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                @for(participant of filteredParticipants |async; track participant){
+                    <mat-option *ngIf="!data.participants.includes(participant)" [value]="participant">
+                        <div class="user-name">{{participant.name}}</div>
+                        <div class="user-email">{{participant.email}}</div>
+                    </mat-option>
+                }
+            </mat-autocomplete>
+    </mat-form-field>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="action-container">
+        <div class="buttons">
+            <button mat-button (click)="onNoClick()">No Thanks</button>
+            <button mat-button [mat-dialog-close]="data" [disabled]="!data.title">Ok</button>
+        </div>
+    </div>
+</mat-dialog-actions>

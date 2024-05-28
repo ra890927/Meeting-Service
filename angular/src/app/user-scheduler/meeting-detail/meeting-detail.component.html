@@ -1,0 +1,51 @@
+<div class="detail-header">
+    <div class="detail-header-title">Meeting Info.</div>
+</div>
+<div class="detail-content">
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Meeting Title</div>
+        <div class="detail-content-row-value">{{data.title}}</div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Organizer</div>
+        <div class="detail-content-row-value">{{data.Organizer.username}}</div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">
+            Meeting time
+        </div>
+        <div class="detail-content-row-value">
+            {{data.start | date: 'yyyy-MM-dd HH:mm'}} ~ {{data.end | date: 'yyyy-MM-dd HH:mm'}}
+        </div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Description</div>
+    </div>
+    <div class="textarea-container">
+        <textarea class="textarea" readonly>{{data.description}}</textarea>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Location</div>
+        <div class="detail-content-row-value">{{data.RoomDetail.room_name}}</div>
+        <div class="rules-container">
+            @for (rule of data.RoomDetail.rules; track rule) {
+                <button class="rules" matTooltip={{rule.type_desc}}>{{rule.type_name}}</button> 
+            }
+        </div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Participants</div>
+        <div class="detail-content-row-value">
+            <div class="participants">
+                @for (participant of data.participants; track participant) {
+                    <div class="participant">
+                        <div class="participant-name"><span class="username">{{participant.username}}</span><span class="email">{{participant.email}}</span></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="action-container">
+    <button mat-button mat-dialog-close>Close</button>
+</div>

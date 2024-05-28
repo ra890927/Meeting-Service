@@ -1,0 +1,31 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.card-title{
+    font-size: 3em;
+    margin: 10px;
+    text-align: center;
+}
+
+.card-content{
+    display: flex;
+    justify-content: center;
+}
+
+.card-details{
+    font-size: 2em;
+    position: relative;
+    top:30%;
+    height: fit-content;
+    color: rgb(70, 0, 0)
+}
+
+.buttons{
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    margin: 10px;
+}

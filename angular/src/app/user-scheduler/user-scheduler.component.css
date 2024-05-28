@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.profile-container{
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    border: black 1px solid;
+}
+
+.profile-event-container{
+    display: flex;
+    width: 30%;
+    height: 100%;
+    justify-content: center;
+    border: black 1px solid;
+}
+
+.event-list{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: 100%;
+    border-radius: 20px;
+    overflow-y: hidden;
+    background-color: silver;
+}
+
+.event-list-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 10%;
+    color: white;
+    font-size: 2em;
+}
+.event-list-body{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 90%;
+    overflow-y: scroll;
+}
+.event-list-body::-webkit-scrollbar{
+    display: none;
+}
+.event-list-item-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-top: white 1px solid;
+    height:300px;
+}
+.event-list-item-title{
+    display: flex;
+    justify-content:left;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    margin-left: 20px;
+    color: white;
+    font-size: 1.5em;
+}
+.event-list-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    background-color:silver;
+    color:black;
+    font-size: 1em;
+}
+.button-container{
+    display: flex;
+    justify-content: right;
+    color: white !important;
+    font-size: 1.5em;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+}
+::ng-deep .mat-icon{
+    margin-right: 20px;
+    cursor: pointer;
+}
+.calendar-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    border: black 1px solid;
+}
+
+.calendar{
+    width:80%;
+    height: 80%;
+}
+
+.text-field{
+    width: 80%;
+    text-align: left;
+    font-size: 1.2em;
+}
+.time-field{
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    border-bottom: white 1px solid;
+}
+.month-view-event {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+.event-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 5%;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+.date-time-container {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Adjust the gap as needed */
+}
+::ng-deep .fc-timegrid-event-harness{
+    opacity: 0.8;
+}
