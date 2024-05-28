@@ -15,15 +15,24 @@
 
         <mat-list-item *ngFor="let tag of allTags; last as last">
             <div class="tags row">
-                <div class="column name" *ngIf="!isEditing || tagEditing !== tag">{{tag}}</div>
-                <mat-form-field *ngIf="isEditing && tagEditing === tag" class="column name">
-                    <!-- <mat-label>Room Number</mat-label> -->
-                    <input matInput #tagNameInput [formControl]="tagNameControl">
-                </mat-form-field>
+                @if (!isEditing || tagEditing !== tag){
+                    <div class="column name">{{tag}}</div>
+                }
+                @else {
+                    <mat-form-field class="column name">
+                        <!-- <mat-label>Room Number</mat-label> -->
+                        <input matInput [formControl]="tagNameControl">
+                    </mat-form-field>
+                }
                 <div class="column controls actions">
-                    <mat-icon *ngIf="!isEditing || tagEditing !== tag" class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon>
-                    <mat-icon *ngIf="isEditing && tagEditing === tag" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
-                    <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(tag)">delete</mat-icon>
+                @if (!isEditing || tagEditing !== tag){
+                    <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon> 
+                }
+                @else {
+                <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                }
+                <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(tag)">delete</mat-icon>
+            
                 </div>
             </div>
             <div class="divider-div">

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
@@ -35,11 +35,7 @@ export class TagComponent {
   allTags = allTags;
   isEditing: boolean = false;
   tagEditing: string = '';
-
   tagNameControl = new FormControl();
-
-  @ViewChild("tagNameInput")
-  tagNameInput!: ElementRef<MatInput>;
 
   constructor(public dialog: MatDialog) {
   }
@@ -78,15 +74,15 @@ export class TagComponent {
     if (this.tagEditing) {
       const index = this.allTags.findIndex(tag => tag === this.tagEditing);
 
-      this.tagEditing = this.tagNameInput.nativeElement.value;
+      this.tagEditing = this.tagNameControl.value;
       
       if (index !== -1) {
-        this.allTags.splice(index, 1, this.tagNameInput.nativeElement.value);
+        this.allTags.splice(index, 1, this.tagNameControl.value);
       }
     }
     this.isEditing = false;
     this.tagEditing = '';
-    this.tagNameInput.nativeElement.value = "";
+    this.tagNameControl.setValue('');
   }
 
 }

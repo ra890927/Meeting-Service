@@ -91,7 +91,6 @@ export class RoomComponent implements OnInit{
     if (index >= 0) { // check if the fruit is in the list
       rooms.tags.splice(index, 1);
     }
-    console.log(rooms.tags);
   }
 
   selected(rooms: rooms, tag: string): void {
