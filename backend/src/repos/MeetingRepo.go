@@ -14,7 +14,8 @@ type MeetingRepo interface {
 	DeleteMeeting(id string) error
 	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
+	GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error)
+	GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
 }
 
 type meetingRepo struct {
@@ -73,12 +74,24 @@ func (mr meetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
 	return meetings, nil
 }
 
-func (mr meetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	// here get the meetings by room id and date(start_time)
+func (mr meetingRepo) GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error) {
 	var meetings []*models.Meeting
-	result := mr.db.Where("room_id = ? AND date(start_time) = date(?)", roomID, date).Find(&meetings)
+	result := mr.db.Where("room_id = ?", roomID).Find(&meetings)
 	if result.Error != nil {
-		return nil, result.Error
+		return []*models.Meeting{}, result.Error
+	}
+	return meetings, nil
+}
+
+func (mr meetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+	// search for meetings is in the period of dateFrom and dateTo
+	var meetings []*models.Meeting
+	result := mr.db.Where("(DATE(start_time) BETWEEN ? AND ?) OR (DATE(end_time) BETWEEN ? AND ?) OR (DATE(start_time) <= ? AND DATE(end_time) >= ?)",
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02"),
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02"),
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02")).Find(&meetings)
+	if result.Error != nil {
+		return []*models.Meeting{}, result.Error
 	}
 	return meetings, nil
 }

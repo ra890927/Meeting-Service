@@ -39,8 +39,13 @@ func (m *MockMeetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	args := m.Called(roomID, date)
+func (m *MockMeetingDomain) GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error) {
+	args := m.Called(roomID)
+	return args.Get(0).([]*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+	args := m.Called(dateFrom, dateTo)
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
@@ -79,7 +84,8 @@ func TestServiceCreateMeetingWithNoConflict(t *testing.T) {
 	}
 
 	// Assume no existing meetings
-	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{}, nil)
 	mockMeetingDomain.On("CreateMeeting", meeting).Return(nil)
 
 	err := ms.CreateMeeting(user, meeting)
@@ -111,7 +117,8 @@ func TestServiceCreateMeetingWithConflict(t *testing.T) {
 	}
 
 	// Return existing meeting that conflicts
-	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{existingMeeting}, nil)
 	mockMeetingDomain.On("CreateMeeting", meeting).Return(nil)
 
 	err := ms.CreateMeeting(user, meeting)
@@ -167,7 +174,8 @@ func TestServiceUpdateMeetingWithConflict(t *testing.T) {
 
 	mockMeetingDomain.On("UpdateMeeting", meeting).Return(nil)
 	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(meeting, nil)
-	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{existingMeeting}, nil)
 
 	err := ms.UpdateMeeting(user, meeting)
 
@@ -193,7 +201,8 @@ func TestServiceUpdateMeetingWithNoConflict(t *testing.T) {
 
 	mockMeetingDomain.On("UpdateMeeting", meeting).Return(nil)
 	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(meeting, nil)
-	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", meeting.RoomID, meeting.StartTime).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{}, nil)
 
 	err := ms.UpdateMeeting(user, meeting)
 	assert.NoError(t, err)
@@ -246,16 +255,17 @@ func TestServiceGetAllMeetings(t *testing.T) {
 	assert.Equal(t, expectedMeetings, meetings)
 }
 
-func TestServiceGetMeetingsByRoomIdAndDate(t *testing.T) {
+func TestServiceGetMeetingsByRoomIdAndDatePeriod(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 	roomID := 10
 	date := time.Now()
 	expectedMeetings := []*models.Meeting{{ID: "2", Title: "Strategy Meeting", Description: "Strategy planning session"}}
 
-	mockMeetingDomain.On("GetMeetingsByRoomIdAndDate", roomID, date).Return(expectedMeetings, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", roomID).Return(expectedMeetings, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", date, date).Return(expectedMeetings, nil)
 
-	meetings, err := ms.GetMeetingsByRoomIdAndDate(roomID, date)
+	meetings, err := ms.GetMeetingsByRoomIdAndDatePeriod(roomID, date, date)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedMeetings, meetings)

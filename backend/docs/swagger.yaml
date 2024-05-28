@@ -733,18 +733,7 @@ paths:
       summary: Get a meeting
       tags:
       - Meeting
-  /meeting/getAllMeetings:
-    get:
-      description: Get all meetings
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
-      summary: Get all meetings
-      tags:
-      - Meeting
-  /meeting/getMeetingsByRoomIdAndDate:
+  /meeting/GetMeetingsByRoomIdAndDatePeriod:
     get:
       description: Get meetings by room ID and date
       parameters:
@@ -755,8 +744,12 @@ paths:
         type: integer
       - description: Date
         in: query
-        name: date
+        name: date_from
         required: true
+        type: string
+      - description: Date
+        in: query
+        name: date_to
         type: string
       responses:
         "200":
@@ -764,6 +757,17 @@ paths:
           schema:
             $ref: '#/definitions/presentations.GetAllMeetingsResponse'
       summary: Get meetings by room ID and date
+      tags:
+      - Meeting
+  /meeting/getAllMeetings:
+    get:
+      description: Get all meetings
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get all meetings
       tags:
       - Meeting
   /rooms:

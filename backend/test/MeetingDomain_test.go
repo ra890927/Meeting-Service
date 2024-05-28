@@ -39,8 +39,13 @@ func (m *MockMeetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	args := m.Called(roomID, date)
+func (m *MockMeetingRepo) GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error) {
+	args := m.Called(roomID)
+	return args.Get(0).([]*models.Meeting), args.Error(1)
+}
+
+func (m *MockMeetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+	args := m.Called(dateFrom, dateTo)
 	return args.Get(0).([]*models.Meeting), args.Error(1)
 }
 
@@ -99,4 +104,76 @@ func TestDomainGetMeeting(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, meeting.Title, fetchedMeeting.Title)
 	assert.Equal(t, meeting.Description, fetchedMeeting.Description)
+}
+
+func TestDomainGetAllMeetings(t *testing.T) {
+	meetings := []*models.Meeting{
+		{
+			Title:       "Board Meeting",
+			Description: "Annual Board Meeting",
+		},
+		{
+			Title:       "Team Meeting",
+			Description: "Weekly Team Meeting",
+		},
+	}
+
+	mockMeetingRepo := new(MockMeetingRepo)
+	mockMeetingRepo.On("GetAllMeetings").Return(meetings, nil)
+	md := domains.NewMeetingDomain(mockMeetingRepo)
+	fetchedMeetings, err := md.GetAllMeetings()
+
+	assert.NoError(t, err)
+	assert.Equal(t, len(meetings), len(fetchedMeetings))
+}
+
+func TestDomainGetMeetingsByRoomId(t *testing.T) {
+	roomID := 1
+	meetings := []*models.Meeting{
+		{
+			RoomID:      roomID,
+			Title:       "Board Meeting",
+			Description: "Annual Board Meeting",
+		},
+		{
+			RoomID:      roomID,
+			Title:       "Team Meeting",
+			Description: "Weekly Team Meeting",
+		},
+	}
+
+	mockMeetingRepo := new(MockMeetingRepo)
+	mockMeetingRepo.On("GetMeetingsByRoomId", roomID).Return(meetings, nil)
+	md := domains.NewMeetingDomain(mockMeetingRepo)
+	fetchedMeetings, err := md.GetMeetingsByRoomId(roomID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, len(meetings), len(fetchedMeetings))
+}
+
+func TestDomainGetMeetingsByDatePeriod(t *testing.T) {
+	dateFrom := time.Now()
+	dateTo := time.Now().AddDate(0, 0, 1)
+	meetings := []*models.Meeting{
+		{
+			Title:       "Board Meeting",
+			Description: "Annual Board Meeting",
+			StartTime:   dateFrom,
+			EndTime:     dateTo,
+		},
+		{
+			Title:       "Team Meeting",
+			Description: "Weekly Team Meeting",
+			StartTime:   dateFrom,
+			EndTime:     dateTo,
+		},
+	}
+
+	mockMeetingRepo := new(MockMeetingRepo)
+	mockMeetingRepo.On("GetMeetingsByDatePeriod", dateFrom, dateTo).Return(meetings, nil)
+	md := domains.NewMeetingDomain(mockMeetingRepo)
+	fetchedMeetings, err := md.GetMeetingsByDatePeriod(dateFrom, dateTo)
+
+	assert.NoError(t, err)
+	assert.Equal(t, len(meetings), len(fetchedMeetings))
 }

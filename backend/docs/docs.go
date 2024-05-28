@@ -440,24 +440,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/meeting/getAllMeetings": {
-            "get": {
-                "description": "Get all meetings",
-                "tags": [
-                    "Meeting"
-                ],
-                "summary": "Get all meetings",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/meeting/getMeetingsByRoomIdAndDate": {
+        "/meeting/GetMeetingsByRoomIdAndDatePeriod": {
             "get": {
                 "description": "Get meetings by room ID and date",
                 "tags": [
@@ -475,11 +458,34 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Date",
-                        "name": "date",
+                        "name": "date_from",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date",
+                        "name": "date_to",
+                        "in": "query"
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting/getAllMeetings": {
+            "get": {
+                "description": "Get all meetings",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get all meetings",
                 "responses": {
                     "200": {
                         "description": "OK",

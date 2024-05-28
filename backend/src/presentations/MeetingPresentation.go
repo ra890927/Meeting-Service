@@ -16,7 +16,7 @@ type MeetingPresentation interface {
 	DeleteMeeting(c *gin.Context)
 	GetMeeting(c *gin.Context)
 	GetAllMeetings(c *gin.Context)
-	GetMeetingsByRoomIdAndDate(c *gin.Context)
+	GetMeetingsByRoomIdAndDatePeriod(c *gin.Context)
 }
 
 type meetingPresentation struct {
@@ -191,7 +191,6 @@ func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
 	if err != nil {
 		response.Status = "error"
 		response.Message = "Internal server error"
-		fmt.Println(err)
 		c.JSON(500, response)
 		return
 	}
@@ -318,36 +317,46 @@ func (mp meetingPresentation) GetAllMeetings(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-// GetMeetingsByRoomIdAndDate retrieves meetings based on room ID and specific date
+// GetMeetingsByRoomIdAndDatePeriod retrieves meetings based on room ID and specific date
 // @Summary Get meetings by room ID and date
 // @Description Get meetings by room ID and date
 // @Tags Meeting
 // @Param room_id query int true "Room ID"
-// @Param date query string true "Date"
+// @Param date_from query string true "Date"
+// @Param date_to query string false "Date"
 // @Success 200 {object} GetAllMeetingsResponse
-// @Router /meeting/getMeetingsByRoomIdAndDate [get]
-func (mp meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
+// @Router /meeting/GetMeetingsByRoomIdAndDatePeriod [get]
+func (mp meetingPresentation) GetMeetingsByRoomIdAndDatePeriod(c *gin.Context) {
 	var response GetAllMeetingsResponse
-	roomID, ok := c.GetQuery("room_id")
-	date, ok2 := c.GetQuery("date")
-	if !ok || !ok2 {
-		fmt.Println("Invalid request")
+	roomID, success_1 := c.GetQuery("room_id")
+	date_from, success_2 := c.GetQuery("date_from")
+	date_to, _ := c.GetQuery("date_to")
+	if !success_1 || !success_2 {
 		response.Status = "error"
 		response.Message = "Invalid requestaaa"
 		c.JSON(400, response)
 		return
 	}
-	roomIdInt, _ := strconv.Atoi(roomID)
-	parsedDate, _ := time.Parse("2006-01-02", date)
-	meetings, err := mp.meetingService.GetMeetingsByRoomIdAndDate(roomIdInt, parsedDate)
+	roomIdInt, err1 := strconv.Atoi(roomID)
+	parsedDateFrom, err2 := time.Parse("2006-01-02", date_from)
+	parsedDateTo, err3 := time.Parse("2006-01-02", date_to)
+	if err1 != nil || err2 != nil {
+		response.Status = "error"
+		response.Message = "Invalid request"
+		c.JSON(400, response)
+		return
+	}
+	if err3 != nil {
+		parsedDateTo = parsedDateFrom
+	}
+
+	meetings, err := mp.meetingService.GetMeetingsByRoomIdAndDatePeriod(roomIdInt, parsedDateFrom, parsedDateTo)
 	if err != nil {
 		response.Status = "error"
 		response.Message = "Internal server error"
 		c.JSON(500, response)
 		return
 	}
-
-	fmt.Println(meetings)
 
 	response.Status = "success"
 	response.Message = "Meetings retrieved"
@@ -373,6 +382,19 @@ func (mp meetingPresentation) GetMeetingsByRoomIdAndDate(c *gin.Context) {
 		meetingResponse.EndTime = meeting.EndTime
 		meetingResponse.StatusType = meeting.StatusType
 		response.Data.Meetings = append(response.Data.Meetings, meetingResponse)
+	}
+	if len(response.Data.Meetings) == 0 {
+		response.Data.Meetings = []struct {
+			ID           string    `json:"id"`
+			RoomID       int       `json:"room_id"`
+			Title        string    `json:"title"`
+			OrganizerID  uint      `json:"organizer"`
+			Participants []uint    `json:"participants"`
+			Description  string    `json:"description"`
+			StartTime    time.Time `json:"start_time"`
+			EndTime      time.Time `json:"end_time"`
+			StatusType   string    `json:"status_type"`
+		}{}
 	}
 	c.JSON(200, response)
 }

@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
 	"time"
@@ -14,7 +13,7 @@ type MeetingService interface {
 	DeleteMeeting(operator *models.User, id string) error
 	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
+	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
 }
 
 type meetingService struct {
@@ -31,18 +30,45 @@ func NewMeetingService(roomDomainArg ...domains.MeetingDomain) MeetingService {
 	}
 }
 
+func (ms meetingService) intersectMeetingsById(meetingsArg ...[]*models.Meeting) []*models.Meeting {
+	if len(meetingsArg) == 0 {
+		return []*models.Meeting{}
+	}
+	if len(meetingsArg) == 1 {
+		return meetingsArg[0]
+	}
+
+	totalKeys := make(map[string]int)
+	for _, meetings := range meetingsArg {
+		for _, m := range meetings {
+			totalKeys[m.ID]++
+		}
+	}
+
+	var result []*models.Meeting
+	for _, m := range meetingsArg[0] {
+		if totalKeys[m.ID] == len(meetingsArg) {
+			result = append(result, m)
+		}
+	}
+	return result
+}
+
 // check if the meeting time is valid and not overlapping with other meetings
 func (ms meetingService) checkValidMeetingTime(targetMeeting *models.Meeting) error {
 	if !targetMeeting.StartTime.Before(targetMeeting.EndTime) {
 		return errors.New("end time should be after start time")
 	}
-	fmt.Println(targetMeeting.Title)
 
-	existingMeetings, err := ms.MeetingDomain.GetMeetingsByRoomIdAndDate(targetMeeting.RoomID, targetMeeting.StartTime)
-	if err != nil {
-		return errors.New("error when getting existing meetings")
+	meetingsByRoomId, err1 := ms.MeetingDomain.GetMeetingsByRoomId(targetMeeting.RoomID)
+	meetingsByDatePeriod, err2 := ms.MeetingDomain.GetMeetingsByDatePeriod(targetMeeting.StartTime, targetMeeting.EndTime)
+	if err1 != nil || err2 != nil {
+		return errors.New("error when fetching meetings")
 	}
-	fmt.Println(existingMeetings)
+
+	// take the intersection of the two sets
+	existingMeetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
+
 	for _, m := range existingMeetings {
 		// except the target meeting itself
 		if m.ID == targetMeeting.ID {
@@ -130,10 +156,12 @@ func (ms meetingService) GetAllMeetings() ([]*models.Meeting, error) {
 	return meetings, nil
 }
 
-func (ms meetingService) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	meetings, err := ms.MeetingDomain.GetMeetingsByRoomIdAndDate(roomID, date)
-	if err != nil {
-		return nil, err
+func (ms meetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, date_from time.Time, date_to time.Time) ([]*models.Meeting, error) {
+	meetingsByRoomId, err1 := ms.MeetingDomain.GetMeetingsByRoomId(roomID)
+	meetingsByDatePeriod, err2 := ms.MeetingDomain.GetMeetingsByDatePeriod(date_from, date_to)
+	if err1 != nil || err2 != nil {
+		return []*models.Meeting{}, errors.New("error when fetching meetings")
 	}
+	meetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
 	return meetings, nil
 }

@@ -62,7 +62,7 @@ func main() {
 		{
 			eg.GET("/getAllMeetings", meeingPresentation.GetAllMeetings)
 			eg.GET("/:id", meeingPresentation.GetMeeting)
-			eg.GET("/getMeetingsByRoomIdAndDate", meeingPresentation.GetMeetingsByRoomIdAndDate)
+			eg.GET("/getMeetingsByRoomIdAndDate", meeingPresentation.GetMeetingsByRoomIdAndDatePeriod)
 			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
 			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
 			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)

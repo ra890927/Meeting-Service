@@ -12,7 +12,8 @@ type MeetingDomain interface {
 	DeleteMeeting(id string) error
 	GetMeeting(id string) (*models.Meeting, error)
 	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
+	GetMeetingsByRoomId(room int) ([]*models.Meeting, error)
+	GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
 }
 
 type meetingDomain struct {
@@ -24,10 +25,12 @@ func NewMeetingDomain(meetingRepoArg ...repos.MeetingRepo) MeetingDomain {
 		return MeetingDomain(&meetingDomain{
 			MeetingRepo: meetingRepoArg[0],
 		})
-	} else {
+	} else if len(meetingRepoArg) == 0 {
 		return MeetingDomain(&meetingDomain{
 			MeetingRepo: repos.NewMeetingRepo(),
 		})
+	} else {
+		panic("too many arguments")
 	}
 }
 
@@ -71,10 +74,18 @@ func (md meetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
 	return meetings, nil
 }
 
-func (md meetingDomain) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	meetings, err := md.MeetingRepo.GetMeetingsByRoomIdAndDate(roomID, date)
+func (md meetingDomain) GetMeetingsByRoomId(room int) ([]*models.Meeting, error) {
+	meetings, err := md.MeetingRepo.GetMeetingsByRoomId(room)
 	if err != nil {
-		return nil, err
+		return []*models.Meeting{}, err
+	}
+	return meetings, nil
+}
+
+func (md meetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+	meetings, err := md.MeetingRepo.GetMeetingsByDatePeriod(dateFrom, dateTo)
+	if err != nil {
+		return []*models.Meeting{}, err
 	}
 	return meetings, nil
 }

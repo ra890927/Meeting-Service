@@ -110,23 +110,40 @@ func (suite *MeetingRepoTestSuite) TestGetAllMeetings() {
 	assert.Len(suite.T(), meetings, originalLength+1)
 }
 
-func (suite *MeetingRepoTestSuite) TestGetMeetingsByRoomIdAndDate() {
-	// check the original length of the meetings
-	meetings, err := suite.mr.GetMeetingsByRoomIdAndDate(1, time.Now())
-	assert.NoError(suite.T(), err)
-	originalLength := len(meetings)
+func (suite *MeetingRepoTestSuite) TestGetMeetingsByRoomId() {
+	roomId := 1
+	originalMeetings, _ := suite.mr.GetMeetingsByRoomId(roomId)
 
 	meeting := &models.Meeting{
-		RoomID:    1,
+		RoomID:    roomId,
 		StartTime: time.Now().Add(-time.Hour),
 		EndTime:   time.Now().Add(time.Hour),
 	}
-	err = suite.mr.CreateMeeting(meeting)
+	err := suite.mr.CreateMeeting(meeting)
 	assert.NoError(suite.T(), err)
 
-	meetings, err = suite.mr.GetMeetingsByRoomIdAndDate(1, time.Now())
+	meetings, err := suite.mr.GetMeetingsByRoomId(meeting.RoomID)
 	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), meetings, originalLength+1)
+	assert.Len(suite.T(), meetings, len(originalMeetings)+1)
+}
+
+func (suite *MeetingRepoTestSuite) TestGetMeetingsByDatePeriod() {
+	dateFrom, _ := time.Parse("2006-01-02", "2021-01-01")
+	dateTo, _ := time.Parse("2006-01-02", "2021-01-01")
+	originalMeetings, _ := suite.mr.GetMeetingsByDatePeriod(dateFrom, dateTo)
+
+	meeting := &models.Meeting{
+		Title:     "123",
+		StartTime: dateFrom.Add(time.Hour),
+		EndTime:   dateFrom.Add(2 * time.Hour),
+	}
+	err := suite.mr.CreateMeeting(meeting)
+	assert.NoError(suite.T(), err)
+
+	meetings, err := suite.mr.GetMeetingsByDatePeriod(dateFrom, dateTo)
+
+	assert.NoError(suite.T(), err)
+	assert.Len(suite.T(), meetings, len(originalMeetings)+1)
 }
 
 func TestMeetingRepoTestSuite(t *testing.T) {
