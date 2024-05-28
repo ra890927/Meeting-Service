@@ -42,7 +42,7 @@ func (suite *UserRepoTestSuite) TestCreateUser() {
 		Password: "test-password",
 		Role:     "test-role",
 	}
-	_, err := suite.ur.CreateUser(user)
+	err := suite.ur.CreateUser(user)
 	assert.NoError(suite.T(), err)
 	assert.NotZero(suite.T(), user.ID)
 }
@@ -52,7 +52,7 @@ func (suite *UserRepoTestSuite) TestGetUserByEmail() {
 		Username: "TestGetUserByEmail",
 		Email:    "TestGetUserByEmail@test.com",
 	}
-	_, err := suite.ur.CreateUser(user)
+	err := suite.ur.CreateUser(user)
 	assert.NoError(suite.T(), err)
 
 	foundUser, err := suite.ur.GetUserByEmail(user.Email)
@@ -66,7 +66,7 @@ func (suite *UserRepoTestSuite) TestGetUserByID() {
 		Username: "TestGetUserByID",
 		Email:    "TestGetUserByID@test.com",
 	}
-	_, err := suite.ur.CreateUser(user)
+	err := suite.ur.CreateUser(user)
 	assert.NoError(suite.T(), err)
 
 	foundUser, err := suite.ur.GetUserByID(user.ID)
@@ -90,7 +90,7 @@ func (suite *UserRepoTestSuite) TestGetAllUsers() {
 	orifinalFoundUsers, err := suite.ur.GetAllUsers()
 
 	for _, user := range users {
-		_, err := suite.ur.CreateUser(&user)
+		err := suite.ur.CreateUser(&user)
 		assert.NoError(suite.T(), err)
 	}
 
