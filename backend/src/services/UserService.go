@@ -86,10 +86,9 @@ func (us userService) UpdateUser(operator *models.User, updatedUser *models.User
 	}
 
 	// 0528: not allow to update email
-	if updatedUser.Email != "" {
+	if updatedUser.Email != userByID.Email {
 		return nil, errors.New("email cannot be updated")
 	}
-	updatedUser.Email = userByID.Email
 
 	// use the original [username, password] if the updated one is empty
 	if updatedUser.Username == "" {
