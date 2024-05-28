@@ -5,8 +5,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @Component({
@@ -17,7 +19,11 @@ import { CommonModule } from '@angular/common';
     MatCardModule,
     MatListModule,
     MatIconModule,
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule
+    
   ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
@@ -28,14 +34,10 @@ export class UserComponent {
   usersEditing: users | undefined;
   isEditing: boolean = false;
 
-  @ViewChild("userNameInput")
-  userNameInput!: ElementRef<MatInput>;
-  @ViewChild("emailInput")
-  emailInput!: ElementRef<MatInput>;
-  @ViewChild("roleInput")
-  roleInput!: ElementRef<MatInput>;
-  @ViewChild("detailsInput")
-  detailsInput!: ElementRef<MatInput>;
+  userNameControl = new FormControl();
+  emailControl = new FormControl();
+  roleControl = new FormControl();
+  detailsControl = new FormControl();
 
   ngOnInit(): void {
     this.usersList.push({
@@ -75,24 +77,19 @@ export class UserComponent {
   edit(users: users): void {
     this.isEditing = !this.isEditing;
     this.usersEditing = users;
-
-    setTimeout(() => {
-      if (this.userNameInput && this.emailInput && this.detailsInput) {
-        this.userNameInput.nativeElement.value = users.userName;
-        this.userNameInput.nativeElement.focus();
-        this.emailInput.nativeElement.value = users.email;
-        this.detailsInput.nativeElement.value = users.details;
-      }
-    }, 0);
+    this.userNameControl.setValue(users.userName);
+    this.emailControl.setValue(users.email);
+    this.roleControl.setValue(users.role);
+    this.detailsControl.setValue(users.details);
     
     localStorage.setItem("usersList", JSON.stringify(this.usersList));
   }
 
   save(): void {
     if (this.usersEditing) {
-      this.usersEditing.userName = this.userNameInput.nativeElement.value;
-      this.usersEditing.email = this.emailInput.nativeElement.value;
-      this.usersEditing.details = this.detailsInput.nativeElement.value;
+      this.usersEditing.userName = this.userNameControl.value;
+      this.usersEditing.email = this.emailControl.value;
+      this.usersEditing.details = this.detailsControl.value;
       localStorage.setItem("usersList", JSON.stringify(this.usersList));
     }
     this.isEditing = false;

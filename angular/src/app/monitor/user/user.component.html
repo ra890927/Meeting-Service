@@ -11,13 +11,22 @@
         </mat-list-item>
         <mat-list-item *ngFor="let users of usersList">
             <div class="users row">
-                <div class="column show" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
-                <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #userNameInput>
-                <div class="column show"  *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.email}}">{{users.email}}</div>
-                <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #emailInput>
-                <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User'}" (click)="changeStatus(users)">{{users.role}}</span></div>
-                <div class="column show" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.details}}">{{users.details}}</div>
-                <input *ngIf="isEditing && usersEditing?.id === users.id" class="column show" matInput #detailsInput>
+                <div class="column" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
+                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
+                    <!-- <mat-label>User Name</mat-label> -->
+                    <input matInput [formControl]="userNameControl">
+                </mat-form-field>
+                <div class="column"  *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.email}}">{{users.email}}</div>
+                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
+                    <!-- <mat-label>Email</mat-label> -->
+                    <input matInput [formControl]="emailControl">
+                </mat-form-field>
+                <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
+                <div class="column" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.details}}">{{users.details}}</div>
+                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
+                    <!-- <mat-label>Details</mat-label> -->
+                    <input matInput [formControl]="detailsControl">
+                </mat-form-field>
                 <div class="column controls">
                     <mat-icon *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
                     <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>

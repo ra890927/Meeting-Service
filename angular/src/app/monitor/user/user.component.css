@@ -30,6 +30,11 @@
     position: relative; 
 }
 
+.disabled-status {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .edit {
     color: goldenrod;
 }
