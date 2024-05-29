@@ -27,16 +27,9 @@
     justify-content: space-around;
     align-items: center;
     width: 100%;
-    height: 90vh;
+    height: 80vh;
 }
 
-.fc { /* the calendar root */
-    /* max-width: 1100px; */
-    /* margin: 0 auto; */
-    height: 700px;
-    padding: 80px;
-    width: 70%;
-}
 .cards_container {
     display: flex;
     flex-direction: column;
@@ -47,15 +40,15 @@
     height:80%;
 }
 .rooms{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 70%;
-    border:#d3d3d3 15px solid;
-    border-radius: 30px; 
-    margin: 5%;
+    height: 100%;
 }
 .found{
-    width: 100%;
-    padding: 5%;
-    height: 700px;
+    width: 80%;
+    height: 80%;
 }
 .not-found{
     padding: 5%;
@@ -108,16 +101,21 @@
 
 .text-field{
     width: 80%;
-    height: 20px;
     text-align: left;
     font-size: 1.2em;
+}
+.time-field{
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    border-bottom: white 1px solid;
 }
 
 .button-change{
     position: absolute;
-    width: 20%;
-    top:0;
-    right: 0;
+    width: fit-content;
+    top:-1px;
+    right: -1px;
 }
 
 .month-view-event {
@@ -177,7 +175,7 @@ input{
     margin-right: 20%;
 }
   
-  .people-input {
+.people-input {
     flex-grow: 1;
 }
 .tags-label {

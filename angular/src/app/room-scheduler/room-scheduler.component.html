@@ -72,7 +72,7 @@
                     <mat-icon style="font-size: 16px; width: fit-content; height: fit-content;position:absolute; right: 0%; " (click)="deleteEvent(arg.event, $event)">close</mat-icon>
                 </div>
                 <div *ngIf="!isMonthView" class="event-container">
-                    <div class="text-field">{{arg.timeText}}</div>
+                    <div class="time-field">{{arg.timeText}}</div>
                     <mat-icon class="button-change" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
                     <div class="text-field">Booker: Chris</div>
                     <div class="text-field">Title: {{arg.event.title}}</div>
