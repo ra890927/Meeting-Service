@@ -10,8 +10,8 @@ import (
 )
 
 type UserService interface {
-	CreateUser(user *models.User) (*models.User, error)
-	UpdateUser(operator *models.User, user *models.User) (*models.User, error)
+	CreateUser(user *models.User) error
+	UpdateUser(operator models.User, user *models.User) error
 	GetAllUsers() ([]models.User, error)
 }
 
@@ -29,17 +29,17 @@ func NewUserService(userDomainArgs ...domains.UserDomain) UserService {
 	}
 }
 
-func (us userService) CreateUser(user *models.User) (*models.User, error) {
+func (us userService) CreateUser(user *models.User) error {
 	// Validate the email
 	_, err := mail.ParseAddress(user.Email)
 	if err != nil {
-		return nil, err
+		return errors.New("invalid email")
 	}
 
 	// Check if the user exists
 	existingUser, _ := us.userDomain.GetUserByEmail(user.Email)
 	if existingUser.ID != 0 {
-		return nil, errors.New("user already exists")
+		return errors.New("user already exists")
 	}
 
 	// Set default role to "user"
@@ -48,19 +48,17 @@ func (us userService) CreateUser(user *models.User) (*models.User, error) {
 	// Hash the password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return errors.New("error when hashing password")
 	}
 	user.Password = string(hashValue)
 
 	// Create a new user
-	createdUser, err := us.userDomain.CreateUser(user)
-
-	// return the user if no errors
+	err = us.userDomain.CreateUser(user)
 	if err != nil {
-		return nil, err
+		return errors.New("error creating user")
 	}
 
-	return createdUser, nil
+	return nil
 }
 
 func (us userService) GetAllUsers() ([]models.User, error) {
@@ -73,22 +71,23 @@ func (us userService) GetAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (us userService) UpdateUser(operator *models.User, updatedUser *models.User) (*models.User, error) {
+func (us userService) UpdateUser(operator models.User, updatedUser *models.User) error {
 	// check if the operator is the user itself or admin
 	if operator.ID != updatedUser.ID && operator.Role != "admin" {
-		return nil, errors.New("only user itself or admin can update user")
+		return errors.New("only user itself or admin can update user")
 	}
 
 	// Check if the user exists
 	userByID, err := us.userDomain.GetUserByID(updatedUser.ID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return errors.New("user not found")
 	}
 
 	// 0528: not allow to update email
 	if updatedUser.Email != userByID.Email {
-		return nil, errors.New("email cannot be updated")
+		return errors.New("email cannot be updated")
 	}
+	updatedUser.Email = userByID.Email // get the original email
 
 	// use the original [username, password] if the updated one is empty
 	if updatedUser.Username == "" {
@@ -99,7 +98,7 @@ func (us userService) UpdateUser(operator *models.User, updatedUser *models.User
 	} else {
 		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return nil, err
+			return errors.New("error when hashing password")
 		}
 		updatedUser.Password = string(hashValue)
 	}
@@ -107,19 +106,17 @@ func (us userService) UpdateUser(operator *models.User, updatedUser *models.User
 	// check if the operator is admin and update the role or use the original role
 	if updatedUser.Role == "admin" {
 		if operator.Role != "admin" {
-			return nil, errors.New("only admin can update user role")
+			return errors.New("only admin can update user role")
 		}
 	} else {
 		updatedUser.Role = userByID.Role
 	}
 
 	// Update a user
-	_, err = us.userDomain.UpdateUser(updatedUser)
-
-	// return the user if no errors
+	err = us.userDomain.UpdateUser(updatedUser)
 	if err != nil {
-		return nil, err
+		return errors.New("error updating user")
 	}
 
-	return updatedUser, nil
+	return nil
 }
