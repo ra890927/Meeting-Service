@@ -10,10 +10,10 @@ type MeetingDomain interface {
 	CreateMeeting(meeting *models.Meeting) error
 	UpdateMeeting(meeting *models.Meeting) error
 	DeleteMeeting(id string) error
-	GetMeeting(id string) (*models.Meeting, error)
-	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomId(room int) ([]*models.Meeting, error)
-	GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
+	GetMeeting(id string) (models.Meeting, error)
+	GetAllMeetings() ([]models.Meeting, error)
+	GetMeetingsByRoomId(room int) ([]models.Meeting, error)
+	GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error)
 }
 
 type meetingDomain struct {
@@ -58,34 +58,34 @@ func (md meetingDomain) DeleteMeeting(id string) error {
 	return nil
 }
 
-func (md meetingDomain) GetMeeting(id string) (*models.Meeting, error) {
+func (md meetingDomain) GetMeeting(id string) (models.Meeting, error) {
 	meeting, err := md.MeetingRepo.GetMeeting(id)
 	if err != nil {
-		return nil, err
+		return models.Meeting{}, err
 	}
 	return meeting, nil
 }
 
-func (md meetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
+func (md meetingDomain) GetAllMeetings() ([]models.Meeting, error) {
 	meetings, err := md.MeetingRepo.GetAllMeetings()
 	if err != nil {
-		return nil, err
+		return []models.Meeting{}, err
 	}
 	return meetings, nil
 }
 
-func (md meetingDomain) GetMeetingsByRoomId(room int) ([]*models.Meeting, error) {
+func (md meetingDomain) GetMeetingsByRoomId(room int) ([]models.Meeting, error) {
 	meetings, err := md.MeetingRepo.GetMeetingsByRoomId(room)
 	if err != nil {
-		return []*models.Meeting{}, err
+		return []models.Meeting{}, err
 	}
 	return meetings, nil
 }
 
-func (md meetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+func (md meetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error) {
 	meetings, err := md.MeetingRepo.GetMeetingsByDatePeriod(dateFrom, dateTo)
 	if err != nil {
-		return []*models.Meeting{}, err
+		return []models.Meeting{}, err
 	}
 	return meetings, nil
 }

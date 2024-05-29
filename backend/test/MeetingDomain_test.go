@@ -29,24 +29,24 @@ func (m *MockMeetingRepo) DeleteMeeting(id string) error {
 	return args.Error(0)
 }
 
-func (m *MockMeetingRepo) GetMeeting(id string) (*models.Meeting, error) {
+func (m *MockMeetingRepo) GetMeeting(id string) (models.Meeting, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+	return args.Get(0).(models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
+func (m *MockMeetingRepo) GetAllMeetings() ([]models.Meeting, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingRepo) GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error) {
+func (m *MockMeetingRepo) GetMeetingsByRoomId(roomID int) ([]models.Meeting, error) {
 	args := m.Called(roomID)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+func (m *MockMeetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error) {
 	args := m.Called(dateFrom, dateTo)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
 func TestDomainCreateMeeting(t *testing.T) {
@@ -91,7 +91,7 @@ func TestDomainDeleteMeeting(t *testing.T) {
 
 func TestDomainGetMeeting(t *testing.T) {
 	id := "1"
-	meeting := &models.Meeting{
+	meeting := models.Meeting{
 		Title:       "Board Meeting",
 		Description: "Annual Board Meeting",
 	}
@@ -107,7 +107,7 @@ func TestDomainGetMeeting(t *testing.T) {
 }
 
 func TestDomainGetAllMeetings(t *testing.T) {
-	meetings := []*models.Meeting{
+	meetings := []models.Meeting{
 		{
 			Title:       "Board Meeting",
 			Description: "Annual Board Meeting",
@@ -129,7 +129,7 @@ func TestDomainGetAllMeetings(t *testing.T) {
 
 func TestDomainGetMeetingsByRoomId(t *testing.T) {
 	roomID := 1
-	meetings := []*models.Meeting{
+	meetings := []models.Meeting{
 		{
 			RoomID:      roomID,
 			Title:       "Board Meeting",
@@ -154,7 +154,7 @@ func TestDomainGetMeetingsByRoomId(t *testing.T) {
 func TestDomainGetMeetingsByDatePeriod(t *testing.T) {
 	dateFrom := time.Now()
 	dateTo := time.Now().AddDate(0, 0, 1)
-	meetings := []*models.Meeting{
+	meetings := []models.Meeting{
 		{
 			Title:       "Board Meeting",
 			Description: "Annual Board Meeting",
