@@ -26,39 +26,39 @@ func addFakeUserMiddleware() gin.HandlerFunc {
 	}
 }
 
-func (m *mockMeetingService) CreateMeeting(operator *models.User, meeting *models.Meeting) error {
+func (m *mockMeetingService) CreateMeeting(operator models.User, meeting *models.Meeting) error {
 	args := m.Called(operator, meeting)
 	return args.Error(0)
 }
 
-func (m *mockMeetingService) UpdateMeeting(operator *models.User, meeting *models.Meeting) error {
+func (m *mockMeetingService) UpdateMeeting(operator models.User, meeting *models.Meeting) error {
 	args := m.Called(operator, meeting)
 	return args.Error(0)
 }
 
-func (m *mockMeetingService) DeleteMeeting(operator *models.User, id string) error {
+func (m *mockMeetingService) DeleteMeeting(operator models.User, id string) error {
 	args := m.Called(operator, id)
 	return args.Error(0)
 }
 
-func (m *mockMeetingService) GetMeeting(id string) (*models.Meeting, error) {
+func (m *mockMeetingService) GetMeeting(id string) (models.Meeting, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+	return args.Get(0).(models.Meeting), args.Error(1)
 }
 
-func (m *mockMeetingService) GetAllMeetings() ([]*models.Meeting, error) {
+func (m *mockMeetingService) GetAllMeetings() ([]models.Meeting, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *mockMeetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+func (m *mockMeetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error) {
 	args := m.Called(roomID, dateFrom, dateTo)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *mockMeetingService) GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error) {
+func (m *mockMeetingService) GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error) {
 	args := m.Called(participantID)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
 func TestCreateMeeting(t *testing.T) {
@@ -67,7 +67,7 @@ func TestCreateMeeting(t *testing.T) {
 		Description: "Annual Board Meeting",
 	}
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("CreateMeeting", &models.User{ID: 1}, &meeting).Return(nil)
+	mockMeetingService.On("CreateMeeting", models.User{ID: 1}, &meeting).Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
@@ -93,7 +93,7 @@ func TestUpdateMeeting(t *testing.T) {
 	}
 
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("UpdateMeeting", &models.User{ID: 1}, &meeting).Return(nil)
+	mockMeetingService.On("UpdateMeeting", models.User{ID: 1}, &meeting).Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
@@ -112,7 +112,7 @@ func TestUpdateMeeting(t *testing.T) {
 
 func TestDeleteMeeting(t *testing.T) {
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("DeleteMeeting", &models.User{ID: 1}, "1").Return(nil)
+	mockMeetingService.On("DeleteMeeting", models.User{ID: 1}, "1").Return(nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
@@ -135,7 +135,7 @@ func TestGetMeeting(t *testing.T) {
 	}
 
 	mockMeetingService := new(mockMeetingService)
-	mockMeetingService.On("GetMeeting", "1").Return(&meeting, nil)
+	mockMeetingService.On("GetMeeting", "1").Return(meeting, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
 
 	gin.SetMode(gin.TestMode)
@@ -151,7 +151,7 @@ func TestGetMeeting(t *testing.T) {
 }
 
 func TestGetAllMeetings(t *testing.T) {
-	meetings := []*models.Meeting{{ID: "1", Title: "Board Meeting", Description: "Annual Board Meeting"}}
+	meetings := []models.Meeting{{ID: "1", Title: "Board Meeting", Description: "Annual Board Meeting"}}
 	mockMeetingService := new(mockMeetingService)
 	mockMeetingService.On("GetAllMeetings").Return(meetings, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)
@@ -169,7 +169,7 @@ func TestGetAllMeetings(t *testing.T) {
 }
 
 func TestGetMeetingsByRoomIdAndDate(t *testing.T) {
-	meetings := []*models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
+	meetings := []models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
 	roomID := 101
 	mockMeetingService := new(mockMeetingService)
 	mockMeetingService.On("GetMeetingsByRoomIdAndDatePeriod", roomID, mock.AnythingOfType("time.Time"), mock.AnythingOfType("time.Time")).Return(meetings, nil)
@@ -189,7 +189,7 @@ func TestGetMeetingsByRoomIdAndDate(t *testing.T) {
 }
 
 func TestGetMeetingsByParticipantId(t *testing.T) {
-	meetings := []*models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
+	meetings := []models.Meeting{{ID: "2", Title: "Team Meeting", Description: "Quarterly Planning"}}
 	mockMeetingService := new(mockMeetingService)
 	mockMeetingService.On("GetMeetingsByParticipantId", uint(1)).Return(meetings, nil)
 	mp := presentations.NewMeetingPresentation(mockMeetingService)

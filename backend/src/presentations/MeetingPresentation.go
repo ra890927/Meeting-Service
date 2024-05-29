@@ -133,7 +133,7 @@ func (mp meetingPresentation) CreateMeeting(c *gin.Context) {
 		StatusType:   body.StatusType,
 	}
 
-	err := mp.meetingService.CreateMeeting(&operator, &meeting)
+	err := mp.meetingService.CreateMeeting(operator, &meeting)
 	if err != nil {
 		response.Status = "error"
 		response.Message = err.Error()
@@ -188,7 +188,7 @@ func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
 		StatusType:   body.StatusType,
 	}
 
-	err := mp.meetingService.UpdateMeeting(&operator, &meeting)
+	err := mp.meetingService.UpdateMeeting(operator, &meeting)
 	if err != nil {
 		response.Status = "error"
 		response.Message = "Internal server error"
@@ -227,7 +227,7 @@ func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 		return
 	}
 
-	err := mp.meetingService.DeleteMeeting(&operator, id)
+	err := mp.meetingService.DeleteMeeting(operator, id)
 	if err != nil {
 		response.Status = "error"
 		response.Message = err.Error()
