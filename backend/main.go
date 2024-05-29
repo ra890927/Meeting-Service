@@ -34,8 +34,7 @@ func main() {
 		meeingPresentation := presentations.NewMeetingPresentation()
 		roomPresentation := presentations.NewRoomPresentation()
 
-
-    eg := v1.Group("/user")
+		eg := v1.Group("/user")
 		{
 			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
@@ -68,12 +67,12 @@ func main() {
 		{
 			eg.GET("/getAllMeetings", meeingPresentation.GetAllMeetings)
 			eg.GET("/:id", meeingPresentation.GetMeeting)
-			eg.GET("/getMeetingsByRoomIdAndDate", meeingPresentation.GetMeetingsByRoomIdAndDatePeriod)
+			eg.GET("/getMeetingsByRoomIdAndDatePeriod", meeingPresentation.GetMeetingsByRoomIdAndDatePeriod)
 			eg.GET("/getMeetingsByParticipantId", meeingPresentation.GetMeetingsByParticipantId)
 			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
 			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
 			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)
-    }
+		}
 		eg = v1.Group("/room")
 		{
 			eg.GET("/getAllRooms", roomPresentation.GetAllRooms)

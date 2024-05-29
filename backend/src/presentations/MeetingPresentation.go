@@ -326,7 +326,7 @@ func (mp meetingPresentation) GetAllMeetings(c *gin.Context) {
 // @Param date_from query string true "Date"
 // @Param date_to query string false "Date"
 // @Success 200 {object} GetAllMeetingsResponse
-// @Router /meeting/GetMeetingsByRoomIdAndDatePeriod [get]
+// @Router /meeting/getMeetingsByRoomIdAndDatePeriod [get]
 func (mp meetingPresentation) GetMeetingsByRoomIdAndDatePeriod(c *gin.Context) {
 	var response GetAllMeetingsResponse
 	roomID, success_1 := c.GetQuery("room_id")
