@@ -4,7 +4,6 @@ import (
 	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
-	"meeting-center/src/utils"
 	"slices"
 	"time"
 )
@@ -19,7 +18,7 @@ type MeetingService interface {
 	GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error)
 }
 
-type MeetingPermission int
+type MeetingPermission uint
 
 const (
 	Create MeetingPermission = 1 << iota
@@ -96,7 +95,7 @@ func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Mee
 	}
 
 	permission := ms.getPermission(operator, originalMeeting)
-	if !utils.CheckPermission(permission, Update) {
+	if (permission & Update) == 0 {
 		return errors.New("only the organizer can update the meeting")
 	}
 
@@ -120,7 +119,7 @@ func (ms meetingService) DeleteMeeting(operator models.User, id string) error {
 	}
 
 	permission := ms.getPermission(operator, meeting)
-	if !utils.CheckPermission(permission, Delete) {
+	if (permission & Delete) == 0 {
 		return errors.New("only the organizer can delete the meeting")
 	}
 
