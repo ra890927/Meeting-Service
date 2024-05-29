@@ -25,14 +25,14 @@ type mockUserService struct {
 	mock.Mock
 }
 
-func (m *mockUserService) CreateUser(user *models.User) (*models.User, error) {
+func (m *mockUserService) CreateUser(user *models.User) error {
 	args := m.Called(user)
-	return args.Get(0).(*models.User), nil
+	return args.Error(0)
 }
 
-func (m *mockUserService) UpdateUser(operator *models.User, user *models.User) (*models.User, error) {
+func (m *mockUserService) UpdateUser(operator models.User, user *models.User) error {
 	args := m.Called(operator, user)
-	return args.Get(0).(*models.User), nil
+	return args.Error(0)
 }
 
 func (m *mockUserService) GetAllUsers() ([]models.User, error) {
@@ -48,7 +48,7 @@ func TestRegisterUser(t *testing.T) {
 	}
 	// Mock the user service
 	mockUserService := new(mockUserService)
-	mockUserService.On("CreateUser", &user).Return(&user, nil)
+	mockUserService.On("CreateUser", &user).Return(nil)
 	up := presentations.NewUserPresentation(mockUserService)
 
 	gin.SetMode(gin.TestMode)
@@ -79,7 +79,7 @@ func TestUpdateUser(t *testing.T) {
 	}
 	// - Mock the user service
 	mockUserService := new(mockUserService)
-	mockUserService.On("UpdateUser", &models.User{ID: 1}, &user).Return(&user, nil)
+	mockUserService.On("UpdateUser", models.User{ID: 1}, &user).Return(nil)
 	up := presentations.NewUserPresentation(mockUserService)
 
 	// - Set the mode to test

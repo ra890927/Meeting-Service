@@ -95,8 +95,7 @@ func (up userPresentation) RegisterUser(c *gin.Context) {
 	}
 
 	// Register the user
-	createdUser, err := up.userService.CreateUser(&user)
-
+	err = up.userService.CreateUser(&user)
 	if err != nil {
 		registerUpdateUserResponse.Status = "error"
 		registerUpdateUserResponse.Message = err.Error()
@@ -107,14 +106,12 @@ func (up userPresentation) RegisterUser(c *gin.Context) {
 	// Return the created user
 	registerUpdateUserResponse.Status = "success"
 	registerUpdateUserResponse.Message = "User created successfully"
-	registerUpdateUserResponse.Data.User.ID = createdUser.ID
-	registerUpdateUserResponse.Data.User.Username = createdUser.Username
-	registerUpdateUserResponse.Data.User.Email = createdUser.Email
-	registerUpdateUserResponse.Data.User.Role = createdUser.Role
+	registerUpdateUserResponse.Data.User.ID = user.ID
+	registerUpdateUserResponse.Data.User.Username = user.Username
+	registerUpdateUserResponse.Data.User.Email = user.Email
+	registerUpdateUserResponse.Data.User.Role = user.Role
 	c.JSON(200, registerUpdateUserResponse)
 }
-
-// @Summary Get user by ID (要不要一次查詢多個用戶)
 
 // @Summary Get all users
 // @Description Get all users
@@ -185,7 +182,7 @@ func (up userPresentation) UpdateUser(c *gin.Context) {
 	}
 
 	// Update the user
-	updatedUser, err := up.userService.UpdateUser(&operator, &user)
+	err = up.userService.UpdateUser(operator, &user)
 	if err != nil {
 		registerUpdateUserResponse.Status = "error"
 		registerUpdateUserResponse.Message = err.Error()
@@ -196,9 +193,9 @@ func (up userPresentation) UpdateUser(c *gin.Context) {
 	// Return the updated user
 	registerUpdateUserResponse.Status = "success"
 	registerUpdateUserResponse.Message = "User updated successfully"
-	registerUpdateUserResponse.Data.User.ID = updatedUser.ID
-	registerUpdateUserResponse.Data.User.Username = updatedUser.Username
-	registerUpdateUserResponse.Data.User.Email = updatedUser.Email
-	registerUpdateUserResponse.Data.User.Role = updatedUser.Role
+	registerUpdateUserResponse.Data.User.ID = user.ID
+	registerUpdateUserResponse.Data.User.Username = user.Username
+	registerUpdateUserResponse.Data.User.Email = user.Email
+	registerUpdateUserResponse.Data.User.Role = user.Role
 	c.JSON(200, registerUpdateUserResponse)
 }
