@@ -4,6 +4,8 @@ import (
 	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
+	"meeting-center/src/utils"
+	"slices"
 	"time"
 )
 
@@ -16,6 +18,21 @@ type MeetingService interface {
 	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error)
 	GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error)
 }
+
+type MeetingPermission int
+
+const (
+	Create MeetingPermission = 1 << iota
+	Update
+	Delete
+	Attach
+	Read
+	Admin       = Create | Update | Delete | Attach | Read
+	Organizer   = Create | Update | Delete | Attach | Read
+	Recorder    = Update | Attach | Read
+	Participant = Attach | Read
+	Other       = Read
+)
 
 type meetingService struct {
 	MeetingDomain domains.MeetingDomain
@@ -55,35 +72,6 @@ func (ms meetingService) intersectMeetingsById(meetingsArg ...[]models.Meeting) 
 	return result
 }
 
-// check if the meeting time is valid and not overlapping with other meetings
-func (ms meetingService) checkValidMeetingTime(targetMeeting models.Meeting) error {
-	if !targetMeeting.StartTime.Before(targetMeeting.EndTime) {
-		return errors.New("end time should be after start time")
-	}
-
-	meetingsByRoomId, err1 := ms.MeetingDomain.GetMeetingsByRoomId(targetMeeting.RoomID)
-	meetingsByDatePeriod, err2 := ms.MeetingDomain.GetMeetingsByDatePeriod(targetMeeting.StartTime, targetMeeting.EndTime)
-	if err1 != nil || err2 != nil {
-		return errors.New("error when fetching meetings")
-	}
-
-	// take the intersection of the two sets
-	existingMeetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
-
-	for _, m := range existingMeetings {
-		// except the target meeting itself
-		if m.ID == targetMeeting.ID {
-			continue
-		}
-
-		// check if the meeting overlaps with existing meetings
-		if targetMeeting.StartTime.Before(m.EndTime) && m.StartTime.Before(targetMeeting.EndTime) {
-			return errors.New("meeting overlaps with existing meeting")
-		}
-	}
-	return nil
-}
-
 func (ms meetingService) CreateMeeting(operator models.User, meeting *models.Meeting) error {
 	// modyfing the OrganizerID to the operator's ID
 	meeting.OrganizerID = operator.ID
@@ -107,8 +95,8 @@ func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Mee
 		return errors.New("meeting not found")
 	}
 
-	// check if the operator is the creator of the meeting
-	if operator.ID != originalMeeting.OrganizerID {
+	permission := ms.getPermission(operator, originalMeeting)
+	if !utils.CheckPermission(permission, Update) {
 		return errors.New("only the organizer can update the meeting")
 	}
 
@@ -130,7 +118,9 @@ func (ms meetingService) DeleteMeeting(operator models.User, id string) error {
 	if err != nil {
 		return errors.New("meeting not found")
 	}
-	if operator.ID != meeting.OrganizerID {
+
+	permission := ms.getPermission(operator, meeting)
+	if !utils.CheckPermission(permission, Delete) {
 		return errors.New("only the organizer can delete the meeting")
 	}
 
@@ -185,4 +175,45 @@ func (ms meetingService) GetMeetingsByParticipantId(participantID uint) ([]model
 	}
 
 	return participantMeetings, nil
+}
+
+func (ms meetingService) getPermission(operater models.User, meeting models.Meeting) MeetingPermission {
+	if operater.Role == "admin" {
+		return Admin
+	} else if operater.ID == meeting.OrganizerID {
+		return Organizer
+	} else if slices.Contains(meeting.Participants, operater.ID) {
+		return Participant
+	} else {
+		return Other
+	}
+}
+
+// check if the meeting time is valid and not overlapping with other meetings
+func (ms meetingService) checkValidMeetingTime(targetMeeting models.Meeting) error {
+	if !targetMeeting.StartTime.Before(targetMeeting.EndTime) {
+		return errors.New("end time should be after start time")
+	}
+
+	meetingsByRoomId, err1 := ms.MeetingDomain.GetMeetingsByRoomId(targetMeeting.RoomID)
+	meetingsByDatePeriod, err2 := ms.MeetingDomain.GetMeetingsByDatePeriod(targetMeeting.StartTime, targetMeeting.EndTime)
+	if err1 != nil || err2 != nil {
+		return errors.New("error when fetching meetings")
+	}
+
+	// take the intersection of the two sets
+	existingMeetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
+
+	for _, m := range existingMeetings {
+		// except the target meeting itself
+		if m.ID == targetMeeting.ID {
+			continue
+		}
+
+		// check if the meeting overlaps with existing meetings
+		if targetMeeting.StartTime.Before(m.EndTime) && m.StartTime.Before(targetMeeting.EndTime) {
+			return errors.New("meeting overlaps with existing meeting")
+		}
+	}
+	return nil
 }
