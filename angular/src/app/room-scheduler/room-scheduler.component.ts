@@ -11,8 +11,7 @@ import {MatCardModule} from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
-import { PopUpFormComponent, User } from './pop-up-form/pop-up-form.component';
-import { PopUpDetailsComponent } from './pop-up-details/pop-up-details.component';
+import { PopUpFormComponent} from './pop-up-form/pop-up-form.component';
 import { PopUpDeleteConfirmComponent } from './pop-up-delete-confirm/pop-up-delete-confirm.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -23,27 +22,80 @@ import { S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import { UserService } from '../API/user.service';
+import { AuthService } from '../API/auth.service';
+import { ItemService } from '../API/item.service';
 //need to save in a interface file
 interface Room {
+  id: number;
   room_name: string;
   type: string;
-  rules: string[];
+  rules: number[];
   capacity: number;
 }
-
-interface RoomEvent {
+interface Event{
   id: string;
-  room_id: number;
   title: string;
   description: string;
-  participants: User[];
   start: string;
   end: string;
+  organizer: number;
+  participants: number[];
+  room_id: number;
+  status_type: string;
+}
+interface CodeValue {
+  code_type_id: number;
+  code_value: string;
+  code_value_desc: string;
+  id: number;
 }
 
-interface Tag{
-  type_name: string;
+interface CodeType {
+  code_values: CodeValue[];
+  id: number;
   type_desc: string;
+  type_name: string;
+}
+
+interface CodeTypesResponse {
+  data: {
+    code_types: CodeType[];
+  };
+  message: string;
+  status: string;
+}
+
+interface UserResponse {
+  data: {
+    users: User[];
+  };
+  message: string;
+  status: string;
+}
+interface RoomResponse {
+  data: {
+    rooms: Room[];
+  };
+  message: string;
+  status: string;
+}
+interface EventResponse {
+  data: {
+    meetings: Event[];
+  };
+  message: string;
+  status: string;
+}
+interface User{
+  id: number;
+  username: string;
+  email: string;
+  role?: string
+}
+interface Tag{
+  tag_name: string;
+  tag_desc: string;
 }
 const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
 //=======================================================
@@ -56,8 +108,7 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
      MatFormFieldModule,
      MatInputModule, 
      MatCardModule, 
-     CommonModule, 
-     PopUpDetailsComponent,
+     CommonModule,
      MatTooltipModule,
      MatSelectModule, 
      MatButtonModule,
@@ -69,15 +120,23 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
   styleUrl: './room-scheduler.component.css',
 })
 export class RoomSchedulerComponent implements OnInit{
-  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog) {
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
   }
-  fakeData: Room[] = [];
-  fakeEvents: RoomEvent[] = [];
+  fakeData: Room[] = [];//for testing
+  fakeEvents: Event[] = [];//for testing
+  fakeTags: CodeValue[] = [];//for testing
+  fakeUsers: User[] = [];//for testing
+  fakeOrganizer: User = {id: 1, username: 'user1', email: '1@1.com', role: 'user'};//for testing
+  fakeTagsTable: {[tag_id: number]: Tag}=[];
+  TagData: CodeValue[] = [];//get from api
+  UserData: User[] = [];//get from api
+  EventData: Event[] = [];//get from api
   roomTable: {[room_name:string]: number} = {'room1': 10, 'room2': 20, 'room3': 30, 'room4': 40, 'room5': 50};//get from api
   availableTags:String[] = ['projector', 'food'];//need to get from api
-  selectedTags: string[] = [];//get from RoomData
+  selectedTags: number[] = [];//get from RoomData
   capacity:number = 0;//search by capacity
   filteredRooms: Room[] = [];//search by tags and capacity and time
+  CurrentUser: any;//get from auth service
   selectedRoom = 'room1';//initial room
   isLogin = true;//get from auth service
   isMonthView: boolean = false;//initial view is week
@@ -142,33 +201,82 @@ export class RoomSchedulerComponent implements OnInit{
       }
     },
     eventResize: function(info){
-        //put request
+        //put request and add modify event
     },
     selectAllow: function (info) {
       return (info.start >= new Date());
     }
   };
   ngOnInit(){
+    // this.CurrentUser = this.userService.getUser();
+    // if(!this.CurrentUser){
+    //   this.router.navigate(['/login']);
+    // }
+    // this.itemService.getAllRooms().subscribe((response: RoomResponse) => {
+    //   if(response.status === 'success'){
+    //     this.RoomData = response.data.rooms;
+    //   }else{
+    //     console.log('get room data failed');
+    //   }
+    // });
+    // this.itemService.getAllTags().subscribe((response: CodeTypesResponse) => {
+    //   if (response.status === 'success') {
+    //     const filter:CodeType|undefined = response.data.code_types.find((code_type: CodeType) => code_type.id === 0);
+    //     if(filter != undefined)
+    //       this.TagData = filter.code_values;
+    //   }else{
+    //     console.log('get tag data failed');
+    //   }
+    // });
+    // this.itemService.getAllUsers().subscribe((response: UserResponse) => {
+    //   if(response.status === 'success'){
+    //     this.UserData = response.data.users;
+    //   }else{
+    //     console.log('get user data failed');
+    //   }
+    // });
+    // this.itemService.getMeetingByRoomIdAndTime(this.RoomData[0].id, '0000-01-01', '3000-01-01').subscribe((response: EventResponse) => {
+    //   if(response.status === 'success'){
+    //     this.EventData = response.data.meetings;
+    //   }else{
+    //     console.log('get event data failed');
+    //   }
+    // });
     this.fakeData = [
-      {room_name: 'room1', type: 'meeting', rules: ['projector'], capacity: 10},
-      {room_name: 'room2', type: 'meeting', rules: ['projector', 'food'], capacity: 20},
-      {room_name: 'room3', type: 'meeting', rules: ['food'], capacity: 30},
-      {room_name: 'room4', type: 'meeting', rules: ['projector'], capacity: 40},
-      {room_name: 'room5', type: 'meeting', rules: ['projector', 'food'], capacity: 50},
+      {id: 1, room_name: 'room1', type: 'meeting', rules: [0], capacity: 10},
+      {id: 2, room_name: 'room2', type: 'meeting', rules: [0, 1], capacity: 20},
+      {id: 3, room_name: 'room3', type: 'meeting', rules: [1], capacity: 30},
+      {id: 4, room_name: 'room4', type: 'meeting', rules: [0], capacity: 40},
+      {id: 5, room_name: 'room5', type: 'meeting', rules: [0, 1], capacity: 50},
     ];
     this.fakeEvents = [
-      {id: '1', room_id: 1, title: 'meeting1', description: 'meeting1', start: TODAY_STR + 'T09:00:00', end: TODAY_STR + 'T13:00:00', participants: []},
-      {id: '2', room_id: 2, title: 'meeting2', description: 'meeting2', start: TODAY_STR + 'T12:00:00', end: TODAY_STR + 'T15:00:00', participants: []},
-      {id: '3', room_id: 3, title: 'meeting3', description: 'meeting3', start: TODAY_STR + 'T14:00:00', end: TODAY_STR + 'T17:00:00', participants: []},
-      {id: '4', room_id: 4, title: 'meeting4', description: 'meeting4', start: TODAY_STR + 'T16:00:00', end: TODAY_STR + 'T19:00:00', participants: []},
-      {id: '5', room_id: 5, title: 'meeting5', description: 'meeting5', start: TODAY_STR + 'T18:00:00', end: TODAY_STR + 'T21:00:00', participants: []},
+      {id: '1', room_id: 1, title: 'meeting1', description: 'meeting1',organizer: 1, start: TODAY_STR + 'T09:00:00', end: TODAY_STR + 'T13:00:00', participants: [1, 2], status_type: 'approved'},
+      {id: '2', room_id: 2, title: 'meeting2', description: 'meeting2',organizer: 2, start: TODAY_STR + 'T10:00:00', end: TODAY_STR + 'T14:00:00', participants: [2, 3], status_type: 'approved'},
+      {id: '3', room_id: 3, title: 'meeting3', description: 'meeting3',organizer: 3, start: TODAY_STR + 'T11:00:00', end: TODAY_STR + 'T15:00:00', participants: [3, 4], status_type: 'approved'},
+      {id: '4', room_id: 4, title: 'meeting4', description: 'meeting4',organizer: 4, start: TODAY_STR + 'T12:00:00', end: TODAY_STR + 'T16:00:00', participants: [5, 1], status_type: 'approved'},
+      {id: '5', room_id: 5, title: 'meeting5', description: 'meeting5',organizer: 5, start: TODAY_STR + 'T13:00:00', end: TODAY_STR + 'T17:00:00', participants: [1, 3], status_type: 'approved'},
     ];
+    this.fakeTags = [
+      {code_type_id: 0, code_value: 'projector', code_value_desc: 'This room is equipped with a projector, which can be used for presentations or visual displays.', id: 0},
+      {code_type_id: 0, code_value: 'food', code_value_desc: 'can eat in the room.', id: 1}
+    ];
+    this.fakeUsers = [
+      {id: 1, username: 'user1', email: '1@1.com', role: 'user'},
+      {id: 2, username: 'user2', email: '2@2.com', role: 'user'},
+      {id: 3, username: 'user3', email: '3@3.com', role: 'user'},
+      {id: 4, username: 'user4', email: '4@4.com', role: 'user'},
+      {id: 5, username: 'user5', email: '5@5.com', role: 'user'},
+    ];
+    this.fakeOrganizer = {id: 1, username: 'user1', email: '1@1.com', role: 'user'};
     this.roomTable = {'room1': 1, 'room2': 2, 'room3': 3, 'room4': 4, 'room5': 5};
+    //by function
+    this.fakeTags.forEach(tag => {
+      this.fakeTagsTable[tag.id] = {tag_name: tag.code_value, tag_desc: tag.code_value_desc};
+    });
     this.filteredRooms = this.fakeData;
-    this.calendarOptions.events = this.filterEvents(this.roomTable[this.selectedRoom]);
+    this.calendarOptions.events = this.CALLEvents(1);
   }
   applyFilter() {
-
     //filter by tags, capacity and time is valid between startDateTime and endDateTime
     this.filteredRooms = this.fakeData.filter(room => {
       // Check if the room's rules include all selected tags
@@ -202,7 +310,7 @@ export class RoomSchedulerComponent implements OnInit{
     this.handleRoomChange(this.selectedRoom);
   }
   //event filter by room_id
-  filterEvents(room_id: number){
+  CALLEvents(room_id: number){
     console.log(this.fakeEvents.filter((event) => event.room_id === room_id));
     return this.fakeEvents.filter((event) => event.room_id === room_id);
   }
@@ -225,15 +333,16 @@ export class RoomSchedulerComponent implements OnInit{
     const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: '', description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: []},
+      data: {title: '', organizer: 1, description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: [1]},
     });
 
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {
-        console.log(data.participants);
+        console.log(data);
         calendarApi.addEvent({
-          id: createEventId(),
+          // id: createEventId(),
           title: data.title,
+          organizer: data.organizer,
           description: data.description,
           participants: data.participants,
           start: selectInfo.startStr,
@@ -249,10 +358,10 @@ export class RoomSchedulerComponent implements OnInit{
     this.isMonthView = viewInfo.view.type === 'dayGridMonth';
   }
   handleEventClick(clickInfo: EventClickArg) {
-    const dialogRef = this.dialog.open(PopUpDetailsComponent, {
+    const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: clickInfo.event.title, description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
+      data: {title: clickInfo.event.title,organizer: clickInfo.event.extendedProps['organizer'],description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {
@@ -284,7 +393,7 @@ export class RoomSchedulerComponent implements OnInit{
       this.selectedRoom = room;
       let eventsToDisplay: any[] = [];
       console.log("change" + room);
-      eventsToDisplay = this.filterEvents(this.roomTable[room]);
+      eventsToDisplay = this.CALLEvents(this.roomTable[room]);
       this.calendarOptions = {
         ...this.calendarOptions,
         events: eventsToDisplay

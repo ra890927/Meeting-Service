@@ -11,8 +11,8 @@
                     <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
                     <label class="tags-label">Tags</label>
                     <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
-                        <mat-option *ngFor="let tag of availableTags" [value]="tag">
-                            {{ tag }}
+                        <mat-option *ngFor="let tag of fakeTags" [value]="tag.id">
+                            {{ tag.code_value }}
                         </mat-option>
                     </mat-select>
                 </div>
@@ -55,9 +55,11 @@
                 </mat-card-header>
                 <mat-card-content>
                 <p>Up to {{ room.capacity }} people</p>
-                <button *ngFor = "let code of room.rules"  class="show-details" matTooltip={{roomDescriptions[code]}}>
-                        {{code}}
-                </button>
+                @for(rule of room.rules; track rule){
+                    <button  class="show-details" matTooltip={{fakeTagsTable[rule].tag_desc}}>
+                        {{fakeTagsTable[rule].tag_name}}
+                    </button>
+                }
                 </mat-card-content>
             </mat-card>
         </div>
