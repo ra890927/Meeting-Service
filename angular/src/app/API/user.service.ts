@@ -14,12 +14,13 @@ export class UserService {
   constructor() { }
   
   clean(): void {
-    localStorage.removeItem('user');
+    window.sessionStorage.removeItem('user');
+    window.sessionStorage.removeItem('token');
   }
   // save user data
   public saveUser(user: any): void {
-    localStorage.removeItem('user');
-    localStorage.setItem('user', JSON.stringify(user));
+    window.sessionStorage.removeItem('user');
+    window.sessionStorage.setItem('user', JSON.stringify(user));
   }
   // get user data
   public getUser(): User|null{

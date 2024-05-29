@@ -10,6 +10,7 @@ import { AbstractControl,FormControl, FormGroup, ReactiveFormsModule, Validators
 import { NgIf } from '@angular/common';
 import { AuthService } from '../API/auth.service';
 import { co } from '@fullcalendar/core/internal-common';
+import { UserService } from '../API/user.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -25,7 +26,7 @@ import { co } from '@fullcalendar/core/internal-common';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(private router: Router, private authService: AuthService ) { }
+  constructor(private router: Router, private authService: AuthService, private userservice: UserService ) { }
 
   @ViewChild("userNameInput")
   userNameInput!: ElementRef<MatInput>;
@@ -72,8 +73,8 @@ export class LoginComponent {
           if (res.status === 'success') {
             //set the token and user details in local storage
             window.sessionStorage.setItem('token', res.data.token);
-            window.sessionStorage.setItem('user', JSON.stringify(res.data.user));
-            this.navigate('/user-scheduler');//navigate to profile page
+            this.userservice.saveUser(res.data.user);
+            this.navigate('/profile');//navigate to profile page
           }else{
             console.log('Login failed');
             this.loginError = true;
@@ -82,8 +83,7 @@ export class LoginComponent {
         },
         (error) => {
             console.error('An error occurred:', error);
-            this.connectionError = true; // 設置連線錯誤標誌
-            // 您可以在這裡顯示適當的錯誤消息
+            this.connectionError = true; // set connection error to true
         }
         );
       } 
@@ -93,16 +93,6 @@ export class LoginComponent {
     }
   }
 
-  logout() {
-    this.authService.logout().subscribe((res) => {
-      if (res.status === '200') {
-        //clear the token and user details from local storage
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        this.navigate('/login');//navigate to login page
-      }
-    });
-  }
   
   navigate(path: string) {
     this.router.navigate([path]); // navigate to the path

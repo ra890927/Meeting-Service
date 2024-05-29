@@ -6,7 +6,7 @@ export const cookieInterceptor: HttpInterceptorFn = (req, next) => {
     withCredentials: true,
     setHeaders: {
       'sameSite': 'None',
-      'Authorization': String(localStorage.getItem('token'))
+      'Authorization': String(window.sessionStorage.getItem('token'))
     }
 
   });
