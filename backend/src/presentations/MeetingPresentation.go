@@ -213,7 +213,7 @@ func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
 // @Summary Delete a meeting
 // @Description Delete a meeting
 // @Tags Meeting
-// @Param id path int true "Meeting ID"
+// @Param id path string true "Meeting ID"
 // @Success 200 {object} DeleteMeetingResponse
 // @Router /meeting/{id} [delete]
 func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
@@ -240,7 +240,7 @@ func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 // @Summary Get a meeting
 // @Description Get a meeting
 // @Tags Meeting
-// @Param id path int true "Meeting ID"
+// @Param id path string true "Meeting ID"
 // @Success 200 {object} CreateUpdateGetMeetingResponse
 // @Router /meeting/{id} [get]
 func (mp meetingPresentation) GetMeeting(c *gin.Context) {
