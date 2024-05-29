@@ -1,5 +1,6 @@
 import { Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 
 const MEETING_API = 'http://140.113.215.132:8080/api/v1/meeting/';
@@ -25,8 +26,8 @@ export class ItemService {
     return this.http.get(ROOM_API, httpOptions);
   }
   // get all users
-  getAllUsers(): any {
-    return this.http.get(USER_API, httpOptions);
+  getAllUsers(): Observable<any> {
+    return this.http.get(USER_API+'getAllUsers', httpOptions);
   }
   // get meeting by user id
   getMeetingByUserId(id: string): any {

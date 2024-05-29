@@ -10,6 +10,10 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
+import { UserService } from '../../API/user.service';
+import { ItemService } from '../../API/item.service';
+import { AdminService } from '../../API/admin.service';
+
 
 @Component({
   selector: 'app-user',
@@ -31,66 +35,103 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 export class UserComponent {
   usersList: users[] = [];
-  usersEditing: users | undefined;
+  usersEditing: users = new users();
   isEditing: boolean = false;
-
   userNameControl = new FormControl();
-  detailsControl = new FormControl();
+  userFromBackend: any;
+  connectionError = false;
+
+  constructor(private userService: UserService, private itemservice:ItemService, private adminService: AdminService) {
+  }
 
   ngOnInit(): void {
     this.usersList.push({
-      id: '001',
+      id: 1,
       userName: 'John Doe',
       email: 'pat@example.com',
-      role: 'Admin',
-      details: 'This is a test user'
+      role: 'admin'
     });
-    const usersJson = localStorage.getItem("usersList");
-    if (usersJson) this.usersList = JSON.parse(usersJson);
+
+    // get all users from backend
+    this.itemservice.getAllUsers().subscribe((response)=>{
+      console.log(response.data.users);
+      this.usersList = response.data.users.map((user: any) => {
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          userName: user.username,
+        };
+      });
+    });
   }
 
 
   changeStatus(users: users): void {
     if (this.isEditing){
       switch (users.role) {
-        case 'Admin':
-            users.role = 'User';
+        case 'admin':
+            users.role = 'user';
+            this.usersEditing.role = 'user';
             break;
-        case 'User':
-            users.role = 'Admin';
+        case 'user':
+            users.role = 'admin';
+            this.usersEditing.role = 'admin';
             break;
         default:
-          users.role = 'User'; // Default to User
+          users.role = 'user'; // Default to User
+          this.usersEditing.role = 'user';
       }
-      localStorage.setItem("usersList", JSON.stringify(this.usersList)); // save to local storage
+
     }
   }
 
   delete(users: users): void {
     this.usersList = this.usersList.filter(t => t.id !== users.id);
-    
-    localStorage.setItem("usersList", JSON.stringify(this.usersList));
   }
 
   edit(users: users): void {
     this.isEditing = !this.isEditing;
     this.usersEditing = users;
     this.userNameControl.setValue(users.userName);
-    this.detailsControl.setValue(users.details);
-    
-    localStorage.setItem("usersList", JSON.stringify(this.usersList));
   }
 
   save(): void {
-    if (this.usersEditing) {
-      this.usersEditing.userName = this.userNameControl.value;
-      this.usersEditing.details = this.detailsControl.value;
-      localStorage.setItem("usersList", JSON.stringify(this.usersList));
+    if(this.usersEditing){
+      console.log(this.usersEditing.role);
+
+      this.adminService.updateUser(this.usersEditing.id, this.userNameControl.value, this.usersEditing.email, this.usersEditing.role, '').subscribe(
+        (res) => {
+          if (res.status === 'success') {
+            console.log(this.usersEditing.role);
+            const index = this.usersList.findIndex(user => user.id === this.usersEditing.id);
+            if (index !== -1) {
+              this.usersList[index].userName = this.userNameControl.value;
+              this.usersList[index].role = this.usersEditing.role;
+              this.isEditing = false;
+              this.usersEditing = new users();
+              this.userNameControl.setValue('');
+              console.log("userlists",this.usersList);
+            }
+            console.log("!");
+            
+          }else{
+            this.isEditing = false;
+            this.usersEditing = new users();
+            this.userNameControl.setValue('');
+            console.log('Update failed');
+            return
+          }
+        },
+        (error) => {
+            console.error('A connection error occurred:', error);
+            this.connectionError = true; 
+        }
+        );
     }
-    this.isEditing = false;
-    this.usersEditing = undefined;
-    this.userNameControl.setValue('');
-    this.detailsControl.setValue('');
+
+
+    
   }
 
 }

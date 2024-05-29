@@ -5,7 +5,6 @@
                 <div class="list-column">Name</div>
                 <div class="list-column">E-mail</div>
                 <div class="list-column">Role</div>
-                <div class="list-column">Details</div>
                 <div class="list-column">Actions</div>
             </div>
         </mat-list-item>
@@ -17,16 +16,11 @@
                     <input matInput [formControl]="userNameControl">
                 </mat-form-field>
                 <div class="column" data-title="{{users.email}}">{{users.email}}</div>
-                <div class="column status"><span [ngClass]="{'Admin': users.role === 'Admin', 'User': users.role === 'User', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
-                <div class="column" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.details}}">{{users.details}}</div>
-                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
-                    <!-- <mat-label>Details</mat-label> -->
-                    <input matInput [formControl]="detailsControl">
-                </mat-form-field>
+                <div class="column status"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
                 <div class="column controls">
                     <mat-icon *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
                     <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
-                    <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon>
+                    <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon> -->
                 </div> 
             </div>
         </mat-list-item>

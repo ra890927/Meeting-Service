@@ -1,9 +1,9 @@
 export class users {
-    id: string = '';
+    id: number = 0;
     userName: string = '';
     email: string = '';
-    role: 'Admin' | 'User'  = 'User';
-    details: string = '';
+    role: 'admin' | 'user'  = 'user';
+    // details: string = '';
 }
 
 export class rooms {

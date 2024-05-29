@@ -58,12 +58,12 @@
     cursor: pointer;
 }
 
-.User {
+.user {
     background-color: orange;
     color: white;
 }
 
-.Admin {
+.admin {
     background-color: red;
     color: white;
 }
