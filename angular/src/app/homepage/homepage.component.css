@@ -26,8 +26,8 @@ button{
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
     padding: 12px 30px;
-    height: 500px;
-    width: 400px;
+    height: 60vh;
+    width: 25vw;
     border: 5px solid rgba(255, 255, 255, 0.319);
     /* -webkit-text-stroke: 1px white; */
     border-radius: 10px;
