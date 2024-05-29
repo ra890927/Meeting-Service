@@ -25,9 +25,13 @@ func main() {
 	// Create a new presentation
 
 	r := gin.Default()
+	// CORS middleware
+	r.Use(middlewares.CORSMiddleware())
+
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	v1 := r.Group("/api/v1")
 	{
+		meeingPresentation := presentations.NewMeetingPresentation()
 		roomPresentation := presentations.NewRoomPresentation()
 		userPresentation := presentations.NewUserPresentation()
 
@@ -58,6 +62,16 @@ func main() {
 			eg.POST("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.CreateCodeValue)
 			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
 			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)
+		}
+		eg = v1.Group("/meeting")
+		{
+			eg.GET("/getAllMeetings", meeingPresentation.GetAllMeetings)
+			eg.GET("/:id", meeingPresentation.GetMeeting)
+			eg.GET("/getMeetingsByRoomIdAndDatePeriod", meeingPresentation.GetMeetingsByRoomIdAndDatePeriod)
+			eg.GET("/getMeetingsByParticipantId", meeingPresentation.GetMeetingsByParticipantId)
+			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
+			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
+			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)
 		}
 		eg = v1.Group("/room")
 		{
