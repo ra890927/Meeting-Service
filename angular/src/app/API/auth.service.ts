@@ -49,7 +49,10 @@ export class AuthService {
     }, 
     httpOptions);
   }
-
+  
+  whoami(): Observable<any> {
+    return this.http.get(AUTH_API + 'whoami', httpOptions);
+  }
   // logout
   logout(): Observable<any> {
     return this.http.post(AUTH_API + 'logout', {}, httpOptions);
