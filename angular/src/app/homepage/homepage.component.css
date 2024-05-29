@@ -1,3 +1,10 @@
+.image{
+    width:100%;
+    /* clip-path: inset(220px 0 600px 0); */
+    position: absolute;
+    top: -200px;
+}
+
 .buttonContainer{
     display: flex;
     justify-content: space-around;
