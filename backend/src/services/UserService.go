@@ -104,12 +104,10 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 	}
 
 	// check if the operator is admin and update the role or use the original role
-	if updatedUser.Role == "admin" {
-		if operator.Role != "admin" {
+	if updatedUser.Role != userByID.Role { // if the role is updated
+		if operator.Role != "admin" { // only admin can update user role
 			return errors.New("only admin can update user role")
 		}
-	} else {
-		updatedUser.Role = userByID.Role
 	}
 
 	// Update a user
