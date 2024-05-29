@@ -29,58 +29,25 @@ func NewUserDomain(userRepoArgs ...repos.UserRepo) UserDomain {
 
 func (ud userDomain) CreateUser(user *models.User) error {
 	// Create a new user
-	err := ud.userRepo.CreateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ud.userRepo.CreateUser(user)
 }
 
 func (ud userDomain) UpdateUser(user *models.User) error {
 	// Update a user
-	err := ud.userRepo.UpdateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ud.userRepo.UpdateUser(user)
 }
 
 func (ud userDomain) GetAllUsers() ([]models.User, error) {
 	// Get all users
-	allUsers, err := ud.userRepo.GetAllUsers()
-	if err != nil {
-		return []models.User{}, err
-	}
-
-	return allUsers, nil
+	return ud.userRepo.GetAllUsers()
 }
 
 func (ud userDomain) GetUserByEmail(email string) (models.User, error) {
 	// Get a user by email
-	userByEmail, err := ud.userRepo.GetUserByEmail(email)
-
-	// return the user if no errors
-	if err != nil {
-		return models.User{}, err
-	}
-
-	return userByEmail, nil
+	return ud.userRepo.GetUserByEmail(email)
 }
 
 func (ud userDomain) GetUserByID(id uint) (models.User, error) {
 	// Get a user by ID
-	user, err := ud.userRepo.GetUserByID(id)
-
-	// return the user if no errors
-	if err != nil {
-		return models.User{}, err
-	}
-
-	return user, nil
+	return ud.userRepo.GetUserByID(id)
 }

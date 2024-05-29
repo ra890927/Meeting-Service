@@ -42,33 +42,23 @@ func (us userService) CreateUser(user *models.User) error {
 		return errors.New("user already exists")
 	}
 
-	// Set default role to "user"
-	user.Role = "user"
-
 	// Hash the password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return errors.New("error when hashing password")
 	}
+
+	// Set default role to "user"
+	user.Role = "user"
 	user.Password = string(hashValue)
 
 	// Create a new user
-	err = us.userDomain.CreateUser(user)
-	if err != nil {
-		return errors.New("error creating user")
-	}
-
-	return nil
+	return us.userDomain.CreateUser(user)
 }
 
 func (us userService) GetAllUsers() ([]models.User, error) {
 	// Get all users
-	users, err := us.userDomain.GetAllUsers()
-	if err != nil {
-		return []models.User{}, errors.New("error getting all users")
-	}
-
-	return users, nil
+	return us.userDomain.GetAllUsers()
 }
 
 func (us userService) UpdateUser(operator models.User, updatedUser *models.User) error {
