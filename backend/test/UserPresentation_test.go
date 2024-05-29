@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func addFakeUserMiddleware() gin.HandlerFunc {
+func addFakeUserMiddlewareUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := models.User{ID: 1}
 		c.Set("validate_user", user)
@@ -85,7 +85,7 @@ func TestUpdateUser(t *testing.T) {
 	// - Set the mode to test
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.PUT("/user", addFakeUserMiddleware(), up.UpdateUser)
+	r.PUT("/user", addFakeUserMiddlewareUser(), up.UpdateUser)
 
 	// - Create a request
 	jsonDataString := `{"id":1, "username":"test-user-updated","email":"test@test.com","password":"test-password-updated","role":"test-role-updated"}`
