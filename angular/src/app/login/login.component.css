@@ -6,18 +6,21 @@
 .login-container{
     display: flex;
     position: absolute;
-    height: 100vh;
+    height: 95vh;
     width: 100%;
 }
 .switch{
     flex: 1;
     background-image: url(../../assets/meeting-room.jpg);
     background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: end
 }
 .switch>div{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    height: 90vh;
+}
+.switch>div>div{
     width: fit-content;
     height: fit-content;
     margin: 25% 20px;
@@ -32,6 +35,7 @@
     outline: none;
     color: white;
     mix-blend-mode: screen;
+    font-family: 'Courier New', Courier, monospace;
 }
 .button-style::before {
     position: absolute;
@@ -60,8 +64,11 @@
 }
 .log-title{
     text-align: center;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 2em;
     margin-bottom: 3em;
+
 }
 .login-form-inner{
     width: 50%;

@@ -19,7 +19,8 @@
 
 .text{
     position: absolute;
+    font-family: 'Courier New', Courier, monospace;
     /* transform: translate(-50%, -50%); */
-    font-size: 14px;
+    font-size: 16px;
     color: rgb(188, 180, 180);
 }

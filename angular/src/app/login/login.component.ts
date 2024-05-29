@@ -10,10 +10,14 @@ import { AbstractControl,FormControl, FormGroup, ReactiveFormsModule, Validators
 import { NgIf } from '@angular/common';
 import { AuthService } from '../API/auth.service';
 import { co } from '@fullcalendar/core/internal-common';
+import { LogoComponent } from '../layout/logo/logo.component';
+import { FooterComponent } from '../layout/footer/footer.component';
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
+    LogoComponent,
+    FooterComponent,
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
