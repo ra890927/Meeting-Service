@@ -129,16 +129,24 @@ func (ap authPresentation) Logout(c *gin.Context) {
 	var logoutResponse LogoutResponse
 
 	// Get the token from cookie
+	tokenValue := ""
 	token, err := c.Request.Cookie("token")
 	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
+		// if cant get from cookie, get from header for CORS problem
+		tokenValue = c.GetHeader("Authorization")
+		if tokenValue == "" {
+			c.JSON(400, gin.H{"error": "Invalid request"})
+			return
+		}
+	} else {
+		tokenValue = token.Value
 	}
+
 	// Logout the user
-	err = ap.as.Logout(&token.Value)
+	err = ap.as.Logout(&tokenValue)
 	if err != nil {
 		logoutResponse.Status = "fail"
-		logoutResponse.Data.Message = "Logout failed"
+		logoutResponse.Data.Message = err.Error()
 		c.JSON(500, logoutResponse)
 		return
 	}
