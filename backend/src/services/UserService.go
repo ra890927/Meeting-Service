@@ -77,21 +77,6 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 	if updatedUser.Email != userByID.Email {
 		return errors.New("email cannot be updated")
 	}
-	updatedUser.Email = userByID.Email // get the original email
-
-	// use the original [username, password] if the updated one is empty
-	if updatedUser.Username == "" {
-		updatedUser.Username = userByID.Username
-	}
-	if updatedUser.Password == "" {
-		updatedUser.Password = userByID.Password
-	} else {
-		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return errors.New("error when hashing password")
-		}
-		updatedUser.Password = string(hashValue)
-	}
 
 	// check if the operator is admin and update the role or use the original role
 	if updatedUser.Role != userByID.Role { // if the role is updated
@@ -100,11 +85,15 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 		}
 	}
 
-	// Update a user
-	err = us.userDomain.UpdateUser(updatedUser)
-	if err != nil {
-		return errors.New("error updating user")
+	updatedUser.OverwriteValue(&userByID)
+	if len(updatedUser.Password) > 0 {
+		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return errors.New("error when hashing password")
+		}
+		updatedUser.Password = string(hashValue)
 	}
 
-	return nil
+	// Update a user
+	return us.userDomain.UpdateUser(updatedUser)
 }
