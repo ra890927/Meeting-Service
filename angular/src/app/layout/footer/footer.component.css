@@ -10,7 +10,7 @@
 
 .wave{
     position: absolute;
-    height: 10vh;
+    /* height: 10vh; */
     width: 100%;
     bottom: 0;
     transform:rotate(0deg);
