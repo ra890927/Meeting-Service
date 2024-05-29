@@ -30,31 +30,31 @@ func (m *MockMeetingDomain) DeleteMeeting(id string) error {
 	return args.Error(0)
 }
 
-func (m *MockMeetingDomain) GetMeeting(id string) (*models.Meeting, error) {
+func (m *MockMeetingDomain) GetMeeting(id string) (models.Meeting, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Meeting), args.Error(1)
+	return args.Get(0).(models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingDomain) GetAllMeetings() ([]*models.Meeting, error) {
+func (m *MockMeetingDomain) GetAllMeetings() ([]models.Meeting, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingDomain) GetMeetingsByRoomId(roomID int) ([]*models.Meeting, error) {
+func (m *MockMeetingDomain) GetMeetingsByRoomId(roomID int) ([]models.Meeting, error) {
 	args := m.Called(roomID)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
-func (m *MockMeetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error) {
+func (m *MockMeetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error) {
 	args := m.Called(dateFrom, dateTo)
-	return args.Get(0).([]*models.Meeting), args.Error(1)
+	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
 func TestServiceCreateMeetingWithInvalidTime(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		Title:       "Invalid Time Meeting",
@@ -74,7 +74,7 @@ func TestServiceCreateMeetingWithNoConflict(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		Title:       "Board Meeting",
@@ -85,8 +85,8 @@ func TestServiceCreateMeetingWithNoConflict(t *testing.T) {
 	}
 
 	// Assume no existing meetings
-	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{}, nil)
-	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]models.Meeting{}, nil)
 	mockMeetingDomain.On("CreateMeeting", meeting).Return(nil)
 
 	err := ms.CreateMeeting(user, meeting)
@@ -98,7 +98,7 @@ func TestServiceCreateMeetingWithConflict(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		ID:          "1",
@@ -109,7 +109,7 @@ func TestServiceCreateMeetingWithConflict(t *testing.T) {
 		EndTime:     time.Now().Add(2 * time.Hour),
 	}
 
-	existingMeeting := &models.Meeting{
+	existingMeeting := models.Meeting{
 		ID:        "2",
 		Title:     "Strategy Meeting (existing)",
 		RoomID:    2,
@@ -118,8 +118,8 @@ func TestServiceCreateMeetingWithConflict(t *testing.T) {
 	}
 
 	// Return existing meeting that conflicts
-	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{existingMeeting}, nil)
-	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]models.Meeting{existingMeeting}, nil)
 	mockMeetingDomain.On("CreateMeeting", meeting).Return(nil)
 
 	err := ms.CreateMeeting(user, meeting)
@@ -132,7 +132,7 @@ func TestServiceUpdateMeetingWithInvalidTime(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		ID:          "1",
@@ -143,7 +143,7 @@ func TestServiceUpdateMeetingWithInvalidTime(t *testing.T) {
 		EndTime:     time.Now(),
 	}
 
-	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(meeting, nil)
+	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(*meeting, nil)
 
 	err := ms.UpdateMeeting(user, meeting)
 
@@ -155,7 +155,7 @@ func TestServiceUpdateMeetingWithConflict(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		ID:          "1",
@@ -166,7 +166,7 @@ func TestServiceUpdateMeetingWithConflict(t *testing.T) {
 		EndTime:     time.Now().Add(2 * time.Hour),
 	}
 
-	existingMeeting := &models.Meeting{
+	existingMeeting := models.Meeting{
 		ID:        "2",
 		Title:     "Strategy Meeting",
 		StartTime: time.Now().Add(1 * time.Hour),
@@ -174,9 +174,9 @@ func TestServiceUpdateMeetingWithConflict(t *testing.T) {
 	}
 
 	mockMeetingDomain.On("UpdateMeeting", meeting).Return(nil)
-	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(meeting, nil)
-	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{existingMeeting}, nil)
-	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(*meeting, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]models.Meeting{existingMeeting}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]models.Meeting{existingMeeting}, nil)
 
 	err := ms.UpdateMeeting(user, meeting)
 
@@ -189,7 +189,7 @@ func TestServiceUpdateMeetingWithNoConflict(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 
 	meeting := &models.Meeting{
 		ID:          "1",
@@ -201,9 +201,9 @@ func TestServiceUpdateMeetingWithNoConflict(t *testing.T) {
 	}
 
 	mockMeetingDomain.On("UpdateMeeting", meeting).Return(nil)
-	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(meeting, nil)
-	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]*models.Meeting{}, nil)
-	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]*models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeeting", meeting.ID).Return(*meeting, nil)
+	mockMeetingDomain.On("GetMeetingsByRoomId", meeting.RoomID).Return([]models.Meeting{}, nil)
+	mockMeetingDomain.On("GetMeetingsByDatePeriod", meeting.StartTime, meeting.EndTime).Return([]models.Meeting{}, nil)
 
 	err := ms.UpdateMeeting(user, meeting)
 	assert.NoError(t, err)
@@ -213,9 +213,9 @@ func TestServiceDeleteMeeting(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 
-	user := &models.User{ID: 1}
+	user := models.User{ID: 1}
 	id := "1"
-	mockMeetingDomain.On("GetMeeting", id).Return(&models.Meeting{ID: id, OrganizerID: user.ID}, nil)
+	mockMeetingDomain.On("GetMeeting", id).Return(models.Meeting{ID: id, OrganizerID: user.ID}, nil)
 	mockMeetingDomain.On("DeleteMeeting", id).Return(nil)
 
 	err := ms.DeleteMeeting(user, id)
@@ -228,7 +228,7 @@ func TestServiceGetMeeting(t *testing.T) {
 	ms := services.NewMeetingService(mockMeetingDomain)
 
 	id := "1"
-	meeting := &models.Meeting{
+	meeting := models.Meeting{
 		Title:       "Board Meeting",
 		Description: "Annual Board Meeting",
 	}
@@ -244,7 +244,7 @@ func TestServiceGetMeeting(t *testing.T) {
 func TestServiceGetAllMeetings(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
-	expectedMeetings := []*models.Meeting{
+	expectedMeetings := []models.Meeting{
 		{ID: "1", Title: "Board Meeting", Description: "Annual Board Meeting"},
 	}
 
@@ -261,7 +261,7 @@ func TestServiceGetMeetingsByRoomIdAndDatePeriod(t *testing.T) {
 	ms := services.NewMeetingService(mockMeetingDomain)
 	roomID := 10
 	date := time.Now()
-	expectedMeetings := []*models.Meeting{{ID: "2", Title: "Strategy Meeting", Description: "Strategy planning session"}}
+	expectedMeetings := []models.Meeting{{ID: "2", Title: "Strategy Meeting", Description: "Strategy planning session"}}
 
 	mockMeetingDomain.On("GetMeetingsByRoomId", roomID).Return(expectedMeetings, nil)
 	mockMeetingDomain.On("GetMeetingsByDatePeriod", date, date).Return(expectedMeetings, nil)
@@ -276,7 +276,7 @@ func TestServiceGetMeetingsByParticipantId(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 	ms := services.NewMeetingService(mockMeetingDomain)
 	participantID := uint(1)
-	expectedMeetings := []*models.Meeting{
+	expectedMeetings := []models.Meeting{
 		{
 			ID:           "2",
 			Participants: datatypes.JSONSlice[uint]{participantID},

@@ -8,13 +8,13 @@ import (
 )
 
 type MeetingService interface {
-	CreateMeeting(operator *models.User, meeting *models.Meeting) error
-	UpdateMeeting(operator *models.User, meeting *models.Meeting) error
-	DeleteMeeting(operator *models.User, id string) error
-	GetMeeting(id string) (*models.Meeting, error)
-	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]*models.Meeting, error)
-	GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error)
+	CreateMeeting(operator models.User, meeting *models.Meeting) error
+	UpdateMeeting(operator models.User, meeting *models.Meeting) error
+	DeleteMeeting(operator models.User, id string) error
+	GetMeeting(id string) (models.Meeting, error)
+	GetAllMeetings() ([]models.Meeting, error)
+	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error)
+	GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error)
 }
 
 type meetingService struct {
@@ -31,9 +31,9 @@ func NewMeetingService(roomDomainArg ...domains.MeetingDomain) MeetingService {
 	}
 }
 
-func (ms meetingService) intersectMeetingsById(meetingsArg ...[]*models.Meeting) []*models.Meeting {
+func (ms meetingService) intersectMeetingsById(meetingsArg ...[]models.Meeting) []models.Meeting {
 	if len(meetingsArg) == 0 {
-		return []*models.Meeting{}
+		return []models.Meeting{}
 	}
 	if len(meetingsArg) == 1 {
 		return meetingsArg[0]
@@ -46,7 +46,7 @@ func (ms meetingService) intersectMeetingsById(meetingsArg ...[]*models.Meeting)
 		}
 	}
 
-	var result []*models.Meeting
+	var result []models.Meeting
 	for _, m := range meetingsArg[0] {
 		if totalKeys[m.ID] == len(meetingsArg) {
 			result = append(result, m)
@@ -56,7 +56,7 @@ func (ms meetingService) intersectMeetingsById(meetingsArg ...[]*models.Meeting)
 }
 
 // check if the meeting time is valid and not overlapping with other meetings
-func (ms meetingService) checkValidMeetingTime(targetMeeting *models.Meeting) error {
+func (ms meetingService) checkValidMeetingTime(targetMeeting models.Meeting) error {
 	if !targetMeeting.StartTime.Before(targetMeeting.EndTime) {
 		return errors.New("end time should be after start time")
 	}
@@ -84,11 +84,11 @@ func (ms meetingService) checkValidMeetingTime(targetMeeting *models.Meeting) er
 	return nil
 }
 
-func (ms meetingService) CreateMeeting(operator *models.User, meeting *models.Meeting) error {
+func (ms meetingService) CreateMeeting(operator models.User, meeting *models.Meeting) error {
 	// modyfing the OrganizerID to the operator's ID
 	meeting.OrganizerID = operator.ID
 
-	err := ms.checkValidMeetingTime(meeting)
+	err := ms.checkValidMeetingTime(*meeting)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (ms meetingService) CreateMeeting(operator *models.User, meeting *models.Me
 	return nil
 }
 
-func (ms meetingService) UpdateMeeting(operator *models.User, meeting *models.Meeting) error {
+func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Meeting) error {
 	// find out the original meeting
 	originalMeeting, err := ms.MeetingDomain.GetMeeting(meeting.ID)
 	if err != nil {
@@ -112,23 +112,23 @@ func (ms meetingService) UpdateMeeting(operator *models.User, meeting *models.Me
 		return errors.New("only the organizer can update the meeting")
 	}
 
-	err = ms.checkValidMeetingTime(meeting)
+	err = ms.checkValidMeetingTime(*meeting)
 	if err != nil {
 		return err
 	}
 
 	err = ms.MeetingDomain.UpdateMeeting(meeting)
 	if err != nil {
-		return err
+		return errors.New("error when updating meeting")
 	}
 	return nil
 }
 
-func (ms meetingService) DeleteMeeting(operator *models.User, id string) error {
+func (ms meetingService) DeleteMeeting(operator models.User, id string) error {
 	// only the organizer can delete the meeting
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
-		return err
+		return errors.New("meeting not found")
 	}
 	if operator.ID != meeting.OrganizerID {
 		return errors.New("only the organizer can delete the meeting")
@@ -141,40 +141,40 @@ func (ms meetingService) DeleteMeeting(operator *models.User, id string) error {
 	return nil
 }
 
-func (ms meetingService) GetMeeting(id string) (*models.Meeting, error) {
+func (ms meetingService) GetMeeting(id string) (models.Meeting, error) {
 	meeting, err := ms.MeetingDomain.GetMeeting(id)
 	if err != nil {
-		return nil, err
+		return models.Meeting{}, errors.New("meeting not found")
 	}
 	return meeting, nil
 }
 
-func (ms meetingService) GetAllMeetings() ([]*models.Meeting, error) {
+func (ms meetingService) GetAllMeetings() ([]models.Meeting, error) {
 	meetings, err := ms.MeetingDomain.GetAllMeetings()
 	if err != nil {
-		return nil, err
+		return []models.Meeting{}, errors.New("error when fetching meetings")
 	}
 	return meetings, nil
 }
 
-func (ms meetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, date_from time.Time, date_to time.Time) ([]*models.Meeting, error) {
+func (ms meetingService) GetMeetingsByRoomIdAndDatePeriod(roomID int, date_from time.Time, date_to time.Time) ([]models.Meeting, error) {
 	meetingsByRoomId, err1 := ms.MeetingDomain.GetMeetingsByRoomId(roomID)
 	meetingsByDatePeriod, err2 := ms.MeetingDomain.GetMeetingsByDatePeriod(date_from, date_to)
 	if err1 != nil || err2 != nil {
-		return []*models.Meeting{}, errors.New("error when fetching meetings")
+		return []models.Meeting{}, errors.New("error when fetching meetings")
 	}
 	meetings := ms.intersectMeetingsById(meetingsByRoomId, meetingsByDatePeriod)
 	return meetings, nil
 }
 
-func (ms meetingService) GetMeetingsByParticipantId(participantID uint) ([]*models.Meeting, error) {
+func (ms meetingService) GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error) {
 	// TODO: find a method to get all meetings by participant ID in repo layer
 	meetings, err := ms.MeetingDomain.GetAllMeetings()
 	if err != nil {
-		return []*models.Meeting{}, errors.New("error when fetching meetings")
+		return []models.Meeting{}, errors.New("error when fetching meetings")
 	}
 
-	var participantMeetings []*models.Meeting
+	var participantMeetings []models.Meeting
 	for _, m := range meetings {
 		for _, p := range m.Participants {
 			if p == participantID {
