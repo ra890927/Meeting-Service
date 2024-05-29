@@ -1,28 +1,35 @@
-<mat-card>
-    <mat-list>
-        <mat-list-item>
-            <div class="list-header">
-                <div class="list-column">Name</div>
-                <div class="list-column">E-mail</div>
-                <div class="list-column">Role</div>
-                <div class="list-column">Actions</div>
-            </div>
-        </mat-list-item>
-        <mat-list-item *ngFor="let users of usersList">
-            <div class="users row">
-                <div class="column" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
-                <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column">
-                    <!-- <mat-label>User Name</mat-label> -->
-                    <input matInput [formControl]="userNameControl">
-                </mat-form-field>
-                <div class="column" data-title="{{users.email}}">{{users.email}}</div>
-                <div class="column status"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
-                <div class="column controls">
-                    <mat-icon *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
-                    <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
-                    <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon> -->
-                </div> 
-            </div>
-        </mat-list-item>
-    </mat-list>
-</mat-card>
+<div class="user-div">
+    <mat-card class="user-mat-card">
+        <mat-list>
+            <mat-list-item>
+                <div class="list-header">
+                    <div class="list-column name">Name</div>
+                    <div class="list-column email">E-mail</div>
+                    <div class="list-column role">Role</div>
+                    <div class="list-column action">Actions</div>
+                </div>
+            </mat-list-item>
+        </mat-list>
+        <mat-list class="scrollable-list">
+            <mat-list-item *ngFor="let users of usersList; last as last">
+                <div class="users row">
+                    <div class="column name" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
+                    <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column name">
+                        <!-- <mat-label>User Name</mat-label> -->
+                        <input matInput [formControl]="userNameControl">
+                    </mat-form-field>
+                    <div class="column email" data-title="{{users.email}}">{{users.email}}</div>
+                    <div class="column status role"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing}" (click)="changeStatus(users)">{{users.role}}</span></div>
+                    <div class="column controls actions">
+                        <mat-icon *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
+                        <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                        <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon> -->
+                    </div> 
+                </div>
+                <div class="divider-div">
+                    <mat-divider class="custom-divider" [inset]="true" *ngIf="!last"></mat-divider>
+                </div>
+            </mat-list-item>
+        </mat-list>
+    </mat-card>
+</div>

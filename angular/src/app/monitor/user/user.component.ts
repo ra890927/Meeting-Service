@@ -35,7 +35,12 @@ import { AdminService } from '../../API/admin.service';
 
 export class UserComponent {
   usersList: users[] = [];
-  usersEditing: users = new users();
+  usersEditing: users = {
+    id: 0,
+    userName: '',
+    email: '',
+    role: 'user'
+  };
   isEditing: boolean = false;
   userNameControl = new FormControl();
   userFromBackend: any;
@@ -50,6 +55,72 @@ export class UserComponent {
       userName: 'John Doe',
       email: 'pat@example.com',
       role: 'admin'
+    });
+    this.usersList.push({
+      id: 2,
+      userName: 'Amy',
+      email: 'amy@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 3,
+      userName: 'Bob',
+      email: 'Bob@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 1,
+      userName: 'John Doe',
+      email: 'pat@example.com',
+      role: 'admin'
+    });
+    this.usersList.push({
+      id: 2,
+      userName: 'Amy',
+      email: 'amy@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 3,
+      userName: 'Bob',
+      email: 'Bob@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 1,
+      userName: 'John Doe',
+      email: 'pat@example.com',
+      role: 'admin'
+    });
+    this.usersList.push({
+      id: 2,
+      userName: 'Amy',
+      email: 'amy@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 3,
+      userName: 'Bob',
+      email: 'Bob@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 1,
+      userName: 'John Doe',
+      email: 'pat@example.com',
+      role: 'admin'
+    });
+    this.usersList.push({
+      id: 2,
+      userName: 'Amy',
+      email: 'amy@example.com',
+      role: 'user'
+    });
+    this.usersList.push({
+      id: 3,
+      userName: 'Bob',
+      email: 'Bob@example.com',
+      role: 'user'
     });
 
     // get all users from backend
@@ -109,7 +180,12 @@ export class UserComponent {
               this.usersList[index].userName = this.userNameControl.value;
               this.usersList[index].role = this.usersEditing.role;
               this.isEditing = false;
-              this.usersEditing = new users();
+              this.usersEditing = {
+                id: 0,
+                userName: '',
+                email: '',
+                role: 'user'
+              };
               this.userNameControl.setValue('');
               console.log("userlists",this.usersList);
             }
@@ -117,7 +193,12 @@ export class UserComponent {
             
           }else{
             this.isEditing = false;
-            this.usersEditing = new users();
+            this.usersEditing = {
+              id: 0,
+              userName: '',
+              email: '',
+              role: 'user'
+            };
             this.userNameControl.setValue('');
             console.log('Update failed');
             return
