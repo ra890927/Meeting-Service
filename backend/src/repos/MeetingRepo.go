@@ -1,54 +1,47 @@
 package repos
 
 import (
+	db "meeting-center/src/io"
 	"meeting-center/src/models"
 	"time"
 
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type MeetingRepo interface {
-	CreateMeeting(meeting *models.Meeting) (*models.Meeting, error)
-	UpdateMeeting(id string, meeting *models.Meeting) error
+	CreateMeeting(meeting *models.Meeting) error
+	UpdateMeeting(meeting *models.Meeting) error
 	DeleteMeeting(id string) error
-	GetMeeting(id string) (*models.Meeting, error)
-	GetAllMeetings() ([]*models.Meeting, error)
-	GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error)
+	GetMeeting(id string) (models.Meeting, error)
+	GetAllMeetings() ([]models.Meeting, error)
+	GetMeetingsByRoomId(roomID int) ([]models.Meeting, error)
+	GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error)
 }
 
 type meetingRepo struct {
-	dsn string
+	db *gorm.DB
 }
 
-func NewMeetingRepo(dsnArg ...string) MeetingRepo {
-	dsn := "../sqlite.db"
-	if len(dsnArg) == 1 {
-		dsn = dsnArg[0]
+func NewMeetingRepo(dbArgs ...*gorm.DB) MeetingRepo {
+	if len(dbArgs) == 0 {
+		return MeetingRepo(&meetingRepo{db: db.GetDBInstance()})
+	} else if len(dbArgs) == 1 {
+		return MeetingRepo(&meetingRepo{db: dbArgs[0]})
+	} else {
+		panic("Too many arguments")
 	}
-	return MeetingRepo(&meetingRepo{
-		dsn: dsn,
-	})
 }
 
-func (mr meetingRepo) CreateMeeting(meeting *models.Meeting) (*models.Meeting, error) {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	result := db.Create(meeting)
+func (mr meetingRepo) CreateMeeting(meeting *models.Meeting) error {
+	result := mr.db.Create(meeting)
 	if result.Error != nil {
-		return nil, result.Error
+		return result.Error
 	}
-	return meeting, nil
+	return nil
 }
 
-func (mr meetingRepo) UpdateMeeting(id string, meeting *models.Meeting) error {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return err
-	}
-	result := db.Model(&models.Meeting{}).Where("id = ?", id).Updates(meeting)
+func (mr meetingRepo) UpdateMeeting(meeting *models.Meeting) error {
+	result := mr.db.Model(&models.Meeting{}).Where("id = ?", meeting.ID).Updates(meeting)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -56,52 +49,49 @@ func (mr meetingRepo) UpdateMeeting(id string, meeting *models.Meeting) error {
 }
 
 func (mr meetingRepo) DeleteMeeting(id string) error {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return err
-	}
-	result := db.Delete(&models.Meeting{}, id)
+	result := mr.db.Where("id = ?", id).Delete(&models.Meeting{})
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func (mr meetingRepo) GetMeeting(id string) (*models.Meeting, error) {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
+func (mr meetingRepo) GetMeeting(id string) (models.Meeting, error) {
 	var meeting models.Meeting
-	result := db.First(&meeting, id)
+	result := mr.db.Where("id = ?", id).First(&meeting)
 	if result.Error != nil {
-		return nil, result.Error
+		return models.Meeting{}, result.Error
 	}
-	return &meeting, nil
+	return meeting, nil
 }
 
-func (mr meetingRepo) GetAllMeetings() ([]*models.Meeting, error) {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	var meetings []*models.Meeting
-	result := db.Find(&meetings)
+func (mr meetingRepo) GetAllMeetings() ([]models.Meeting, error) {
+	var meetings []models.Meeting
+	result := mr.db.Find(&meetings)
 	if result.Error != nil {
-		return nil, result.Error
+		return []models.Meeting{}, result.Error
 	}
 	return meetings, nil
 }
 
-func (mr meetingRepo) GetMeetingsByRoomIdAndDate(roomID int, date time.Time) ([]*models.Meeting, error) {
-	db, err := gorm.Open(sqlite.Open(mr.dsn), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	var meetings []*models.Meeting
-	result := db.Where("room_id = ? AND date(start_time) = date(?)", roomID, date).Find(&meetings)
+func (mr meetingRepo) GetMeetingsByRoomId(roomID int) ([]models.Meeting, error) {
+	var meetings []models.Meeting
+	result := mr.db.Where("room_id = ?", roomID).Find(&meetings)
 	if result.Error != nil {
-		return nil, result.Error
+		return []models.Meeting{}, result.Error
+	}
+	return meetings, nil
+}
+
+func (mr meetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error) {
+	// search for meetings is in the period of dateFrom and dateTo
+	var meetings []models.Meeting
+	result := mr.db.Where("(DATE(start_time) BETWEEN ? AND ?) OR (DATE(end_time) BETWEEN ? AND ?) OR (DATE(start_time) <= ? AND DATE(end_time) >= ?)",
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02"),
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02"),
+		dateFrom.Format("2006-01-02"), dateTo.Format("2006-01-02")).Find(&meetings)
+	if result.Error != nil {
+		return []models.Meeting{}, result.Error
 	}
 	return meetings, nil
 }

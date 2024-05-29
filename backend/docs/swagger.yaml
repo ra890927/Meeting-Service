@@ -23,6 +23,25 @@ definitions:
       id:
         type: integer
     type: object
+  models.Room:
+    properties:
+      capacity:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      room_name:
+        type: string
+      rules:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.User:
     properties:
       created_at:
@@ -158,6 +177,13 @@ definitions:
     properties:
       data:
         type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.DeleteMeetingResponse:
+    properties:
       message:
         type: string
       status:
