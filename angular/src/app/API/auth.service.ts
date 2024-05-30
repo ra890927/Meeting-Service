@@ -53,7 +53,6 @@ export class AuthService {
   whoami(): Observable<any> {
     return this.http.get(AUTH_API + 'whoami', httpOptions);
   }
-
   
   // logout
   logout(): Observable<any> {

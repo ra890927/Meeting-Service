@@ -54,6 +54,7 @@ interface User{
   id: number;
   username: string;
   email: string;
+  role?: string
 }
 interface needData{
   id: string;

@@ -2,17 +2,25 @@
 <div class="header-div">
   <img src="assets/meeting-room.jpg" class="image">
   <mat-toolbar>
-      <button mat-icon-button>
+      <!-- <button mat-icon-button>
         <mat-icon>menu</mat-icon>
-      </button>
+      </button> if rwd -->
       <!-- <span class="example-spacer"></span> -->
       <span class="logo">Meeting.com</span>
-      <span class="example-spacer"></span>
-      <button mat-icon-button>
-        <mat-icon>notifications</mat-icon>
-      </button>
-      <button mat-icon-button>
-        <mat-icon>logout</mat-icon>
-      </button>
+      <div class="nav-links">
+        @if (userservice.isLoggedIn()) {
+          <a routerLink="/profile" routerLinkActive="active">Profile</a>
+        }
+        @else {
+          <a routerLink="/login" routerLinkActive="active">Login</a>
+        }
+        <a routerLink="/reservation" routerLinkActive="active">Reservation</a>
+      </div>
+        @if (userservice.isLoggedIn()) {
+          <div class="button-div">
+            <mat-icon>notifications</mat-icon>
+            <mat-icon (click) = "logout()">logout</mat-icon>
+          </div>
+        }
   </mat-toolbar>
 </div>

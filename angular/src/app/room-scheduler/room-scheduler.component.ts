@@ -11,40 +11,98 @@ import {MatCardModule} from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
-import { PopUpFormComponent, User } from './pop-up-form/pop-up-form.component';
-import { PopUpDetailsComponent } from './pop-up-details/pop-up-details.component';
+import { PopUpFormComponent} from './pop-up-form/pop-up-form.component';
 import { PopUpDeleteConfirmComponent } from './pop-up-delete-confirm/pop-up-delete-confirm.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
 import {createEventId} from './event-utils';//test use
-import { S, cl, co, s } from '@fullcalendar/core/internal-common';
+import { R, S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import { UserService } from '../API/user.service';
+import { AuthService } from '../API/auth.service';
+import { ItemService } from '../API/item.service';
+import { interval, Subscription, switchMap } from 'rxjs';
 //need to save in a interface file
 interface Room {
+  id: number;
   room_name: string;
   type: string;
-  rules: string[];
+  rules: number[];
   capacity: number;
 }
-
-interface RoomEvent {
+interface Event{
   id: string;
-  room_id: number;
   title: string;
   description: string;
-  participants: User[];
-  start: string;
-  end: string;
+  start_time: string;
+  end_time: string;
+  organizer: number;
+  participants: number[];
+  room_id: number;
+  status_type: string;
+}
+interface CodeValue {
+  code_type_id: number;
+  code_value: string;
+  code_value_desc: string;
+  id: number;
 }
 
-interface Tag{
-  type_name: string;
+interface CodeType {
+  code_values: CodeValue[];
+  id: number;
   type_desc: string;
+  type_name: string;
 }
+
+interface CodeTypesResponse {
+  data: {
+    code_types: CodeType[];
+  };
+  message: string;
+  status: string;
+}
+
+interface UserResponse {
+  data: {
+    users: User[];
+  };
+  message: string;
+  status: string;
+}
+interface RoomResponse {
+  data: {
+    rooms: Room[];
+  };
+  message: string;
+  status: string;
+}
+interface EventResponse {
+  data: {
+    meetings: Event[];
+  };
+  message: string;
+  status: string;
+}
+interface User{
+  id: number;
+  username: string;
+  email: string;
+  role?: string
+}
+interface Tag{
+  tag_name: string;
+  tag_desc: string;
+}
+interface Userinfo{
+  username: string;
+  email: string;
+}
+
 const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
 //=======================================================
 @Component({
@@ -56,8 +114,7 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
      MatFormFieldModule,
      MatInputModule, 
      MatCardModule, 
-     CommonModule, 
-     PopUpDetailsComponent,
+     CommonModule,
      MatTooltipModule,
      MatSelectModule, 
      MatButtonModule,
@@ -69,17 +126,21 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
   styleUrl: './room-scheduler.component.css',
 })
 export class RoomSchedulerComponent implements OnInit{
-  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog) {
+  private pollingSubscription: Subscription | null = null;
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
   }
-  fakeData: Room[] = [];
-  fakeEvents: RoomEvent[] = [];
-  roomTable: {[room_name:string]: number} = {'room1': 10, 'room2': 20, 'room3': 30, 'room4': 40, 'room5': 50};//get from api
-  availableTags:String[] = ['projector', 'food'];//need to get from api
-  selectedTags: string[] = [];//get from RoomData
+  TagsTable: {[tag_id: number]: Tag} = {};//get from api
+  UserTable: {[user_id: number]: Userinfo} = {};//get from api
+  TagData: CodeValue[] = [];//get from api
+  UserData: User[] = [];//get from api
+  RoomData: Room[] = [];//get from api
+  EventData: Event[] = [];//get from api
+  selectedTags: number[] = [];//get from RoomData
   capacity:number = 0;//search by capacity
   filteredRooms: Room[] = [];//search by tags and capacity and time
-  selectedRoom = 'room1';//initial room
-  isLogin = true;//get from auth service
+  CurrentUser: any;//get from auth service
+  selectedRoom:Room = {id: 0, room_name: '', type: '', rules: [], capacity: 0};//get from api
+  isLogin = false;//get from auth service
   isMonthView: boolean = false;//initial view is week
   startDate: Date= new Date();
   startTime: string =  '';
@@ -115,18 +176,18 @@ export class RoomSchedulerComponent implements OnInit{
     selectOverlap: false,
     eventOverlap: false,
     validRange: {
-      start: '7:00:00',
+      start: '8:00:00',
       end: '23:59:59'
     },
     slotMaxTime: '23:59:59',
-    slotMinTime: '7:00:00',
+    slotMinTime: '8:00:00',
     firstDay: 7,
     select: this.handleDateSelect.bind(this),
     eventClick: this.handleEventClick.bind(this),
     eventsSet: this.handleEvents.bind(this),
     datesSet: this.handleViewChange.bind(this),
     eventDrop: function(info){
-      const minTime = '07:00';
+      const minTime = '08:00';
       const maxTime = '24:00';
 
       if (info.event.start&&info.event.end) {
@@ -142,35 +203,58 @@ export class RoomSchedulerComponent implements OnInit{
       }
     },
     eventResize: function(info){
-        //put request
+        //put request and add modify event
     },
     selectAllow: function (info) {
       return (info.start >= new Date());
     }
   };
   ngOnInit(){
-    this.fakeData = [
-      {room_name: 'room1', type: 'meeting', rules: ['projector'], capacity: 10},
-      {room_name: 'room2', type: 'meeting', rules: ['projector', 'food'], capacity: 20},
-      {room_name: 'room3', type: 'meeting', rules: ['food'], capacity: 30},
-      {room_name: 'room4', type: 'meeting', rules: ['projector'], capacity: 40},
-      {room_name: 'room5', type: 'meeting', rules: ['projector', 'food'], capacity: 50},
-    ];
-    this.fakeEvents = [
-      {id: '1', room_id: 1, title: 'meeting1', description: 'meeting1', start: TODAY_STR + 'T09:00:00', end: TODAY_STR + 'T13:00:00', participants: []},
-      {id: '2', room_id: 2, title: 'meeting2', description: 'meeting2', start: TODAY_STR + 'T12:00:00', end: TODAY_STR + 'T15:00:00', participants: []},
-      {id: '3', room_id: 3, title: 'meeting3', description: 'meeting3', start: TODAY_STR + 'T14:00:00', end: TODAY_STR + 'T17:00:00', participants: []},
-      {id: '4', room_id: 4, title: 'meeting4', description: 'meeting4', start: TODAY_STR + 'T16:00:00', end: TODAY_STR + 'T19:00:00', participants: []},
-      {id: '5', room_id: 5, title: 'meeting5', description: 'meeting5', start: TODAY_STR + 'T18:00:00', end: TODAY_STR + 'T21:00:00', participants: []},
-    ];
-    this.roomTable = {'room1': 1, 'room2': 2, 'room3': 3, 'room4': 4, 'room5': 5};
-    this.filteredRooms = this.fakeData;
-    this.calendarOptions.events = this.filterEvents(this.roomTable[this.selectedRoom]);
+    this.CurrentUser = this.userService.getUser();
+    console.log(this.CurrentUser);
+    this.isLogin = this.userService.isLoggedIn();
+    console.log(this.isLogin);
+    this.calendarOptions.editable = this.isLogin;
+    this.calendarOptions.selectable = this.isLogin;
+    this.itemService.getAllRooms().subscribe((response: RoomResponse) => {
+      if(response.status === 'success'){
+        this.RoomData = response.data.rooms;
+        this.selectedRoom = this.RoomData[0];
+        this.filteredRooms = this.RoomData;
+      }else{
+        console.log('get room data failed');
+      }
+    });
+    this.itemService.getAllTags().subscribe((response: CodeTypesResponse) => {
+      if (response.status === 'success') {
+        const filter:CodeType|undefined = response.data.code_types.find((code_type: CodeType) => code_type.id === 1);
+        console.log(response);
+        if(filter != undefined){
+          console.log(filter);
+          this.TagData = filter.code_values;
+          this.TagData.forEach(tag => {
+            this.TagsTable[tag.id] = {tag_name: tag.code_value, tag_desc: tag.code_value_desc};
+          });
+        }
+      }else{
+        console.log('get tag data failed');
+      }
+    });
+    this.itemService.getAllUsers().subscribe((response: UserResponse) => {
+      if(response.status === 'success'){
+        this.UserData = response.data.users;
+        this.UserData.forEach(user => {
+          this.UserTable[user.id] = {username: user.username, email: user.email};
+        });
+      }else{
+        console.log('get user data failed');
+      }
+    });
+    this.CALLEvents(1);
   }
   applyFilter() {
-
     //filter by tags, capacity and time is valid between startDateTime and endDateTime
-    this.filteredRooms = this.fakeData.filter(room => {
+    this.filteredRooms = this.RoomData.filter(room => {
       // Check if the room's rules include all selected tags
       const tagsMatch = this.selectedTags.every(tag => room.rules.includes(tag));
       // Check if the room's capacity is sufficient
@@ -186,10 +270,10 @@ export class RoomSchedulerComponent implements OnInit{
       const endDateTime = new Date(this.endDate.toDateString() + ' ' + this.endTime);
       // Check if the room is available between startDateTime and endDateTime 
       //by checking if the room has any events that overlap with the selected time
-      const events = this.fakeEvents.filter(event => event.room_id === this.roomTable[room.room_name]);
+      const events = this.EventData.filter(event => event.room_id === room.id);
       const isAvailable = events.every(event => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+        const eventStart = new Date(event.start_time);
+        const eventEnd = new Date(event.end_time);
         return startDateTime >= eventEnd || endDateTime <= eventStart;
       });
 
@@ -197,14 +281,39 @@ export class RoomSchedulerComponent implements OnInit{
     });
 
     //filter by time
-    this.selectedRoom = this.filteredRooms[0].room_name;
+    this.selectedRoom = this.filteredRooms[0];
     console.log(this.selectedRoom);
     this.handleRoomChange(this.selectedRoom);
   }
   //event filter by room_id
-  filterEvents(room_id: number){
-    console.log(this.fakeEvents.filter((event) => event.room_id === room_id));
-    return this.fakeEvents.filter((event) => event.room_id === room_id);
+  CALLEvents(room_id: number){
+    //set polling to get event data
+    this.pollingSubscription = interval(1000).pipe(
+      switchMap(() => this.itemService.getMeetingByRoomIdAndTime(room_id, '2000-01-01', '3000-01-01'))
+    ).subscribe((response: EventResponse) => {
+      if (response.status === 'success') {
+        this.EventData = response.data.meetings;
+        this.calendarOptions.events = this.EventData.map(event => {
+          return {
+            id: event.id,
+            title: event.title,
+            organizer: event.organizer,
+            description: event.description,
+            participants: event.participants,
+            start: event.start_time,
+            end: event.end_time,
+            allDay: false
+          };
+        });
+      } else {
+        console.log('get event data failed');
+      }
+    });
+  }
+  ngOnDestroy() {
+      if (this.pollingSubscription) {
+        this.pollingSubscription.unsubscribe();
+      }
   }
   calendarVisible = signal(true);
 
@@ -225,20 +334,26 @@ export class RoomSchedulerComponent implements OnInit{
     const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: '', description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: []},
+      data: {title: '', organizer: this.CurrentUser.id, description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: [this.CurrentUser.id]},
     });
-
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {
-        console.log(data.participants);
-        calendarApi.addEvent({
-          id: createEventId(),
-          title: data.title,
-          description: data.description,
-          participants: data.participants,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay
+        console.log(data);
+        this.itemService.postMeeting( data.description, data.endTime, data.organizer, data.participants, this.selectedRoom.id, data.startTime, 'approved', data.title).subscribe((response: any) => {
+          if(response.status === 'success'){
+            calendarApi.addEvent({
+              // id: createEventId(),
+              title: data.title,
+              organizer: data.organizer,
+              description: data.description,
+              participants: data.participants,
+              start: selectInfo.startStr,
+              end: selectInfo.endStr,
+              allDay: selectInfo.allDay
+            });
+          }else{
+            console.log('post event failed');
+          }
         });
       }else{
         calendarApi.unselect();
@@ -249,17 +364,24 @@ export class RoomSchedulerComponent implements OnInit{
     this.isMonthView = viewInfo.view.type === 'dayGridMonth';
   }
   handleEventClick(clickInfo: EventClickArg) {
-    const dialogRef = this.dialog.open(PopUpDetailsComponent, {
+    const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: clickInfo.event.title, description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
+      data: {title: clickInfo.event.title,organizer: clickInfo.event.extendedProps['organizer'],description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {
         clickInfo.event.setProp('title', data.title);
-        clickInfo.event.setExtendedProp('description', data.description);
-        clickInfo.event.setExtendedProp('participants', data.participants);
-        //add put request
+        this.itemService.putMeeting(clickInfo.event.id, data.description, data.endTime, data.organizer, data.participants, this.selectedRoom.id, data.startTime, 'approved', data.title).subscribe((response: any) => {
+          if(response.status === 'success'){
+            clickInfo.event.setExtendedProp('description', data.description);
+            clickInfo.event.setExtendedProp('participants', data.participants);
+            clickInfo.event.setStart(data.startTime);
+            clickInfo.event.setEnd(data.endTime);
+          }else{
+            console.log('put event failed');
+          }
+        });
       }
     });
   }
@@ -271,24 +393,24 @@ export class RoomSchedulerComponent implements OnInit{
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data) {
-        event.remove();
-        //add delete request
-      }
+        this.itemService.deleteMeeting(event.id).subscribe((response: any) => {
+          if (response.status === 'success') {
+            event.remove();
+          } else {
+            console.log('delete event failed');
+          }
+        });
+        }
     });
   }
   handleEvents(events: EventApi[]) {
     this.currentEvents.set(events);
     this.changeDetector.detectChanges();
   }
-  handleRoomChange(room: string) {
+  handleRoomChange(room: Room) {
       this.selectedRoom = room;
-      let eventsToDisplay: any[] = [];
       console.log("change" + room);
-      eventsToDisplay = this.filterEvents(this.roomTable[room]);
-      this.calendarOptions = {
-        ...this.calendarOptions,
-        events: eventsToDisplay
-      };
+      this.CALLEvents(this.selectedRoom.id);
   }
   toggleSearchContainer() {
     this.isSearchContainerOpen = !this.isSearchContainerOpen;
@@ -299,8 +421,8 @@ export class RoomSchedulerComponent implements OnInit{
     this.startTime = '';
     this.endDate = new Date();
     this.endTime = '';
-    this.filteredRooms = this.fakeData;
-    this.selectedRoom = this.filteredRooms[0].room_name;
+    this.filteredRooms = this.RoomData;
+    this.selectedRoom = this.filteredRooms[0];
     this.handleRoomChange(this.selectedRoom);
   }
 }
