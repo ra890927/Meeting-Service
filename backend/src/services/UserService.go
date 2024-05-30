@@ -86,7 +86,8 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 	}
 
 	updatedUser.OverwriteValue(&userByID)
-	if len(updatedUser.Password) > 0 {
+	if updatedUser.Password != userByID.Password {
+		// if updatedUser.Password have not be overwritten by OverwriteValue
 		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return errors.New("error when hashing password")
