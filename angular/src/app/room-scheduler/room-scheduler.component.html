@@ -13,7 +13,7 @@
                     <label class="tags-label">Tags</label>
                     <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
                         <mat-option *ngFor="let tag of TagData" [value]="tag.id">
-                            {{ tag.code_value }}
+                            {{ tag.tag }}
                         </mat-option>
                     </mat-select>
                 </div>

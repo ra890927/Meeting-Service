@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, signal, ChangeDetectorRef, OnInit,inject } from '@angular/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, DateSelectArg, EventClickArg, EventApi, DatesSetArg} from '@fullcalendar/core';
 import {MatFormFieldModule, MatHint} from '@angular/material/form-field';
@@ -18,14 +18,14 @@ import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
 import {createEventId} from './event-utils';//test use
-import { R, S, cl, co, s } from '@fullcalendar/core/internal-common';
+import { R, S, cl, co, ez, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import { UserService } from '../API/user.service';
 import { AuthService } from '../API/auth.service';
 import { ItemService } from '../API/item.service';
-import { interval, Subscription, switchMap } from 'rxjs';
+import { interval, startWith, Subscription, switchMap } from 'rxjs';
 //need to save in a interface file
 interface Room {
   id: number;
@@ -46,10 +46,10 @@ interface Event{
   status_type: string;
 }
 interface CodeValue {
-  code_type_id: number;
-  code_value: string;
-  code_value_desc: string;
   id: number;
+  tag: string;
+  description: string;
+  codeTypeId: number;
 }
 
 interface CodeType {
@@ -127,6 +127,8 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
 })
 export class RoomSchedulerComponent implements OnInit{
   private pollingSubscription: Subscription | null = null;
+  //inject
+  is = inject(ItemService);
   constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
   }
   TagsTable: {[tag_id: number]: Tag} = {};//get from api
@@ -182,14 +184,15 @@ export class RoomSchedulerComponent implements OnInit{
     slotMaxTime: '23:59:59',
     slotMinTime: '8:00:00',
     firstDay: 7,
+    
     select: this.handleDateSelect.bind(this),
     eventClick: this.handleEventClick.bind(this),
     eventsSet: this.handleEvents.bind(this),
     datesSet: this.handleViewChange.bind(this),
-    eventDrop: function(info){
+    eventDrop: (info) =>{
       const minTime = '08:00';
       const maxTime = '24:00';
-
+      console.log(info.event.id);
       if (info.event.start&&info.event.end) {
         const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
         const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -197,14 +200,46 @@ export class RoomSchedulerComponent implements OnInit{
         console.log(eventEndTime);
         if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime) {
           info.revert();
+        }else{
+          console.log(info.event.id);
+          this.itemService.putMeeting(info.event.id, info.event.extendedProps['description'], info.event.endStr, info.event.extendedProps['organizer'], info.event.extendedProps['participants'], this.selectedRoom.id, info.event.startStr, 'approved', info.event.title).subscribe((response: any) => {
+            if(response.status === 'success'){
+              info.event.setStart(info.event.startStr);
+              info.event.setEnd(info.event.endStr);
+            }else{
+              info.revert();
+            }
+          });
         }
-        //put request and add modify event
       }else{
         info.revert();
       }
     },
-    eventResize: function(info){
-        //put request and add modify event
+    eventResize:(info) =>{
+        const minTime = '08:00';
+        const maxTime = '24:00';
+        console.log(info.event.id);
+        if (info.event.start&&info.event.end) {
+          const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+          const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+          console.log(eventStartTime);
+          console.log(eventEndTime);
+          if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime) {
+            info.revert();
+          }else{
+            console.log(info.event.id);
+            this.itemService.putMeeting(info.event.id, info.event.extendedProps['description'], info.event.endStr, info.event.extendedProps['organizer'], info.event.extendedProps['participants'], this.selectedRoom.id, info.event.startStr, 'approved', info.event.title).subscribe((response: any) => {
+              if(response.status === 'success'){
+                info.event.setStart(info.event.startStr);
+                info.event.setEnd(info.event.endStr);
+              }else{
+                info.revert();
+              }
+            });
+          }
+        }else{
+          info.revert();
+        }
     },
     selectAllow: function (info) {
       return (info.start >= new Date());
@@ -222,21 +257,17 @@ export class RoomSchedulerComponent implements OnInit{
         this.RoomData = response.data.rooms;
         this.selectedRoom = this.RoomData[0];
         this.filteredRooms = this.RoomData;
+        this.CALLEvents(this.selectedRoom.id);
       }else{
         console.log('get room data failed');
       }
     });
-    this.itemService.getAllTags().subscribe((response: CodeTypesResponse) => {
-      if (response.status === 'success') {
-        const filter:CodeType|undefined = response.data.code_types.find((code_type: CodeType) => code_type.id === 1);
-        console.log(response);
-        if(filter != undefined){
-          console.log(filter);
-          this.TagData = filter.code_values;
+    this.itemService.getAllTags().subscribe((response: CodeValue[]) => {
+      if (response) {
+          this.TagData = response
           this.TagData.forEach(tag => {
-            this.TagsTable[tag.id] = {tag_name: tag.code_value, tag_desc: tag.code_value_desc};
+            this.TagsTable[tag.id] = {tag_name: tag.tag, tag_desc: tag.description};
           });
-        }
       }else{
         console.log('get tag data failed');
       }
@@ -251,7 +282,7 @@ export class RoomSchedulerComponent implements OnInit{
         console.log('get user data failed');
       }
     });
-    this.CALLEvents(1);
+
   }
   applyFilter() {
     //filter by tags, capacity and time is valid between startDateTime and endDateTime
@@ -289,7 +320,8 @@ export class RoomSchedulerComponent implements OnInit{
   //event filter by room_id
   CALLEvents(room_id: number){
     //set polling to get event data
-    this.pollingSubscription = interval(1000).pipe(
+    this.pollingSubscription = interval(5000).pipe(
+      startWith(0),
       switchMap(() => this.itemService.getMeetingByRoomIdAndTime(room_id, '2000-01-01', '3000-01-01'))
     ).subscribe((response: EventResponse) => {
       if (response.status === 'success') {
@@ -388,6 +420,9 @@ export class RoomSchedulerComponent implements OnInit{
   }
   deleteEvent(event: EventApi, $event: MouseEvent) {
     $event.stopPropagation(); 
+    if(!this.isLogin){
+      return;
+    }
     const dialogRef = this.dialog.open(PopUpDeleteConfirmComponent, {
       width: '50%',
       height: '50%',
@@ -409,6 +444,9 @@ export class RoomSchedulerComponent implements OnInit{
     this.changeDetector.detectChanges();
   }
   handleRoomChange(room: Room) {
+      if(this.pollingSubscription){
+        this.pollingSubscription.unsubscribe();
+      }
       this.selectedRoom = room;
       console.log("change" + room);
       this.CALLEvents(this.selectedRoom.id);
@@ -426,6 +464,7 @@ export class RoomSchedulerComponent implements OnInit{
     this.selectedRoom = this.filteredRooms[0];
     this.handleRoomChange(this.selectedRoom);
   }
+
 }
 
 
