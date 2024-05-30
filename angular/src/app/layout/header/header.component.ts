@@ -24,7 +24,28 @@ export class HeaderComponent {
   userservice = inject(UserService);
   authservice = inject(AuthService);
   router = inject(Router);
+  isAdmin = false;
   constructor() { }
+
+  ngOnInit(): void {
+    this.authservice.whoami().subscribe(
+      response => {
+        console.log(response);
+        if (response.data.user.role === 'admin') {
+          this.isAdmin = true;
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
+  // navigate to the admin page
+  toAdmin() {
+    this.router.navigate(['monitor']);
+  }
+
   logout() {
     console.log('logout');
     this.authservice.logout().subscribe(

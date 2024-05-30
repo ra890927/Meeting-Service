@@ -9,7 +9,7 @@
       <span class="logo">Meeting.com</span>
       <div class="nav-links">
         @if (userservice.isLoggedIn()) {
-          <a routerLink="/profile" routerLinkActive="active">Profile</a>
+          <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
         }
         @else {
           <a routerLink="/login" routerLinkActive="active">Login</a>
@@ -18,6 +18,9 @@
       </div>
         @if (userservice.isLoggedIn()) {
           <div class="button-div">
+            @if (isAdmin) {
+              <mat-icon (click) = "toAdmin()">admin_panel_settings</mat-icon>
+            }
             <mat-icon>notifications</mat-icon>
             <mat-icon (click) = "logout()">logout</mat-icon>
           </div>

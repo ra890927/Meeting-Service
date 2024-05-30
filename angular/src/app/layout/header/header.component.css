@@ -32,7 +32,7 @@
     height:50%;
     width: 60%;
     z-index: 99;
-    border-bottom: white 3px solid;
+    border-bottom: rgba(255, 255, 255, 0.671) 4px solid;
 }
 .nav-links a{
     color: white;
@@ -40,7 +40,16 @@
     font-size: 1.5em;
     padding: 10px;
     margin: 10px;
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+
+.nav-links a:hover{
+    color: #888888;
+    /* border-bottom: white 3px solid; */
+}
+
 .mat-toolbar {
     background-color: #2e2b2bbe;
     color: #fff;
@@ -48,12 +57,25 @@
 .button-div{
     position: absolute;
     display:flex;
-    flex-direction: row;
+    /* flex-direction: row; */
     justify-content: right;
     align-items: center;
-    right: 0;
+    right: 10px;
     top: 0;
     height:50%;
     width: 20%;
     z-index: 100;
+}
+
+mat-icon{
+    margin: 0px 10px;
+    cursor: pointer;
+    font-size: 1.5em;
+    height: 30px;
+    width: 30px;
+
+}
+
+mat-icon:hover{
+    color: #b3aeae;
 }
