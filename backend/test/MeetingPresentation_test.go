@@ -18,7 +18,7 @@ type mockMeetingService struct {
 	mock.Mock
 }
 
-func addFakeUserMiddleware() gin.HandlerFunc {
+func addFakeUserMiddlewareMeeting() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := models.User{ID: 1}
 		c.Set("validate_user", user)
@@ -73,7 +73,7 @@ func TestCreateMeeting(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
 
-	r.POST("/meeting", addFakeUserMiddleware(), mp.CreateMeeting)
+	r.POST("/meeting", addFakeUserMiddlewareMeeting(), mp.CreateMeeting)
 
 	jsonData, _ := json.Marshal(meeting)
 	req := httptest.NewRequest("POST", "/meeting", bytes.NewBuffer(jsonData))
@@ -98,7 +98,7 @@ func TestUpdateMeeting(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.PUT("/meeting", addFakeUserMiddleware(), mp.UpdateMeeting)
+	r.PUT("/meeting", addFakeUserMiddlewareMeeting(), mp.UpdateMeeting)
 
 	jsonData, _ := json.Marshal(meeting)
 	req := httptest.NewRequest("PUT", "/meeting", bytes.NewBuffer(jsonData))
@@ -117,7 +117,7 @@ func TestDeleteMeeting(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	r := gin.Default()
-	r.DELETE("/meeting/:id", addFakeUserMiddleware(), mp.DeleteMeeting)
+	r.DELETE("/meeting/:id", addFakeUserMiddlewareMeeting(), mp.DeleteMeeting)
 
 	req := httptest.NewRequest("DELETE", "/meeting/1", nil)
 

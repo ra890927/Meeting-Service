@@ -6,9 +6,11 @@ import (
 )
 
 type UserDomain interface {
-	CreateUser(user *models.User) (*models.User, error)
-	UpdateUser(user *models.User) (*models.User, error)
-	GetUserByEmail(email string) (*models.User, error)
+	CreateUser(user *models.User) error
+	UpdateUser(user *models.User) error
+	GetAllUsers() ([]models.User, error)
+	GetUserByEmail(email string) (models.User, error)
+	GetUserByID(id uint) (models.User, error)
 }
 
 type userDomain struct {
@@ -25,38 +27,27 @@ func NewUserDomain(userRepoArgs ...repos.UserRepo) UserDomain {
 	}
 }
 
-func (ud userDomain) CreateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) CreateUser(user *models.User) error {
 	// Create a new user
-	createdUser, err := ud.userRepo.CreateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return nil, err
-	}
-
-	return createdUser, nil
+	return ud.userRepo.CreateUser(user)
 }
 
-func (ud userDomain) UpdateUser(user *models.User) (*models.User, error) {
+func (ud userDomain) UpdateUser(user *models.User) error {
 	// Update a user
-	updatedUser, err := ud.userRepo.UpdateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return nil, err
-	}
-
-	return updatedUser, nil
+	return ud.userRepo.UpdateUser(user)
 }
 
-func (ud userDomain) GetUserByEmail(email string) (*models.User, error) {
+func (ud userDomain) GetAllUsers() ([]models.User, error) {
+	// Get all users
+	return ud.userRepo.GetAllUsers()
+}
+
+func (ud userDomain) GetUserByEmail(email string) (models.User, error) {
 	// Get a user by email
-	userByEmail, err := ud.userRepo.GetUserByEmail(email)
+	return ud.userRepo.GetUserByEmail(email)
+}
 
-	// return the user if no errors
-	if err != nil {
-		return nil, err
-	}
-
-	return userByEmail, nil
+func (ud userDomain) GetUserByID(id uint) (models.User, error) {
+	// Get a user by ID
+	return ud.userRepo.GetUserByID(id)
 }
