@@ -198,8 +198,9 @@ export class RoomSchedulerComponent implements OnInit{
         if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime) {
           info.revert();
         }
+        //put request and add modify event
       }else{
-        //put request
+        info.revert();
       }
     },
     eventResize: function(info){
