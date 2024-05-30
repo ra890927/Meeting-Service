@@ -9,6 +9,7 @@
         <mat-list-item>
             <div class="list-header">
                 <div class="list-column name">Tag Name</div>
+                <div class="list-column description">Description</div>
                 <div class="list-column actions">Actions</div>
             </div>
         </mat-list-item>
@@ -16,12 +17,21 @@
         <mat-list-item *ngFor="let tag of allTags; last as last">
             <div class="tags row">
                 @if (!isEditing || tagEditing !== tag){
-                    <div class="column name">{{tag}}</div>
+                    <div class="column name">{{tag.tag}}</div>
                 }
                 @else {
                     <mat-form-field class="column name">
                         <!-- <mat-label>Room Number</mat-label> -->
                         <input matInput [formControl]="tagNameControl">
+                    </mat-form-field>
+                } 
+                @if (!isEditing || tagEditing !== tag){
+                    <div class="column description">{{tag.description}}</div>
+                }
+                @else {
+                    <mat-form-field class="column description">
+                        <!-- <mat-label>Room Number</mat-label> -->
+                        <input matInput [formControl]="tagDescriptionControl">
                     </mat-form-field>
                 }
                 <div class="column controls actions">

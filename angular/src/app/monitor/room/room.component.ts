@@ -30,7 +30,8 @@ import { MatMenuModule } from '@angular/material/menu';
     CommonModule,
     FormsModule
   ],
-  templateUrl: './room.component.html',
+  // templateUrl: './room.component.html',
+  template: '',
   styleUrl: './room.component.css'
 })
 export class RoomComponent implements OnInit{
@@ -132,7 +133,8 @@ export class RoomComponent implements OnInit{
 
 @Component({
   selector: 'add-room',
-  templateUrl: 'add-room.html',
+  // templateUrl: 'add-room.html',
+  template: '',
   styleUrl: './add-room.css',
   standalone: true,
   imports: [
