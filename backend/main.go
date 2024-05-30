@@ -25,7 +25,11 @@ func main() {
 	// Create a new presentation
 
 	r := gin.Default()
+
+	r.Use(middlewares.RegisterMetricsMiddleware())
+
 	docs.SwaggerInfo.BasePath = "/api/v1"
+
 	v1 := r.Group("/api/v1")
 	{
 		roomPresentation := presentations.NewRoomPresentation()
