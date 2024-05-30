@@ -56,12 +56,12 @@ export class ItemService {
     return this.http.get(MEETING_API + "/getMeetingsByRoomIdAndDatePeriod?room_id=" + id + "&date_from=" + start + "&date_to=" + end, httpOptions);
   }
   // post meeting
-  postMeeting(description:string, end_time:string, organizer:number, participant:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
+  postMeeting(description:string, end_time:string, organizer:number, participants:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
     return this.http.post(MEETING_API, {
       description,
       end_time,
       organizer,
-      participant,
+      participants,
       room_id,
       start_time,
       status_type,
@@ -69,13 +69,13 @@ export class ItemService {
     }, httpOptions);
   }
   // put meeting
-  putMeeting(id:string, description:string, end_time:string, organizer:number, participant:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
+  putMeeting(id:string, description:string, end_time:string, organizer:number, participants:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
     return this.http.put(MEETING_API, {
       id,
       description,
       end_time,
       organizer,
-      participant,
+      participants,
       room_id,
       start_time,
       status_type,
