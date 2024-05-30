@@ -19,6 +19,7 @@ export class UserService {
   }
   // save user data
   public saveUser(user: any): void {
+    console.log(user);
     window.sessionStorage.removeItem('user');
     window.sessionStorage.setItem('user', JSON.stringify(user));
   }

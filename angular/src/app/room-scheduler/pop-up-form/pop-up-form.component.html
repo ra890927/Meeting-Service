@@ -6,19 +6,19 @@
   <div class = "card-container">
     <mat-form-field class="input-container">
         <mat-label>What's your title</mat-label>
-        <input matInput [(ngModel)]="data.title">
+        <input matInput [(ngModel)]="data.title" [disabled]="!canModify">
     </mat-form-field>
     </div>
    <div class = "card-container">
     <mat-form-field class="input-container description">
         <mat-label>What's your description</mat-label>
-        <textarea matInput class = "description-container" [(ngModel)]="data.description"></textarea>
+        <textarea matInput class = "description-container" [(ngModel)]="data.description" [disabled]="!canModify"></textarea>
     </mat-form-field>
    </div>
    <div class = "card-container">
     <mat-form-field class="input-container">
         <mat-label>Participants</mat-label>
-        <mat-chip-grid #chipGrid aria-label="Participants">
+        <mat-chip-grid #chipGrid aria-label="Participants" [disabled]="!canModify">
             @for ( participant of tempParticipants; track participant){
                 <mat-chip-row (removed) = "remove(participant)">
                     {{participant.email}}
@@ -48,7 +48,7 @@
     <div class="action-container">
         <div class="buttons">
             <button mat-button (click)="onNoClick()">No Thanks</button>
-            <button mat-button (click)="onOkClick()" [mat-dialog-close]="data" [disabled]="!data.title">Ok</button>
+            <button mat-button (click)="onOkClick()" [mat-dialog-close]="data" [disabled]="!data.title||!canModify">Ok</button>
         </div>
     </div>
 </mat-dialog-actions>

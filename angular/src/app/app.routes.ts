@@ -7,6 +7,8 @@ import { RoomSchedulerComponent } from './room-scheduler/room-scheduler.componen
 import { MonitorComponent } from './monitor/monitor.component';
 import { UserSchedulerComponent } from './user-scheduler/user-scheduler.component';
 import { ProfileComponent } from './profile/profile.component';
+import { adminGuard } from './route-guard/admin.guard';
+import { authGuard } from './route-guard/auth.guard';
 
 export const routes: Routes = [
     { path:  "", component: HomepageComponent},
@@ -14,6 +16,6 @@ export const routes: Routes = [
     { path: "register", component: RegisterComponent},
     { path: "reservation", component: ReservationComponent},
     { path: "room-scheduler", component: RoomSchedulerComponent},
-    { path: "monitor", component: MonitorComponent},
-    { path: "profile", component: ProfileComponent},
+    { path: "monitor", component: MonitorComponent, canActivate: [adminGuard]},
+    { path: "profile", component: ProfileComponent, canActivate:[authGuard]},
 ];

@@ -1,4 +1,5 @@
 <div class="calendarContainer">
+    <div class="reservation-header">RESERVATION</div>
     <div class = "cards_container">
         <div class = "search-switch">
             <mat-icon class="search-icon"  (click)="toggleSearchContainer()" [ngClass]="{ 'search': isSearchContainerOpen, 'search_off': !isSearchContainerOpen }">
@@ -11,7 +12,7 @@
                     <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
                     <label class="tags-label">Tags</label>
                     <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
-                        <mat-option *ngFor="let tag of fakeTags" [value]="tag.id">
+                        <mat-option *ngFor="let tag of TagData" [value]="tag.id">
                             {{ tag.code_value }}
                         </mat-option>
                     </mat-select>
@@ -49,15 +50,15 @@
                 </div>
           </div>
         <div class = "card_container">
-            <mat-card class = "card" *ngFor="let room of filteredRooms" [ngClass]="{ 'selected': selectedRoom === room.room_name }" (click)="handleRoomChange(room.room_name)">
+            <mat-card class = "card" *ngFor="let room of filteredRooms" [ngClass]="{ 'selected': selectedRoom === room }" (click)="handleRoomChange(room)">
                 <mat-card-header>
                 <mat-card-title>{{ room.room_name }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                 <p>Up to {{ room.capacity }} people</p>
                 @for(rule of room.rules; track rule){
-                    <button  class="show-details" matTooltip={{fakeTagsTable[rule].tag_desc}}>
-                        {{fakeTagsTable[rule].tag_name}}
+                    <button  class="show-details" matTooltip={{TagsTable[rule].tag_desc}}>
+                        {{TagsTable[rule].tag_name}}
                     </button>
                 }
                 </mat-card-content>
@@ -76,7 +77,12 @@
                 <div *ngIf="!isMonthView" class="event-container">
                     <div class="time-field">{{arg.timeText}}</div>
                     <mat-icon class="button-change" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
-                    <div class="text-field">Booker: Chris</div>
+                    @if(arg.event.extendedProps.organizer !== undefined && UserTable[arg.event.extendedProps.organizer] !== undefined){
+                        <div class="text-field">Booker: {{UserTable[arg.event.extendedProps.organizer].username}}</div>
+                    }
+                    @else {
+                        <div class="text-field">Booker:</div>
+                    }
                     <div class="text-field">Title: {{arg.event.title}}</div>
                 </div>
             </ng-template>
