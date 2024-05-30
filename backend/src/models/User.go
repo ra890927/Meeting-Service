@@ -17,6 +17,7 @@ type User struct {
 }
 
 func (user *User) OverwriteValue(other *User) {
+	// Get the reflect value of the user(user) and other(expected)
 	va := reflect.ValueOf(user).Elem()
 	vb := reflect.ValueOf(other).Elem()
 
@@ -24,7 +25,9 @@ func (user *User) OverwriteValue(other *User) {
 		fieldA := va.Field(i)
 		fieldB := vb.Field(i)
 
-		if !utils.IsEmptyValue(fieldB) {
+		if !utils.IsEmptyValue(fieldB) && utils.IsEmptyValue(fieldA) {
+			// only if that expected's is not empty and the input's field is empty
+			// then overwrite the input's field with the expected's field
 			fieldA.Set(fieldB)
 		}
 	}
