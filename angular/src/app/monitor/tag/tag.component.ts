@@ -65,6 +65,7 @@ export class TagComponent {
         tag: item.tag,
         description: item.description
       }));
+      console.log('getallTags:', this.allTags);
 
       this.codeTypeId = response[0].codeTypeId;
       console.log('codeTypeId:', this.codeTypeId);
@@ -95,6 +96,7 @@ export class TagComponent {
                 description: result.tagDescription
               });
               console.log('Tag created');
+              console.log('createAllTags:', this.allTags);
             }
             else{
               console.log('Create failed');
@@ -103,6 +105,20 @@ export class TagComponent {
           }
         );
         
+        // get all tags from backend
+         this.itemService.getAllTags().subscribe((response:any)=>{
+          this.allTags = response.map((item: any) => ({
+            id: item.id,
+            tag: item.tag,
+            description: item.description
+          }));
+          console.log('getallTags:', this.allTags);
+
+          this.codeTypeId = response[0].codeTypeId;
+          console.log('codeTypeId:', this.codeTypeId);
+          
+        });
+
       } else {
         console.log('The dialog was closed without any data');
       }

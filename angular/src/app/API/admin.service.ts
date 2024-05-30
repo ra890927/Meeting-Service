@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 
 const USER_API = 'http://140.113.215.132:8080/api/v1/admin/user';
 const ROOM_API = 'http://140.113.215.132:8080/api/v1/admin/rooms';
-const TAG_API = 'http://140.113.215.132:18080/api/v1/code';
+const TAG_API = 'http://140.113.215.132:8080/api/v1/code';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
