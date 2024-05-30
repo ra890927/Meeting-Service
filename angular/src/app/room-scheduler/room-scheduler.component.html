@@ -57,9 +57,11 @@
                 <mat-card-content>
                 <p>Up to {{ room.capacity }} people</p>
                 @for(rule of room.rules; track rule){
-                    <button  class="show-details" matTooltip={{TagsTable[rule].tag_desc}}>
-                        {{TagsTable[rule].tag_name}}
-                    </button>
+                    @if(TagsTable[rule] !== undefined){
+                        <button  class="show-details" matTooltip={{TagsTable[rule].tag_desc}}>
+                            {{TagsTable[rule].tag_name}}
+                        </button>
+                    }
                 }
                 </mat-card-content>
             </mat-card>
