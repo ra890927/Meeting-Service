@@ -16,7 +16,7 @@
                     <div class = "circle"></div>
                     <div class="event-list-item-title">{{event.title}}</div>
                     <div class="event-list-item">Room: {{event.RoomDetail.room_name}}</div>
-                    <div class="event-list-item">{{event.start | date: 'yyyy-MM-dd HH:mm'}}~{{event.end|date: 'yyyy-MM-dd HH:mm'}}</div>
+                    <div class="event-list-item">{{event.start | date: 'yyyy-MM-dd HH:mm'}}~{{event.end|date: 'HH:mm'}}</div>
                     <div class="event-list-item">Organizer: {{event.Organizer.username}}</div>
                     <div class="button-container">
                         <mat-icon class="event-list-item-button" matTooltip="more info" (click)="openDialog(event.id)">info</mat-icon>
