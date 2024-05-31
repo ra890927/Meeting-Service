@@ -20,6 +20,11 @@ func GetRedisInstance() *redis.Client {
 				DB:       0,  // use default DB
 			})
 
+			_, err := redisClient.Ping(redisClient.Context()).Result()
+			if err != nil {
+				panic(err)
+			}
+
 			redisInstance = redisClient
 		})
 	}
