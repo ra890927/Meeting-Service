@@ -23,10 +23,10 @@ export class ItemService {
   getAllTags(): any {
     return this.http.get(TAG_API + "/type/getAllCodeTypes", httpOptions).pipe(
       map((response: any) => {
-        console.log(response);
+        // console.log(response);
       const filteredData = response.data.code_types.filter((item: any) => item.type_name === 'ROOM_RULE');
       const codeValues = filteredData[0].code_values;
-      console.log("codeValues", codeValues);
+      // console.log("codeValues", codeValues);
       return codeValues.map((item: any) => ({
         id: item.id,
         tag: item.code_value,

@@ -13,6 +13,10 @@ import { v4 as uuidv4 } from 'uuid'; // generate random id
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatMenuModule } from '@angular/material/menu';
 
+import { ItemService } from '../../API/item.service';
+import { AdminService } from '../../API/admin.service';
+import { cA } from '@fullcalendar/core/internal-common';
+
 @Component({
   selector: 'app-room',
   standalone: true,
@@ -30,35 +34,32 @@ import { MatMenuModule } from '@angular/material/menu';
     CommonModule,
     FormsModule
   ],
-  // templateUrl: './room.component.html',
-  template: '',
+  templateUrl: './room.component.html',
   styleUrl: './room.component.css'
 })
 export class RoomComponent implements OnInit{
   
   roomsList: rooms[] = [{ 
-    id: '001',
+    id: 1,
     roomNumber: 'lab639',
     tags: ['Food Allowed'],
     capacity: 10,
-    details: 'This is a test room.'
   },
-  { id: '002',
+  { id: 2,
     roomNumber: 'lab637',
     tags: ['Food Allowed', 'Projector Available', 'Free WiFi'],
     capacity: 30,
-    details: 'This is a test room2.'
   }];
   roomsEditing: rooms | undefined;
   isEditing: boolean = false;
   roomNumberControl = new FormControl();
   capacityControl = new FormControl();
-  detailsControl = new FormControl();
 
   filteredTags: string[] = [];
-  allTags = allTags;
+  allTags: string[] = [];
+  allTagsDetails: string[] = []; 
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private itemService: ItemService, private adminService: AdminService) {
   }
 
   openDialog() {
@@ -67,14 +68,57 @@ export class RoomComponent implements OnInit{
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.roomsList.push({
-          id: uuidv4(),
-          roomNumber: result.roomNumber,
-          tags: result.tags,
-          capacity: result.capacity,
-          details: result.details
+        // fake data
+        // this.roomsList.push({
+        //   id: this.fakeId++,
+        //   roomNumber: result.roomNumber,
+        //   tags: result.tags,
+        //   capacity: result.capacity,
+        // });
+        // localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+
+        this.adminService.createRoom(
+          result.roomNumber,
+          result.capacity,
+          result.tags.map((tag: string) => {
+            const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.tag === tag);
+            return tagDetail ? tagDetail.id : null;
+          }),
+          ''
+        ).subscribe((response: any) => {
+          if (response.status === 'success') {
+            this.roomsList.push({
+              id: 0,
+              roomNumber: result.roomNumber,
+              tags: result.tags,
+              capacity: result.capacity,
+            });
+            // localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+            console.log('Room created');}
+          else{
+            console.log('Room creation failed');
+            return;
+          }
         });
-        localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+
+        // get all room from backend
+        this.itemService.getAllRooms().subscribe((response:any)=>{
+          this.roomsList = response.data.rooms.map((item: any) => {
+            const tags = item.rules.map((ruleId: number) => {
+              const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
+              return tagDetail ? tagDetail.tag : null;
+            }).filter((tag: any) => tag !== null);
+      
+            return {
+              id: item.id,
+              roomNumber: item.room_name,
+              tags: tags,
+              capacity: item.capacity
+            };
+          });
+          console.log('roomsList:', this.roomsList);
+
+        });
         
       } else {
         console.log('The dialog was closed without any data');
@@ -83,8 +127,35 @@ export class RoomComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    const roomsJson = localStorage.getItem("roomsList");
-    if (roomsJson) this.roomsList = JSON.parse(roomsJson);
+    // const roomsJson = localStorage.getItem("roomsList");
+    // if (roomsJson) this.roomsList = JSON.parse(roomsJson);
+
+    // get all tags from backend
+    this.itemService.getAllTags().subscribe((response:any)=>{
+      this.allTagsDetails = response;
+      this.allTags = response.map((item: any) => item.tag );
+      
+    });
+
+    // get all room from backend
+    this.itemService.getAllRooms().subscribe((response:any)=>{
+      this.roomsList = response.data.rooms.map((item: any) => {
+        const tags = item.rules.map((ruleId: number) => {
+          const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
+          return tagDetail ? tagDetail.tag : null;
+        }).filter((tag: any) => tag !== null);
+  
+        return {
+          id: item.id,
+          roomNumber: item.room_name,
+          tags: tags,
+          capacity: item.capacity
+        };
+      });
+
+    });
+
+    
   }
 
   remove(tag: string, rooms: rooms): void {
@@ -92,6 +163,7 @@ export class RoomComponent implements OnInit{
     if (index >= 0) { // check if the fruit is in the list
       rooms.tags.splice(index, 1);
     }
+    
   }
 
   selected(rooms: rooms, tag: string): void {
@@ -110,7 +182,6 @@ export class RoomComponent implements OnInit{
     this.roomsEditing = rooms;
     this.roomNumberControl.setValue(rooms.roomNumber);
     this.capacityControl.setValue(rooms.capacity);
-    this.detailsControl.setValue(rooms.details);
     
     localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
   }
@@ -119,22 +190,19 @@ export class RoomComponent implements OnInit{
     if (this.roomsEditing) {
       this.roomsEditing.roomNumber = this.roomNumberControl.value;
       this.roomsEditing.capacity = parseInt(this.capacityControl.value, 10);
-      this.roomsEditing.details = this.detailsControl.value;
       localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
     }
     this.isEditing = false;
     this.roomsEditing = undefined;
     this.roomNumberControl.setValue('');
     this.capacityControl.setValue('');
-    this.detailsControl.setValue('');
   }
 
 }
 
 @Component({
   selector: 'add-room',
-  // templateUrl: 'add-room.html',
-  template: '',
+  templateUrl: 'add-room.html',
   styleUrl: './add-room.css',
   standalone: true,
   imports: [
@@ -153,35 +221,41 @@ export class AddRoom {
   roomNumber: string = '';
   tags: string[] = [];
   capacity: number = 0;
-  details: string = '';
-  allTags = allTags;
+  allTags: string[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AddRoom>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, private itemService: ItemService) {}
 
-    selected(tag: string): void {
-      this.tags.push(tag);
-    }
+  ngOnInit(): void {
+    // get all tags from backend
+    this.itemService.getAllTags().subscribe((response:any)=>{
+      this.allTags = response.map((item: any) => item.tag );
+      console.log('getAllTagsArray:', this.allTags);
+    });
+  }
 
-    remove(tag: string): void {
-      const index = this.tags.indexOf(tag);
-  
-      if (index >= 0) { // check if the fruit is in the list
-        this.tags.splice(index, 1);
-      }
-    }
+  selected(tag: string): void {
+    this.tags.push(tag);
+  }
 
-    onSave(): void {
-      this.dialogRef.close({
-        roomNumber: this.roomNumber,
-        tags: this.tags,
-        capacity: this.capacity,
-        details: this.details
-      });
-    }
+  remove(tag: string): void {
+    const index = this.tags.indexOf(tag);
 
-    onCancel(): void {
-      this.dialogRef.close();
+    if (index >= 0) { // check if the fruit is in the list
+      this.tags.splice(index, 1);
     }
+  }
+
+  onSave(): void {
+    this.dialogRef.close({
+      roomNumber: this.roomNumber,
+      tags: this.tags,
+      capacity: this.capacity,
+    });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 
 const USER_API = 'http://140.113.215.132:8080/api/v1/admin/user';
-const ROOM_API = 'http://140.113.215.132:8080/api/v1/admin/rooms';
+const ROOM_API = 'http://140.113.215.132:8080/api/v1/admin/room';
 const TAG_API = 'http://140.113.215.132:8080/api/v1/code';
 
 const httpOptions = {
@@ -17,11 +17,6 @@ const httpOptions = {
 export class AdminService {
 
   constructor(private http: HttpClient) {}
-
-
-  // getAdmins() {
-  //   return this.http.get('http://localhost:3000/admins');
-  // }
 
   updateUser(id: number, username: string, email: string, role: string, password: string): Observable<any> {
     return this.http.put(USER_API,
@@ -48,7 +43,7 @@ export class AdminService {
   }
 
   deleteRoom(id: number): Observable<any> {
-    return this.http.delete(ROOM_API + String(id), httpOptions);
+    return this.http.delete(ROOM_API + "/value?id=" + String(id), httpOptions);
   }
 
   createRoom(room_name: string, capacity: number, rules: number[], type: string): Observable<any> {

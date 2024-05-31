@@ -125,7 +125,6 @@ export class UserComponent {
 
     // get all users from backend
     this.itemservice.getAllUsers().subscribe((response)=>{
-      console.log("response.data.users", response.data.users);
       this.usersList = response.data.users.map((user: any) => {
         return {
           id: user.id,
@@ -169,13 +168,10 @@ export class UserComponent {
 
   save(): void {
     if(this.usersEditing){
-      console.log(this.usersEditing.role);
-      console.log(this.userNameControl.value);
 
       this.adminService.updateUser(this.usersEditing.id, this.userNameControl.value, this.usersEditing.email, this.usersEditing.role, '').subscribe(
         (res) => {
           if (res.status === 'success') {
-            console.log(this.usersEditing.role);
             const index = this.usersList.findIndex(user => user.id === this.usersEditing.id);
             if (index !== -1) {
               this.usersList[index].userName = this.userNameControl.value;
@@ -188,7 +184,6 @@ export class UserComponent {
                 role: 'user'
               };
               this.userNameControl.setValue('');
-              console.log("userlists",this.usersList);
             }
             
           }else{

@@ -65,10 +65,8 @@ export class TagComponent {
         tag: item.tag,
         description: item.description
       }));
-      console.log('getallTags:', this.allTags);
 
       this.codeTypeId = response[0].codeTypeId;
-      console.log('codeTypeId:', this.codeTypeId);
       
     });
   }
@@ -115,7 +113,6 @@ export class TagComponent {
           console.log('getallTags:', this.allTags);
 
           this.codeTypeId = response[0].codeTypeId;
-          console.log('codeTypeId:', this.codeTypeId);
           
         });
 
@@ -184,7 +181,6 @@ export class TagComponent {
             this.tagEditing = { id: 0, tag: '', description: ''};
             this.tagNameControl.setValue('');
             this.tagDescriptionControl.setValue('');
-            console.log('allTags:', this.allTags);
   
           }
           else{

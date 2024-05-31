@@ -9,7 +9,7 @@
                 <div class="list-column room">Room</div>
                 <div class="list-column tags">Tags</div>
                 <div class="list-column capacity">Capacity</div>
-                <div class="list-column details">Details</div>
+                <!-- <div class="list-column details">Details</div> -->
                 <div class="list-column actions">Actions</div>
             </div>
         </mat-list-item>
@@ -65,16 +65,6 @@
                 @else {
                     <mat-form-field class="column capacity">
                         <input matInput [formControl]="capacityControl">
-                    </mat-form-field>
-                }
-
-                <!-- Details -->
-                @if (!isEditing || roomsEditing?.id !== rooms.id) {
-                    <div class="column details" data-title="{{rooms.details}}">{{rooms.details}}</div>
-                }
-                @else {
-                    <mat-form-field class="column details">
-                        <input matInput [formControl]="detailsControl">
                     </mat-form-field>
                 }
                   

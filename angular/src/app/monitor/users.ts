@@ -6,11 +6,11 @@
 // }
 
 export class rooms {
-    id: string = '';
+    id: number = 0;
     roomNumber: string = '';
     tags: string[]=[];
     capacity: number = 0;
-    details: string = '';
+    // details: string = '';
 }
 
 export interface users {
