@@ -222,16 +222,24 @@ export class TagComponent {
 export class AddTag {
   tagName: string = '';
   tagDescription: string = '';
-
+  showErrorMessage: boolean = false;
+  errorMessage: string = '';
   constructor(
     public dialogRef: MatDialogRef<AddTag>,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 
     onSave(): void {
-      this.dialogRef.close({
-        tagName: this.tagName,
-        tagDescription: this.tagDescription
-      });
+      if(this.tagName === ''|| this.tagDescription === ''){
+        this.showErrorMessage = true;
+        this.errorMessage = 'Please fill in all fields';
+        return;
+      }
+      else{
+        this.dialogRef.close({
+          tagName: this.tagName,
+          tagDescription: this.tagDescription
+        });
+      }
     }
 
     onCancel(): void {

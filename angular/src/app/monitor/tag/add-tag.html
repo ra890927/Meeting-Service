@@ -3,13 +3,17 @@
     <div class="inputContainer">
         <mat-form-field>
             <mat-label>Tag Name</mat-label>
-            <input matInput [(ngModel)]="tagName">
+            <input matInput [(ngModel)]="tagName" required>
         </mat-form-field>
         <mat-form-field>
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="tagDescription">
+            <input matInput [(ngModel)]="tagDescription" required>
         </mat-form-field>
-        
+        @if(showErrorMessage){
+            <mat-error >
+                {{errorMessage}}
+            </mat-error>
+        }
     </div>
     <div class="buttonContainer">
         <button mat-stroked-button (click)="onCancel()">Cancel</button>

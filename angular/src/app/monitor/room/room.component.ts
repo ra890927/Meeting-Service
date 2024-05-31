@@ -9,9 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormControl, FormsModule, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms'
 import { MatMenuModule } from '@angular/material/menu';
-
 import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
 import { cA } from '@fullcalendar/core/internal-common';
@@ -241,7 +240,8 @@ export class RoomComponent implements OnInit{
     FormsModule,
     CommonModule,
     MatMenuModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule
   ],
 })
 export class AddRoom {
@@ -249,10 +249,12 @@ export class AddRoom {
   tags: string[] = [];
   capacity: number = 0;
   allTags: string[] = [];
-
+  showErrorMessage: boolean = false;
+  errorMessage: string = '';
   constructor(
     public dialogRef: MatDialogRef<AddRoom>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private itemService: ItemService) {}
+    @Inject(MAT_DIALOG_DATA) public data: any, private itemService: ItemService) {
+    }
 
   ngOnInit(): void {
     // get all tags from backend
@@ -275,11 +277,13 @@ export class AddRoom {
   }
 
   onSave(): void {
-    this.dialogRef.close({
-      roomNumber: this.roomNumber,
-      tags: this.tags,
-      capacity: this.capacity,
-    });
+    if (this.capacity > 0 && this.roomNumber) {
+      console.log('Room saved', { roomNumber: this.roomNumber, capacity: this.capacity, tags: this.tags });
+      this.dialogRef.close({ roomNumber: this.roomNumber, capacity: this.capacity, tags: this.tags });
+    } else {
+      this.showErrorMessage = true;
+      this.errorMessage = 'Please ensure the capacity is greater than 0 and the room number is filled in.';
+    }
   }
 
   onCancel(): void {

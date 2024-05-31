@@ -3,7 +3,7 @@
     <div class="inputContainer">
         <mat-form-field>
             <mat-label>Room Number</mat-label>
-            <input matInput [(ngModel)]="roomNumber">
+            <input matInput [(ngModel)]="roomNumber" required>
         </mat-form-field>
 
         <div class="add-tag-button">
@@ -32,9 +32,13 @@
 
         <mat-form-field>
             <mat-label>Capacity</mat-label>
-            <input matInput type="number" [(ngModel)]="capacity" min="1">
+            <input matInput type="number" [(ngModel)]="capacity" min="1" required>
         </mat-form-field>
-        
+        @if(showErrorMessage){
+            <mat-error >
+                {{errorMessage}}
+            </mat-error>
+        }
     </div>
     <div class="buttonContainer">
         <button mat-stroked-button (click)="onCancel()">Cancel</button>
