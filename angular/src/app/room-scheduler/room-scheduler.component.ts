@@ -427,7 +427,8 @@ export class RoomSchedulerComponent implements OnInit{
   }
   deleteEvent(event: EventApi, $event: MouseEvent) {
     $event.stopPropagation(); 
-    if(event.extendedProps['organizer'] !== this.CurrentUser.id || !this.isadmin){
+    console.log(event.extendedProps['organizer'] + ' ' + this.CurrentUser.id + ' ' + this.isadmin);
+    if(event.extendedProps['organizer'] !== this.CurrentUser.id && !this.isadmin){
       return;
     }
     const dialogRef = this.dialog.open(PopUpDeleteConfirmComponent, {
@@ -438,6 +439,7 @@ export class RoomSchedulerComponent implements OnInit{
       if (data) {
         this.itemService.deleteMeeting(event.id).subscribe((response: any) => {
           if (response.status === 'success') {
+            console.log('delete event success');
             event.remove();
           } else {
             console.log('delete event failed');
