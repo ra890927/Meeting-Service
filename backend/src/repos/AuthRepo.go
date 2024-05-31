@@ -69,7 +69,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	for {
 		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
 		if err != nil {
-			break
+			return nil, nil, err
 		}
 		token = base64.StdEncoding.EncodeToString(hash)
 		// check if the hash exists in the redis database
