@@ -89,3 +89,37 @@ mat-icon{
 mat-icon:hover{
     color: #b3aeae;
 }
+
+.tooltip-text {
+    visibility: hidden;
+    /* visibility: visible; */
+    width: 60px;
+    /* background-color: black; */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    /* bottom: 100%;  */
+    left: 75%;
+    top: 50%;
+    font-size: 18px;
+    /* margin-left: -30px; */
+
+    /* opacity: 0; */
+    /* transition: opacity 0.3s; */
+  }
+
+  .icon-container{
+    border: 1px solid #b3aeae;
+    height: 30px;
+    width: 30px;
+    margin: 0px 10px;
+
+  }
+  
+  .icon-container:hover .tooltip-text {
+    visibility: visible;
+    /* opacity: 1; */
+  }
