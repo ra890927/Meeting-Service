@@ -43,7 +43,7 @@ export class AdminService {
   }
 
   deleteRoom(id: number): Observable<any> {
-    return this.http.delete(ROOM_API + "/value?id=" + String(id), httpOptions);
+    return this.http.delete(ROOM_API + "/" + String(id), httpOptions);
   }
 
   createRoom(room_name: string, capacity: number, rules: number[], type: string): Observable<any> {

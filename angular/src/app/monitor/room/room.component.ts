@@ -173,8 +173,19 @@ export class RoomComponent implements OnInit{
   }
   
   delete(rooms: rooms): void {
-    this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
-    localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+    // this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
+    this.adminService.deleteRoom(rooms.id).subscribe(
+      (res) => {
+        if (res.status === 'success') {
+          this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
+          console.log('Room deleted');
+        }
+        else{
+          console.log('Delete failed');
+          return
+        }
+      }
+    );
   }
 
   edit(rooms: rooms): void {
