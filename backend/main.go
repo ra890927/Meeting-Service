@@ -4,6 +4,7 @@ import (
 	docs "meeting-center/docs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -17,10 +18,13 @@ import (
 
 func main() {
 	r := gin.Default()
+
 	// CORS middleware
 	r.Use(middlewares.CORSMiddleware())
+	r.Use(middlewares.RegisterMetricsMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
+
 	v1 := r.Group("/api/v1")
 	{
 		meeingPresentation := presentations.NewMeetingPresentation()
@@ -85,7 +89,8 @@ func main() {
 			}
 		}
 	}
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run(":8080")
-
 }
