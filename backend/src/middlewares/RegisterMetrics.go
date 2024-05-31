@@ -17,7 +17,8 @@ var (
 			Help: "API request times",
 		},
 		[]string{
-			"group_name",
+			"group",
+			"api",
 			"method",
 		},
 	)
@@ -28,7 +29,8 @@ var (
 			Buckets: prometheus.DefBuckets,
 		},
 		[]string{
-			"group_name",
+			"group",
+			"api",
 			"method",
 		},
 	)
@@ -50,9 +52,11 @@ func RegisterMetricsMiddleware() gin.HandlerFunc {
 		method := c.Request.Method
 
 		if path != "/metrics" && !strings.HasPrefix(path, "/swagger") {
-			groupName := strings.Split(path, "/")[groupIndex]
-			apiRequests.WithLabelValues("/"+groupName, method).Inc()
-			apiDurations.WithLabelValues(groupName, method).Observe(duration)
+			pathList := strings.Split(path, "/")
+			groupName := "/" + pathList[groupIndex]
+			apiName := "/" + pathList[groupIndex+1]
+			apiRequests.WithLabelValues(groupName, apiName, method).Inc()
+			apiDurations.WithLabelValues(groupName, apiName, method).Observe(duration)
 		}
 	}
 }
