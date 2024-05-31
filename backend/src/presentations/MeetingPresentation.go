@@ -234,6 +234,9 @@ func (mp meetingPresentation) DeleteMeeting(c *gin.Context) {
 		c.JSON(500, response)
 		return
 	}
+
+	response.Status = "success"
+	response.Message = "Meeting deleted"
 	c.JSON(200, response)
 }
 
