@@ -2,8 +2,9 @@ package repos
 
 import (
 	"encoding/base64"
-	db "meeting-center/src/io"
+	"meeting-center/src/io"
 	"meeting-center/src/models"
+	"strconv"
 	"time"
 
 	"encoding/json"
@@ -30,17 +31,15 @@ func NewAuthRepo(authRepoArgs ...authRepo) AuthRepo {
 			redisClient: authRepoArgs[0].redisClient,
 		})
 	} else if len(authRepoArgs) == 0 {
-		db := db.GetDBInstance()
-		red := redis.NewClient(&redis.Options{
-			Addr: "localhost:6379",
-		})
-		_, err := red.Ping(red.Context()).Result()
+		db := io.GetDBInstance()
+		redisClient := io.GetRedisInstance()
+		_, err := redisClient.Ping(redisClient.Context()).Result()
 		if err != nil {
 			panic("Failed to connect to redis")
 		}
 		return AuthRepo(&authRepo{
 			dataBase:    db,
-			redisClient: red,
+			redisClient: redisClient,
 		})
 	} else {
 		panic("too many arguments")
@@ -68,7 +67,10 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	cnt := 0
 	token := ""
 	for {
-		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+string(cnt)), bcrypt.DefaultCost)
+		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, nil, err
+		}
 		token = base64.StdEncoding.EncodeToString(hash)
 		// check if the hash exists in the redis database
 		_, err = ar.redisClient.Get(ar.redisClient.Context(), token).Result()

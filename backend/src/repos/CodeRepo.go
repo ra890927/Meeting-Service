@@ -1,7 +1,7 @@
 package repos
 
 import (
-	db "meeting-center/src/io"
+	"meeting-center/src/io"
 	"meeting-center/src/models"
 
 	"gorm.io/gorm"
@@ -32,7 +32,7 @@ type CodeRepo interface {
 
 func NewCodeRepo(dbArgs ...*gorm.DB) CodeRepo {
 	if len(dbArgs) == 0 {
-		return codeRepo{db: db.GetDBInstance()}
+		return codeRepo{db: io.GetDBInstance()}
 	} else if len(dbArgs) == 1 {
 		return codeRepo{db: dbArgs[0]}
 	} else {

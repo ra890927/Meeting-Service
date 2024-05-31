@@ -23,6 +23,25 @@ definitions:
       id:
         type: integer
     type: object
+  models.Room:
+    properties:
+      capacity:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      room_name:
+        type: string
+      rules:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.User:
     properties:
       created_at:
@@ -163,6 +182,13 @@ definitions:
       status:
         type: string
     type: object
+  presentations.DeleteMeetingResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   presentations.GetAllCodeTypesResponse:
     properties:
       data:
@@ -195,6 +221,29 @@ definitions:
                     type: integer
                   type: array
                 type:
+                  type: string
+              type: object
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetAllUsersResponse:
+    properties:
+      data:
+        properties:
+          users:
+            items:
+              properties:
+                email:
+                  type: string
+                id:
+                  type: integer
+                role:
+                  type: string
+                username:
                   type: string
               type: object
             type: array
@@ -283,6 +332,36 @@ definitions:
             type: string
         type: object
       status:
+        type: string
+    type: object
+  presentations.RegisterUpdateUserResponse:
+    properties:
+      data:
+        properties:
+          user:
+            properties:
+              email:
+                type: string
+              id:
+                type: integer
+              role:
+                type: string
+              username:
+                type: string
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.RegisterUserBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
         type: string
     type: object
   presentations.UpdateCodeTypeInput:
@@ -387,6 +466,19 @@ definitions:
       status:
         type: string
     type: object
+  presentations.UpdateUserBody:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   presentations.WhoAmIResponse:
     properties:
       data:
@@ -472,6 +564,28 @@ paths:
           schema:
             type: string
       summary: Delete room
+      tags:
+      - admin
+  /admin/user:
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateUserBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.RegisterUpdateUserResponse'
+      summary: Update user
       tags:
       - admin
   /auth/login:
@@ -748,36 +862,30 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/presentations.RegisterUserBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/presentations.RegisterUpdateUserResponse'
       summary: Register a new user
       tags:
       - User
-    put:
+  /user/getAllUsers:
+    get:
       consumes:
       - application/json
-      description: Update user
-      parameters:
-      - description: User object
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
+      description: Get all users
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
-      summary: Update user
+            $ref: '#/definitions/presentations.GetAllUsersResponse'
+      summary: Get all users
       tags:
       - User
 swagger: "2.0"

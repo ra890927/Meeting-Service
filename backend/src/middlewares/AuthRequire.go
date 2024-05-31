@@ -2,28 +2,30 @@ package middlewares
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 
+	"meeting-center/src/io"
 	"meeting-center/src/models"
 )
 
 func AuthRequire() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the token from cookie
+		// Get the token from cookie first, if not found, get it from header
 		token, err := c.Request.Cookie("token")
 		if err != nil {
-			c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})
-			return
+			// not found in cookie, get it from header's Authorization
+			tokenValue := c.GetHeader("Authorization")
+			if tokenValue == "" {
+				c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})
+				return
+			} else {
+				token = &http.Cookie{Name: "token", Value: tokenValue}
+			}
 		}
 
-		// Create a new Redis client
-		redisClient := redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
-			Password: "", // no password set
-			DB:       0,  // use default DB
-		})
+		redisClient := io.GetRedisInstance()
 
 		// Check if the token is valid
 		marshaledValue, err := redisClient.Get(redisClient.Context(), token.Value).Result()

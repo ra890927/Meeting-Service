@@ -13,19 +13,29 @@ type MockUserRepo struct {
 	mock.Mock
 }
 
-func (m *MockUserRepo) CreateUser(user *models.User) (*models.User, error) {
+func (m *MockUserRepo) CreateUser(user *models.User) error {
 	args := m.Called(user)
-	return args.Get(0).(*models.User), nil
+	return args.Error(0)
 }
 
-func (m *MockUserRepo) UpdateUser(user *models.User) (*models.User, error) {
+func (m *MockUserRepo) UpdateUser(user *models.User) error {
 	args := m.Called(user)
-	return args.Get(0).(*models.User), nil
+	return args.Error(0)
 }
 
-func (m *MockUserRepo) GetUserByEmail(email string) (*models.User, error) {
+func (m *MockUserRepo) GetUserByEmail(email string) (models.User, error) {
 	args := m.Called(email)
-	return args.Get(0).(*models.User), nil
+	return args.Get(0).(models.User), nil
+}
+
+func (m *MockUserRepo) GetAllUsers() ([]models.User, error) {
+	args := m.Called()
+	return args.Get(0).([]models.User), nil
+}
+
+func (m *MockUserRepo) GetUserByID(id uint) (models.User, error) {
+	args := m.Called(id)
+	return args.Get(0).(models.User), nil
 }
 
 func TestDomainCreateUser(t *testing.T) {
@@ -39,22 +49,14 @@ func TestDomainCreateUser(t *testing.T) {
 	}
 	// mock the user repo
 	mockUserRepo := new(MockUserRepo)
-	mockUserRepo.On("CreateUser", user).Return(user, nil)
+	mockUserRepo.On("CreateUser", user).Return(nil)
 	ud := domains.NewUserDomain(mockUserRepo)
 
 	// Act
-	createdUser, err := ud.CreateUser(user)
+	err := ud.CreateUser(user)
 
 	// Assert
-	if err != nil {
-		t.Error("Error while creating a user")
-	} else {
-		// to check if the attribute is right(ID, Username, Email, Password, Role)
-		assert.Equal(t, user.Username, createdUser.Username)
-		assert.Equal(t, user.Email, createdUser.Email)
-		assert.Equal(t, user.Password, createdUser.Password)
-		assert.Equal(t, user.Role, createdUser.Role)
-	}
+	assert.NoError(t, err)
 }
 
 func TestDomainUpdateUser(t *testing.T) {
@@ -68,20 +70,59 @@ func TestDomainUpdateUser(t *testing.T) {
 	}
 	// mock the user repo
 	mockUserRepo := new(MockUserRepo)
-	mockUserRepo.On("UpdateUser", user).Return(user, nil)
+	mockUserRepo.On("UpdateUser", user).Return(nil)
 	ud := domains.NewUserDomain(mockUserRepo)
 
 	// Act
-	updatedUser, err := ud.UpdateUser(user)
+	err := ud.UpdateUser(user)
 
 	// Assert
-	if err != nil {
-		t.Error("Error while updating a user")
-	} else {
-		// to check if the attribute is right(ID, Username, Email, Password, Role)
-		assert.Equal(t, user.Username, updatedUser.Username)
-		assert.Equal(t, user.Email, updatedUser.Email)
-		assert.Equal(t, user.Password, updatedUser.Password)
-		assert.Equal(t, user.Role, updatedUser.Role)
-	}
+	assert.NoError(t, err)
+}
+
+func TestDomainGetAllUsers(t *testing.T) {
+	// Arrange
+	// mock the user repo
+	mockUserRepo := new(MockUserRepo)
+	mockUserRepo.On("GetAllUsers").Return([]models.User{}, nil)
+	ud := domains.NewUserDomain(mockUserRepo)
+
+	// Act
+	users, err := ud.GetAllUsers()
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, users)
+}
+
+func TestDomainGetUserByEmail(t *testing.T) {
+	// Arrange
+	targetEmail := "a@a.com"
+	// mock the user repo
+	mockUserRepo := new(MockUserRepo)
+	mockUserRepo.On("GetUserByEmail", targetEmail).Return(models.User{}, nil)
+	ud := domains.NewUserDomain(mockUserRepo)
+
+	// Act
+	user, err := ud.GetUserByEmail(targetEmail)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+}
+
+func TestDomainGetUserByID(t *testing.T) {
+	// Arrange
+	targetID := uint(1)
+	// mock the user repo
+	mockUserRepo := new(MockUserRepo)
+	mockUserRepo.On("GetUserByID", targetID).Return(models.User{}, nil)
+	ud := domains.NewUserDomain(mockUserRepo)
+
+	// Act
+	user, err := ud.GetUserByID(targetID)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
 }

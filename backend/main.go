@@ -9,7 +9,6 @@ import (
 
 	"meeting-center/src/middlewares"
 	"meeting-center/src/presentations"
-	"meeting-center/src/utils"
 )
 
 // @title Meeting Center API
@@ -17,28 +16,24 @@ import (
 // @description This is a simple Meeting Center API
 
 func main() {
-	// connect to the database
-	err := utils.InitDB()
-	if err != nil {
-		panic(err)
-	}
-	// Create a new presentation
-
 	r := gin.Default()
 
+	// CORS middleware
+	r.Use(middlewares.CORSMiddleware())
 	r.Use(middlewares.RegisterMetricsMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	v1 := r.Group("/api/v1")
 	{
+		meeingPresentation := presentations.NewMeetingPresentation()
 		roomPresentation := presentations.NewRoomPresentation()
+		userPresentation := presentations.NewUserPresentation()
 
 		eg := v1.Group("/user")
 		{
-			userPresentation := presentations.NewUserPresentation()
 			eg.POST("", userPresentation.RegisterUser)
-			eg.PUT("", userPresentation.UpdateUser)
+			eg.GET("/getAllUsers", userPresentation.GetAllUsers)
 		}
 		eg = v1.Group("/auth")
 		{
@@ -63,6 +58,16 @@ func main() {
 			eg.PUT("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.UpdateCodeValue)
 			eg.DELETE("/value", middlewares.AuthRequire(), middlewares.AdminRequire(), codePresentation.DeleteCodeValue)
 		}
+		eg = v1.Group("/meeting")
+		{
+			eg.GET("/getAllMeetings", meeingPresentation.GetAllMeetings)
+			eg.GET("/:id", meeingPresentation.GetMeeting)
+			eg.GET("/getMeetingsByRoomIdAndDatePeriod", meeingPresentation.GetMeetingsByRoomIdAndDatePeriod)
+			eg.GET("/getMeetingsByParticipantId", meeingPresentation.GetMeetingsByParticipantId)
+			eg.POST("", middlewares.AuthRequire(), meeingPresentation.CreateMeeting)
+			eg.PUT("", middlewares.AuthRequire(), meeingPresentation.UpdateMeeting)
+			eg.DELETE("/:id", middlewares.AuthRequire(), meeingPresentation.DeleteMeeting)
+		}
 		eg = v1.Group("/room")
 		{
 			eg.GET("/getAllRooms", roomPresentation.GetAllRooms)
@@ -71,7 +76,11 @@ func main() {
 		eg = v1.Group("/admin")
 		eg.Use(middlewares.AuthRequire(), middlewares.AdminRequire())
 		{
-			sub := eg.Group("/room")
+			sub := eg.Group("/user")
+			{
+				sub.PUT("", userPresentation.UpdateUser)
+			}
+			sub = eg.Group("/room")
 			{
 				sub.POST("", roomPresentation.CreateRoom)
 				sub.PUT("", roomPresentation.UpdateRoom)

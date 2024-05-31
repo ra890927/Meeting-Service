@@ -4,14 +4,16 @@ import (
 	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
+	"meeting-center/src/utils"
 	"net/mail"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
-	CreateUser(user *models.User) (*models.User, error)
-	UpdateUser(user *models.User) (*models.User, error)
+	CreateUser(user *models.User) error
+	UpdateUser(operator models.User, user *models.User) error
+	GetAllUsers() ([]models.User, error)
 }
 
 type userService struct {
@@ -28,71 +30,71 @@ func NewUserService(userDomainArgs ...domains.UserDomain) UserService {
 	}
 }
 
-func (us userService) CreateUser(user *models.User) (*models.User, error) {
+func (us userService) CreateUser(user *models.User) error {
 	// Validate the email
 	_, err := mail.ParseAddress(user.Email)
 	if err != nil {
-		return nil, err
+		return errors.New("invalid email")
 	}
 
-	// Check if the user exists (by email)
-	_, err = us.userDomain.GetUserByEmail(user.Email)
-	if err != nil {
-		return nil, err
+	// Check if the user exists
+	existingUser, _ := us.userDomain.GetUserByEmail(user.Email)
+	if existingUser.ID != 0 {
+		return errors.New("user already exists")
 	}
 
 	// Hash the password
 	hashValue, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return errors.New("error when hashing password")
 	}
+
+	// Set default role to "user"
+	user.Role = "user"
 	user.Password = string(hashValue)
 
 	// Create a new user
-	createdUser, err := us.userDomain.CreateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return nil, err
-	}
-
-	return createdUser, nil
+	return us.userDomain.CreateUser(user)
 }
 
-func (us userService) UpdateUser(user *models.User) (*models.User, error) {
-	// Validate the email
-	_, err := mail.ParseAddress(user.Email)
-	if err != nil {
-		return nil, err
+func (us userService) GetAllUsers() ([]models.User, error) {
+	// Get all users
+	return us.userDomain.GetAllUsers()
+}
+
+func (us userService) UpdateUser(operator models.User, updatedUser *models.User) error {
+	// check if the operator is the user itself or admin
+	if operator.ID != updatedUser.ID && operator.Role != "admin" {
+		return errors.New("only user itself or admin can update user")
 	}
 
 	// Check if the user exists
-	userByEmail, err := us.userDomain.GetUserByEmail(user.Email)
+	userByID, err := us.userDomain.GetUserByID(updatedUser.ID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return errors.New("user not found")
 	}
 
-	// patch userByEmail with the new user (where the input is not empty)
-	if user.Username != "" {
-		userByEmail.Username = user.Username
+	// 0528: not allow to update email
+	if updatedUser.Email != userByID.Email {
+		return errors.New("email cannot be updated")
 	}
-	if user.Password != "" {
-		userByEmail.Password = user.Password
-	} else {
-		hashValue, err := bcrypt.GenerateFromPassword([]byte(userByEmail.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return nil, err
+
+	// check if the operator is admin and update the role or use the original role
+	if updatedUser.Role != userByID.Role { // if the role is updated
+		if operator.Role != "admin" { // only admin can update user role
+			return errors.New("only admin can update user role")
 		}
-		userByEmail.Password = string(hashValue)
 	}
 
-	// Update a user
-	updatedUser, err := us.userDomain.UpdateUser(user)
-
-	// return the user if no errors
-	if err != nil {
-		return nil, err
+	if updatedUser.Password != userByID.Password {
+		// if updatedUser.Password have not be overwritten by OverwriteValue
+		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return errors.New("error when hashing password")
+		}
+		updatedUser.Password = string(hashValue)
 	}
 
-	return updatedUser, nil
+	utils.OverwriteValue(updatedUser, &userByID)
+	return us.userDomain.UpdateUser(updatedUser)
 }
