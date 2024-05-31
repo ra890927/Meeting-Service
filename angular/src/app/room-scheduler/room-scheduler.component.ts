@@ -131,6 +131,7 @@ export class RoomSchedulerComponent implements OnInit{
   is = inject(ItemService);
   constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
   }
+  isadmin = false;
   TagsTable: {[tag_id: number]: Tag} = {};//get from api
   UserTable: {[user_id: number]: Userinfo} = {};//get from api
   TagData: CodeValue[] = [];//get from api
@@ -282,7 +283,13 @@ export class RoomSchedulerComponent implements OnInit{
         console.log('get user data failed');
       }
     });
-
+    this.authService.whoami().subscribe((response: any) => {
+      if(response.status === 'success'){
+        this.isadmin = this.CurrentUser.role === 'admin';
+      }else{
+        console.log('get user data failed');
+      }
+    });
   }
   applyFilter() {
     //filter by tags, capacity and time is valid between startDateTime and endDateTime
@@ -420,7 +427,7 @@ export class RoomSchedulerComponent implements OnInit{
   }
   deleteEvent(event: EventApi, $event: MouseEvent) {
     $event.stopPropagation(); 
-    if(!this.isLogin){
+    if(event.extendedProps['organizer'] !== this.CurrentUser.id || !this.isadmin){
       return;
     }
     const dialogRef = this.dialog.open(PopUpDeleteConfirmComponent, {
