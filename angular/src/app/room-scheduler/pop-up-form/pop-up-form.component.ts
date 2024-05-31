@@ -6,6 +6,7 @@ import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { DatePipe, AsyncPipe } from '@angular/common';
+import {MatMenuModule} from '@angular/material/menu';
 import {OnInit} from '@angular/core';
 import {
   MatDialog,
@@ -26,6 +27,7 @@ import { co, ex } from '@fullcalendar/core/internal-common';
 import { AuthService } from '../../API/auth.service';
 import {LiveAnnouncer} from '@angular/cdk/a11y';
 import { ItemService } from '../../API/item.service';
+import { initialEnd } from '@syncfusion/ej2-angular-schedule';
 export interface DialogData {
   title: string;
   organizer: Number;//current user
@@ -39,6 +41,11 @@ export interface User {
   username: string;
   email: string;
   role: string;
+}
+interface fileFormat{
+  id: string;
+  file_name: string;
+  url: string;
 }
 @Component({
   selector: 'app-pop-up-form',
@@ -57,14 +64,17 @@ export interface User {
     CommonModule,
     MatChipsModule,
     MatAutocompleteModule,
-    AsyncPipe,ReactiveFormsModule],
+    AsyncPipe,ReactiveFormsModule,
+    MatMenuModule],
   templateUrl: './pop-up-form.component.html',
   styleUrl: './pop-up-form.component.css'
 })
 export class PopUpFormComponent implements OnInit{
   separatorKeysCodes: number[] = [ENTER, COMMA];
+  canUpload = false;
   participantCtrl = new FormControl();
   filteredParticipants: Observable<User[]> | undefined;
+  uploadedFiles: fileFormat[] = [];
   tempParticipants: User[] = [];
   tempOrganizer: User = {id: 0, username: '', email: '', role: ''};
   availableUsers:User[] = [];
@@ -103,8 +113,31 @@ export class PopUpFormComponent implements OnInit{
     this.auth.whoami().subscribe((response: any) => {
       if(response.status === 'success'){
         this.canModify = this.data.organizer === response.data.user.id;
+        this.canUpload = this.data.participants.includes(response.data.user.id);
       }
     });
+    //already have uploaded file
+    
+  }
+  onFileSelected(e:any){
+    if(this.canUpload === false){
+      this.announcer.announce('You are not allowed to upload files');
+      return;
+    }
+    const files: FileList = e.target.files;
+    for (let i = 0; i < files.length; i++) {
+      //call the upload file api
+      const file: File = files[i];
+      const url = `https://example.com/${file.name}`; // 替換為實際的上傳邏輯
+      const id = '123'; // 替換為實際的上傳邏輯
+      this.uploadedFiles.push({ id: id, file_name: file.name, url: url });
+    }
+  }
+  deleteFile(file: fileFormat) {
+    const index = this.uploadedFiles.indexOf(file);
+    if (index > -1) {
+      this.uploadedFiles.splice(index, 1);
+    }
   }
   remove(participant: User): void {
     if(participant == this.tempOrganizer){

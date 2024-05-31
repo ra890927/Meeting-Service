@@ -43,6 +43,36 @@
             </mat-autocomplete>
     </mat-form-field>
     </div>
+    <div class = "file-container">
+        <div>
+            <div class="upload-item">
+                <mat-label>Uploaded Files</mat-label>
+                <mat-icon class="add" (click)="canUpload ? fileInput.click() : null">add</mat-icon>
+            </div>
+            <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" multiple>
+              <button class="get-file-button" [matMenuTriggerFor]="menu">
+                <mat-icon >attach_file</mat-icon>
+                <span class="attach_file">attachment</span>
+              </button>
+              <mat-menu #menu="matMenu">
+                @for(file of uploadedFiles; track file){
+                <div class="dropdown-item">
+                  <div class="file-name">{{ file.file_name }}</div>
+                  <div class="button-set">
+                    <a [href]="file.url" download >
+                      <button mat-icon-button color="primary" [disabled]="!canUpload">
+                        <mat-icon>download</mat-icon>
+                      </button>
+                    </a>
+                    <button mat-icon-button color="warn" (click)="canUpload ? deleteFile(file): null">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                }
+              </mat-menu>
+          </div>     
+    </div> 
 </mat-dialog-content>
 <mat-dialog-actions>
     <div class="action-container">

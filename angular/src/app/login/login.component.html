@@ -11,11 +11,11 @@
                 <form [formGroup]="formData">
                 <div>
                     <mat-form-field class="form-container">
-                        <mat-label>User Name</mat-label>
-                        <input matInput #userNameInput formControlName="userName">
-                        <mat-error *ngIf="f['userName'].errors&& (submitted)">
-                            <span *ngIf="f['userName'].errors['required']">User Name is required</span>
-                            <span *ngIf="f['userName'].errors['minlength']">User Name must be at least 4 characters</span>
+                        <mat-label>Email</mat-label>
+                        <input matInput #emailInput formControlName="email">
+                        <mat-error *ngIf="f['email'].errors&& (submitted)">
+                            <span *ngIf="f['email'].errors['required']">Email is required</span>
+                            <span *ngIf="f['email'].errors['email']">Email is invalid</span>
                         </mat-error>
                     </mat-form-field>
                 </div>
