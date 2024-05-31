@@ -3,7 +3,6 @@ package repos
 import (
 	"encoding/base64"
 	"meeting-center/src/io"
-	db "meeting-center/src/io"
 	"meeting-center/src/models"
 	"time"
 
@@ -31,7 +30,7 @@ func NewAuthRepo(authRepoArgs ...authRepo) AuthRepo {
 			redisClient: authRepoArgs[0].redisClient,
 		})
 	} else if len(authRepoArgs) == 0 {
-		db := db.GetDBInstance()
+		db := io.GetDBInstance()
 		redisClient := io.GetRedisInstance()
 		_, err := redisClient.Ping(redisClient.Context()).Result()
 		if err != nil {

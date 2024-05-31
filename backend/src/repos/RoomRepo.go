@@ -1,7 +1,7 @@
 package repos
 
 import (
-	db "meeting-center/src/io"
+	"meeting-center/src/io"
 	"meeting-center/src/models"
 
 	"gorm.io/gorm"
@@ -21,7 +21,7 @@ type RoomRepo interface {
 
 func NewRoomRepo(dbArgs ...*gorm.DB) RoomRepo {
 	if len(dbArgs) == 0 {
-		return roomRepo{db: db.GetDBInstance()}
+		return roomRepo{db: io.GetDBInstance()}
 	} else if len(dbArgs) == 1 {
 		return roomRepo{db: dbArgs[0]}
 	} else {
