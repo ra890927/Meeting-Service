@@ -19,10 +19,10 @@
             <mat-list-item *ngFor="let rooms of roomsList; last as last">
                 <div class="rooms row">
                     <!-- Room Number -->
-                    @if (!isEditing || roomsEditing?.id !== rooms.id) {    
+                    @if (!isEditing || roomsEditing.id !== rooms.id) {    
                         <div class="column room" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
                     }
-                    @if (isEditing && roomsEditing?.id === rooms.id){
+                    @if (isEditing && roomsEditing.id === rooms.id){
                         <mat-form-field class="column room">
                             <!-- <mat-label>Room Number</mat-label> -->
                             <input matInput [formControl]="roomNumberControl">
@@ -33,7 +33,7 @@
                     <div class="tagContainer">
                         <!-- add button -->
                         <div class="add-tag-button">
-                            @if (isEditing && roomsEditing?.id === rooms.id) {
+                            @if (isEditing && roomsEditing.id === rooms.id) {
                                 <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
                                     <mat-icon>add_circle</mat-icon>
                                 </button>
@@ -51,7 +51,7 @@
                         @for (tag of rooms.tags; track tag) {
                             <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
                             {{tag}}
-                            @if (isEditing && roomsEditing?.id === rooms.id){
+                            @if (isEditing && roomsEditing.id === rooms.id){
                                 <button matChipRemove [attr.aria-label]="'remove ' + tag">
                                     <mat-icon>cancel</mat-icon>
                                 </button>
@@ -61,7 +61,7 @@
                     </div>
 
                     <!-- Capacity -->
-                    @if (!isEditing || roomsEditing?.id !== rooms.id) {
+                    @if (!isEditing || roomsEditing.id !== rooms.id) {
                         <div class="column capacity" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
                     }
                     @else {
@@ -72,7 +72,7 @@
                     
                     <!-- Actions -->
                     <div class="column controls actions">
-                        @if (!isEditing || roomsEditing?.id !== rooms.id){
+                        @if (!isEditing || roomsEditing.id !== rooms.id){
                             <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
                         }
                         @else {

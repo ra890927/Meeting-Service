@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { FooterComponent } from '../layout/footer/footer.component';
+import { UserService } from '../API/user.service';
 
 @Component({
   selector: 'app-register',
@@ -38,7 +39,7 @@ export class RegisterComponent {
 
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private userService: UserService) {
     this.registerForm = this.fb.group({
       userName: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
@@ -91,6 +92,29 @@ export class RegisterComponent {
   // navigate to the login page
   navigate(path: string) {
     this.router.navigate([path]);
+  }
+
+  // submit the form
+  submit(){
+    if (this.registerForm.valid) {
+      console.log('Form Submitted!', this.registerForm.value.userName);
+      this.userService.register(this.registerForm.value.userName, this.registerForm.value.email, this.registerForm.value.password).subscribe(
+        (res) => {
+          console.log('res:', res);
+          if (res.status === 'success') {
+            this.router.navigate(['/login']);
+          } else {
+            console.log('Register failed');
+            return;
+          }
+        },
+        (error) => {
+          console.error('A connection error occurred:', error);
+          return;
+        }
+      );
+    }
+
   }
 
 }

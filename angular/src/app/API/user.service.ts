@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+const AUTH_API = 'http://140.113.215.132:8080/api/v1/user';
+
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
+
 interface User {
   id: number;
   username: string;
@@ -9,9 +17,22 @@ interface User {
   providedIn: 'root'
 })
 
+
+
 export class UserService {
 
-  constructor() { }
+  constructor( private http: HttpClient ) {}
+
+  // register
+  register(username: string, email: string, password: string): Observable<any> {
+    return this.http.post(AUTH_API, 
+    {
+      username,
+      email,
+      password
+    }, 
+    httpOptions);
+  }
   
   clean(): void {
     window.sessionStorage.removeItem('user');
