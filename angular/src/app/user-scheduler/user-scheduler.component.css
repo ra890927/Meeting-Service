@@ -9,7 +9,15 @@
     height: 80vh;
     z-index: 99;
 }
-
+.profile-header{
+    position: absolute;
+    top: 15vh;
+    right: 30px;
+    font-size: 60px;
+    font-weight: bold;
+    writing-mode: vertical-rl; 
+    transform: rotate(360deg); 
+}
 .profile-event-container{
     display: flex;
     z-index: 99;

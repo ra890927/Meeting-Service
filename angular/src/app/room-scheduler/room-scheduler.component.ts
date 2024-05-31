@@ -132,6 +132,8 @@ export class RoomSchedulerComponent implements OnInit{
   constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
   }
   isadmin = false;
+  error = signal<string | null>(null);
+  success = signal<string | null>(null);
   TagsTable: {[tag_id: number]: Tag} = {};//get from api
   UserTable: {[user_id: number]: Userinfo} = {};//get from api
   TagData: CodeValue[] = [];//get from api
@@ -180,9 +182,9 @@ export class RoomSchedulerComponent implements OnInit{
     eventOverlap: false,
     validRange: {
       start: '8:00:00',
-      end: '23:59:59'
+      end: '23:30:00'
     },
-    slotMaxTime: '23:59:59',
+    slotMaxTime: '23:30:00',
     slotMinTime: '8:00:00',
     firstDay: 7,
     
@@ -192,40 +194,44 @@ export class RoomSchedulerComponent implements OnInit{
     datesSet: this.handleViewChange.bind(this),
     eventDrop: (info) =>{
       const minTime = '08:00';
-      const maxTime = '24:00';
+      const maxTime = '23:30';
       console.log(info.event.id);
       if (info.event.start&&info.event.end) {
         const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
         const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-        console.log(eventStartTime);
-        console.log(eventEndTime);
-        if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime) {
+        if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime || info.event.start < new Date() || info.event.extendedProps['organizer'] !== this.CurrentUser.id) {
+          this.error.set('time is invalid or you are not the organizer');
+          this.success.set(null);
           info.revert();
         }else{
-          console.log(info.event.id);
           this.itemService.putMeeting(info.event.id, info.event.extendedProps['description'], info.event.endStr, info.event.extendedProps['organizer'], info.event.extendedProps['participants'], this.selectedRoom.id, info.event.startStr, 'approved', info.event.title).subscribe((response: any) => {
             if(response.status === 'success'){
               info.event.setStart(info.event.startStr);
               info.event.setEnd(info.event.endStr);
+              this.success.set('Event updated successfully');
+              this.error.set(null);
             }else{
               info.revert();
+              this.error.set('Failed to update event');
+              this.success.set(null);
             }
           });
         }
       }else{
+        this.error.set('time is invalid');
+        this.success.set(null);
         info.revert();
       }
     },
     eventResize:(info) =>{
         const minTime = '08:00';
-        const maxTime = '24:00';
+        const maxTime = '23:30';
         console.log(info.event.id);
         if (info.event.start&&info.event.end) {
           const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
           const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-          console.log(eventStartTime);
-          console.log(eventEndTime);
-          if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime) {
+          if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime || info.event.start < new Date() || info.event.extendedProps['organizer'] !== this.CurrentUser.id) {
+            this.error.set('time is invalid or you are not the organizer');
             info.revert();
           }else{
             console.log(info.event.id);
@@ -233,12 +239,18 @@ export class RoomSchedulerComponent implements OnInit{
               if(response.status === 'success'){
                 info.event.setStart(info.event.startStr);
                 info.event.setEnd(info.event.endStr);
+                this.success.set('Event updated successfully');
+                this.error.set(null);
               }else{
+                this.error.set('Failed to update event');
+                this.success.set(null);
                 info.revert();
               }
             });
           }
         }else{
+          this.error.set('time is invalid');
+          this.success.set(null);
           info.revert();
         }
     },
@@ -248,9 +260,7 @@ export class RoomSchedulerComponent implements OnInit{
   };
   ngOnInit(){
     this.CurrentUser = this.userService.getUser();
-    console.log(this.CurrentUser);
     this.isLogin = this.userService.isLoggedIn();
-    console.log(this.isLogin);
     this.calendarOptions.editable = this.isLogin;
     this.calendarOptions.selectable = this.isLogin;
     this.itemService.getAllRooms().subscribe((response: RoomResponse) => {
@@ -291,6 +301,12 @@ export class RoomSchedulerComponent implements OnInit{
       }
     });
   }
+  errorClick(){
+    this.error.set(null);
+  }
+  successClick(){
+    this.success.set(null);
+  }
   applyFilter() {
     //filter by tags, capacity and time is valid between startDateTime and endDateTime
     this.filteredRooms = this.RoomData.filter(room => {
@@ -321,7 +337,6 @@ export class RoomSchedulerComponent implements OnInit{
 
     //filter by time
     this.selectedRoom = this.filteredRooms[0];
-    console.log(this.selectedRoom);
     this.handleRoomChange(this.selectedRoom);
   }
   //event filter by room_id
@@ -391,7 +406,11 @@ export class RoomSchedulerComponent implements OnInit{
               end: selectInfo.endStr,
               allDay: selectInfo.allDay
             });
+            this.success.set('Event created successfully');
+            this.error.set(null);
           }else{
+            this.error.set('Failed to create event');
+            this.success.set(null);
             console.log('post event failed');
           }
         });
@@ -414,11 +433,15 @@ export class RoomSchedulerComponent implements OnInit{
         clickInfo.event.setProp('title', data.title);
         this.itemService.putMeeting(clickInfo.event.id, data.description, data.endTime, data.organizer, data.participants, this.selectedRoom.id, data.startTime, 'approved', data.title).subscribe((response: any) => {
           if(response.status === 'success'){
+            this.success.set('Event updated successfully');
+            this.error.set(null);
             clickInfo.event.setExtendedProp('description', data.description);
             clickInfo.event.setExtendedProp('participants', data.participants);
             clickInfo.event.setStart(data.startTime);
             clickInfo.event.setEnd(data.endTime);
           }else{
+            this.error.set('Failed to update event');
+            this.success.set(null);
             console.log('put event failed');
           }
         });
@@ -440,8 +463,12 @@ export class RoomSchedulerComponent implements OnInit{
         this.itemService.deleteMeeting(event.id).subscribe((response: any) => {
           if (response.status === 'success') {
             console.log('delete event success');
+            this.error.set(null);
+            this.success.set('Event deleted successfully');
             event.remove();
           } else {
+            this.error.set('Failed to delete event');
+            this.success.set(null);
             console.log('delete event failed');
           }
         });

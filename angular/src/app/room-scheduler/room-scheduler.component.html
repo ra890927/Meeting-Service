@@ -1,5 +1,17 @@
 <div class="calendarContainer">
     <div class="reservation-header">RESERVATION</div>
+    @if(error()!=null){
+        <div class="error-card" (click)="errorClick()">
+            <div class="card-header">Error!</div>
+            <div class="card-body">{{error()}}</div>
+        </div>
+    }
+    @if(success()!=null){
+        <div class="success-card" (click)="successClick()">
+            <div class="card-header">Success!</div>
+            <div class="card-body">{{success()}}</div>
+        </div>
+    }
     <div class = "cards_container">
         <div class = "search-switch">
             <mat-icon class="search-icon"  (click)="toggleSearchContainer()" [ngClass]="{ 'search': isSearchContainerOpen, 'search_off': !isSearchContainerOpen }">

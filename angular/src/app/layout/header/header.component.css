@@ -47,7 +47,10 @@
 
 .nav-links a:hover{
     color: #888888;
-    /* border-bottom: white 3px solid; */
+}
+
+.nav-links a.active{
+    color: #888888;
 }
 
 .mat-toolbar {
