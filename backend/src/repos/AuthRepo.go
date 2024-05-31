@@ -2,6 +2,7 @@ package repos
 
 import (
 	"encoding/base64"
+	"meeting-center/src/io"
 	db "meeting-center/src/io"
 	"meeting-center/src/models"
 	"time"
@@ -31,16 +32,14 @@ func NewAuthRepo(authRepoArgs ...authRepo) AuthRepo {
 		})
 	} else if len(authRepoArgs) == 0 {
 		db := db.GetDBInstance()
-		red := redis.NewClient(&redis.Options{
-			Addr: "localhost:6379",
-		})
-		_, err := red.Ping(red.Context()).Result()
+		redisClient := io.GetRedisInstance()
+		_, err := redisClient.Ping(redisClient.Context()).Result()
 		if err != nil {
 			panic("Failed to connect to redis")
 		}
 		return AuthRepo(&authRepo{
 			dataBase:    db,
-			redisClient: red,
+			redisClient: redisClient,
 		})
 	} else {
 		panic("too many arguments")

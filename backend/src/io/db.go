@@ -12,7 +12,7 @@ import (
 
 var (
 	dbInstance *gorm.DB
-	once       sync.Once
+	dbOnce     sync.Once
 )
 
 func init() {
@@ -35,7 +35,7 @@ func init() {
 
 func GetDBInstance() *gorm.DB {
 	if dbInstance == nil {
-		once.Do(func() {
+		dbOnce.Do(func() {
 			dsn := "./sqlite.db"
 			db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 			if err != nil {
