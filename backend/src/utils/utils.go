@@ -31,11 +31,11 @@ func OverwriteValue(base, edit interface{}) interface{} {
 	res.Set(va)
 
 	for i := 0; i < va.NumField(); i++ {
-		fieldA := res.Field(i)
+		fieldRes := res.Field(i)
 		fieldB := vb.Field(i)
 
 		if !IsEmptyValue(fieldB) {
-			fieldA.Set(fieldB)
+			fieldRes.Set(fieldB)
 		}
 	}
 
