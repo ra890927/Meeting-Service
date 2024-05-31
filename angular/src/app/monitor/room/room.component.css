@@ -50,10 +50,10 @@
     /* -ms-overflow-style: none; */
 }
 
-.tagContainer::-webkit-scrollbar {
-    /* display: none; */
+/* .tagContainer::-webkit-scrollbar {
+
     width: 10em;
-}
+} */
 
 .add-tag-button{
     margin-right: 10px;
