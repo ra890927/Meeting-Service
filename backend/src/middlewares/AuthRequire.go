@@ -44,9 +44,6 @@ func AuthRequire() gin.HandlerFunc {
 		// Set the user ID in the context
 		c.Set("validate_user", user)
 
-		// Close the Redis client
-		redisClient.Close()
-
 		c.Next()
 	}
 }
