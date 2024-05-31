@@ -67,7 +67,10 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	cnt := 0
 	token := ""
 	for {
-		hash, _ := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
+		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
+		if err != nil {
+			break
+		}
 		token = base64.StdEncoding.EncodeToString(hash)
 		// check if the hash exists in the redis database
 		_, err = ar.redisClient.Get(ar.redisClient.Context(), token).Result()
