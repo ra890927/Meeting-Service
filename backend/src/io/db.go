@@ -1,4 +1,4 @@
-package db
+package io
 
 import (
 	"sync"
@@ -6,12 +6,32 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"meeting-center/src/models"
 )
 
 var (
 	dbInstance *gorm.DB
 	once       sync.Once
 )
+
+func init() {
+	db := GetDBInstance()
+
+	models := []interface{}{
+		&models.User{},
+		&models.Room{},
+		&models.Meeting{},
+		&models.CodeType{},
+		&models.CodeValue{},
+	}
+
+	for _, model := range models {
+		if err := db.AutoMigrate(model); err != nil {
+			panic(err)
+		}
+	}
+}
 
 func GetDBInstance() *gorm.DB {
 	if dbInstance == nil {

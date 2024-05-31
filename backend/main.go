@@ -9,7 +9,6 @@ import (
 
 	"meeting-center/src/middlewares"
 	"meeting-center/src/presentations"
-	"meeting-center/src/utils"
 )
 
 // @title Meeting Center API
@@ -17,13 +16,6 @@ import (
 // @description This is a simple Meeting Center API
 
 func main() {
-	// connect to the database
-	err := utils.InitDB()
-	if err != nil {
-		panic(err)
-	}
-	// Create a new presentation
-
 	r := gin.Default()
 	// CORS middleware
 	r.Use(middlewares.CORSMiddleware())
