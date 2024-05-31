@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"meeting-center/src/io"
 	"meeting-center/src/models"
+	"strconv"
 	"time"
 
 	"encoding/json"
@@ -66,7 +67,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	cnt := 0
 	token := ""
 	for {
-		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+string(cnt)), bcrypt.DefaultCost)
+		hash, _ := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
 		token = base64.StdEncoding.EncodeToString(hash)
 		// check if the hash exists in the redis database
 		_, err = ar.redisClient.Get(ar.redisClient.Context(), token).Result()
