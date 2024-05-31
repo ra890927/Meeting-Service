@@ -51,7 +51,7 @@ func RegisterMetricsMiddleware() gin.HandlerFunc {
 		path := c.FullPath()
 		method := c.Request.Method
 
-		if path != "/metrics" && !strings.HasPrefix(path, "/swagger") {
+		if strings.HasPrefix(path, "/v1/api/") {
 			pathList := strings.Split(path, "/")
 			groupName := "/" + pathList[groupIndex]
 			apiName := "/" + pathList[groupIndex+1]
