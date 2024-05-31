@@ -8,7 +8,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-const groupIndex = 2
+const groupIndex = 3
 
 var (
 	apiRequests = prometheus.NewCounterVec(
@@ -17,11 +17,8 @@ var (
 			Help: "API request times",
 		},
 		[]string{
-			"user",
-			"auth",
-			"code",
-			"room",
-			"admin",
+			"group_name",
+			"method",
 		},
 	)
 	apiDurations = prometheus.NewHistogramVec(
@@ -31,11 +28,8 @@ var (
 			Buckets: prometheus.DefBuckets,
 		},
 		[]string{
-			"user",
-			"auth",
-			"code",
-			"room",
-			"admin",
+			"group_name",
+			"method",
 		},
 	)
 )
@@ -52,10 +46,13 @@ func RegisterMetricsMiddleware() gin.HandlerFunc {
 
 		duration := time.Since(start).Seconds()
 
-		group := strings.Split(c.FullPath(), "/")[groupIndex]
+		path := c.FullPath()
 		method := c.Request.Method
 
-		apiRequests.WithLabelValues(group, method).Inc()
-		apiDurations.WithLabelValues(group, method).Observe(duration)
+		if path != "/metrics" && !strings.HasPrefix(path, "/swagger") {
+			groupName := strings.Split(path, "/")[groupIndex]
+			apiRequests.WithLabelValues("/"+groupName, method).Inc()
+			apiDurations.WithLabelValues(groupName, method).Observe(duration)
+		}
 	}
 }
