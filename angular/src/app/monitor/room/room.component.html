@@ -1,84 +1,90 @@
-<div class="inputDiv">
-    <button mat-raised-button color="primary" (click)="openDialog()">Add Room</button>   
-</div>
+<div class="room-div">
+    <div class="parentDiv"> 
+        <div class="inputDiv">
+            <button mat-raised-button color="primary" (click)="openDialog()">Add Room</button>   
+        </div>
+    </div>
 
-<mat-card>
-    <mat-list>
-        <mat-list-item>
-            <div class="list-header">
-                <div class="list-column room">Room</div>
-                <div class="list-column tags">Tags</div>
-                <div class="list-column capacity">Capacity</div>
-                <!-- <div class="list-column details">Details</div> -->
-                <div class="list-column actions">Actions</div>
-            </div>
-        </mat-list-item>
-        
-        <mat-list-item *ngFor="let rooms of roomsList">
-            <div class="rooms row">
-                <!-- Room Number -->
-                @if (!isEditing || roomsEditing?.id !== rooms.id) {    
-                    <div class="column room" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
-                }
-                @if (isEditing && roomsEditing?.id === rooms.id){
-                    <mat-form-field class="column room">
-                        <!-- <mat-label>Room Number</mat-label> -->
-                        <input matInput [formControl]="roomNumberControl">
-                    </mat-form-field>
-                }
+    <mat-card class="room-mat-card">
+        <mat-list>
+            <mat-list-item>
+                <div class="list-header">
+                    <div class="list-column room">Room</div>
+                    <div class="list-column tags">Tags</div>
+                    <div class="list-column capacity">Capacity</div>
+                    <div class="list-column actions">Actions</div>
+                </div>
+            </mat-list-item>
+            
+            <mat-list-item *ngFor="let rooms of roomsList; last as last">
+                <div class="rooms row">
+                    <!-- Room Number -->
+                    @if (!isEditing || roomsEditing?.id !== rooms.id) {    
+                        <div class="column room" data-title="{{rooms.roomNumber}}">{{rooms.roomNumber}}</div>
+                    }
+                    @if (isEditing && roomsEditing?.id === rooms.id){
+                        <mat-form-field class="column room">
+                            <!-- <mat-label>Room Number</mat-label> -->
+                            <input matInput [formControl]="roomNumberControl">
+                        </mat-form-field>
+                    }
 
-                <!-- Tags (Chips) -->
-                <div class="tagContainer">
-                    <!-- add button -->
-                    <div class="add-tag-button">
-                        @if (isEditing && roomsEditing?.id === rooms.id) {
-                            <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-                                <mat-icon>add_circle</mat-icon>
-                            </button>
+                    <!-- Tags (Chips) -->
+                    <div class="tagContainer">
+                        <!-- add button -->
+                        <div class="add-tag-button">
+                            @if (isEditing && roomsEditing?.id === rooms.id) {
+                                <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+                                    <mat-icon>add_circle</mat-icon>
+                                </button>
+                            }
+                        </div>
+                        <!-- choose tags -->
+                        <mat-menu #menu="matMenu">
+                            @for (tag of allTags; track tag) {
+                                @if (!rooms.tags.includes(tag)) {
+                                    <button mat-menu-item (click)="selected(rooms, tag)">{{tag}}</button>
+                                }
+                            }
+                        </mat-menu>
+                        <!-- display tags -->
+                        @for (tag of rooms.tags; track tag) {
+                            <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
+                            {{tag}}
+                            @if (isEditing && roomsEditing?.id === rooms.id){
+                                <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            }
+                            </mat-chip-row>
                         }
                     </div>
-                    <!-- choose tags -->
-                    <mat-menu #menu="matMenu">
-                        @for (tag of allTags; track tag) {
-                            @if (!rooms.tags.includes(tag)) {
-                                <button mat-menu-item (click)="selected(rooms, tag)">{{tag}}</button>
-                            }
-                        }
-                    </mat-menu>
-                    <!-- display tags -->
-                    @for (tag of rooms.tags; track tag) {
-                        <mat-chip-row (removed)="remove(tag, rooms)" [ngClass]="{'disabled-chip': !isEditing}" >
-                        {{tag}}
-                        @if (isEditing && roomsEditing?.id === rooms.id){
-                            <button matChipRemove [attr.aria-label]="'remove ' + tag">
-                                <mat-icon>cancel</mat-icon>
-                            </button>
-                        }
-                        </mat-chip-row>
-                    }
-                </div>
 
-                <!-- Capacity -->
-                @if (!isEditing || roomsEditing?.id !== rooms.id) {
-                    <div class="column capacity" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
-                }
-                @else {
-                    <mat-form-field class="column capacity">
-                        <input matInput [formControl]="capacityControl" type="number">
-                    </mat-form-field>
-                }
-                  
-                <!-- Actions -->
-                <div class="column controls actions">
-                    @if (!isEditing || roomsEditing?.id !== rooms.id){
-                        <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
+                    <!-- Capacity -->
+                    @if (!isEditing || roomsEditing?.id !== rooms.id) {
+                        <div class="column capacity" data-title="{{rooms.capacity}}">{{rooms.capacity}}</div>
                     }
                     @else {
-                        <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                        <mat-form-field class="column capacity">
+                            <input matInput [formControl]="capacityControl" type="number">
+                        </mat-form-field>
                     }
-                    <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(rooms)">delete</mat-icon>
-                </div> 
-            </div>
-        </mat-list-item>
-    </mat-list>
-</mat-card>
+                    
+                    <!-- Actions -->
+                    <div class="column controls actions">
+                        @if (!isEditing || roomsEditing?.id !== rooms.id){
+                            <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
+                        }
+                        @else {
+                            <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                        }
+                        <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(rooms)">delete</mat-icon>
+                    </div> 
+                </div>
+                <div class="divider-div">
+                    <mat-divider class="custom-divider" [inset]="true" *ngIf="!last"></mat-divider>
+                    </div>
+            </mat-list-item>
+        </mat-list>
+    </mat-card>
+</div>

@@ -1,16 +1,34 @@
-.inputDiv {
-    /* text-align: center; */
-    margin: 20px;
+.room-div {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    background-color: #f5f1f1;
+    height: 80vh;
 }
 
+.parentDiv{
+    display: flex;
+    justify-content: center;
+}
 
-/* button{
-    margin-top: 20px;
+.inputDiv {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-start;
+    width: 60vw;
+}
 
-} */
+.room-mat-card {
+    width: 60vw;
+    height: 64vh;
+    /* margin: 20px; */
+
+}
 
 .list-header{
     display: flex;
+    justify-content: center;
 }
 
 .list-column {
@@ -20,7 +38,7 @@
 }
 
 .room {
-    width: 200px;
+    width: 10vw;
 }
 
 .tagContainer{
@@ -28,7 +46,13 @@
     overflow-x: auto;
     display: flex;
     align-items: center;
-    width: 800px;
+    width: 40vw;
+    /* -ms-overflow-style: none; */
+}
+
+.tagContainer::-webkit-scrollbar {
+    /* display: none; */
+    width: 10em;
 }
 
 .add-tag-button{
@@ -45,19 +69,17 @@ mat-chip-row{
 }
 
 .tags{
-    width: 800px;
+    width: 40vw;
 }
 
 .capacity{
-    width: 80px;
-}
-
-.details{
-    width: 200px;
+    width: 5vw;
+    text-align: center;
 }
 
 .actions{
-    width: 100px;
+    width: 5vw;
+    text-align: center;
 }
 
 .list-header .list-column {
@@ -73,11 +95,12 @@ mat-chip-row{
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    justify-content: center;
 }
 
 .rooms.row .column {
     /* flex: 1;  */
-    padding: 4px;
+    padding: 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -99,4 +122,22 @@ mat-chip-row{
 }
 .controls:hover {
     color: purple;
+}
+
+.divider-div{
+    display: flex;
+    justify-content: center;
+}
+
+.custom-divider {
+    width: 60vw;
+}
+
+
+.mat-divider.mat-divider-inset {
+    margin-left: 0px;
+}
+
+.mat-mdc-list-item .mat-divider-inset, .mat-mdc-list-option .mat-divider-inset {
+    position: relative;
 }

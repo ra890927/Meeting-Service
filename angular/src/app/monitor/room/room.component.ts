@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { rooms, allTags } from '../users';
+import { rooms } from '../users';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,13 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { v4 as uuidv4 } from 'uuid'; // generate random id
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatMenuModule } from '@angular/material/menu';
 
 import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
 import { cA } from '@fullcalendar/core/internal-common';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-room',
@@ -30,6 +30,7 @@ import { cA } from '@fullcalendar/core/internal-common';
     MatButtonModule,
     MatChipsModule,
     MatMenuModule,
+    MatDividerModule,
     ReactiveFormsModule,
     CommonModule,
     FormsModule
@@ -87,12 +88,6 @@ export class RoomComponent implements OnInit{
           ''
         ).subscribe((response: any) => {
           if (response.status === 'success') {
-            this.roomsList.push({
-              id: 0,
-              roomNumber: result.roomNumber,
-              tags: result.tags,
-              capacity: result.capacity,
-            });
             console.log('Room created');}
           else{
             console.log('Room creation failed');
