@@ -13,6 +13,7 @@
             <div class="event-list-header">Current Events</div>
             <div class="event-list-body">
                 <div class="event-list-item-container" *ngFor="let event of detailsInfo">
+                    <div class = "circle"></div>
                     <div class="event-list-item-title">{{event.title}}</div>
                     <div class="event-list-item">Room: {{event.RoomDetail.room_name}}</div>
                     <div class="event-list-item">{{event.start | date: 'yyyy-MM-dd HH:mm'}}~{{event.end|date: 'yyyy-MM-dd HH:mm'}}</div>
@@ -34,7 +35,7 @@
                 </div>
                     <div *ngIf="!isMonthView" class="event-container">
                     <div class="time-field">{{arg.timeText}}</div>
-                    <div class="text-field">Chris</div>
+                    <div class="text-field">{{arg.event.extendedProps.organizer}}</div>
                     <div class="text-field" style=" font-size: 1em;">{{arg.event.title}}</div>
                 </div>
             </ng-template>

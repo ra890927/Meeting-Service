@@ -16,12 +16,14 @@ import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
 import {createEventId} from './event-utils';//test use
-import { S, cl, co, s } from '@fullcalendar/core/internal-common';
+import { C, S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import { MeetingDetailComponent } from './meeting-detail/meeting-detail.component';
 import { UserService } from '../API/user.service';
+import { ItemService } from '../API/item.service';
+import { forkJoin, map } from 'rxjs';
 //need to save in a interface file
 interface Room {
   id: number;
@@ -30,25 +32,47 @@ interface Room {
   rules: number[];
   capacity: number;
 }
+interface EventResponse {
+  data: {
+    meetings: Event[];
+  };
+  message: string;
+  status: string;
+}
+interface RoomResponse {
+  data: {
+    rooms: Room[];
+  };
+  message: string;
+  status: string;
+}
 interface RoomInfo{
   room_name: string;
-  rules: Tag[];
+  rules: CodeValue[];
 } 
-interface RoomEvent {
+interface Event{
   id: string;
-  room_id: number;
   title: string;
   description: string;
+  start_time: string;
+  end_time: string;
+  organizer: number;
   participants: number[];
-  start: string;
-  end: string;
-  OrganizerID: number;
+  room_id: number;
+  status_type: string;
 }
-
-interface Tag{
+interface UserResponse {
+  data: {
+    users: User[];
+  };
+  message: string;
+  status: string;
+}
+interface CodeValue {
   id: number;
-  type_name: string;
-  type_desc: string;
+  tag: string;
+  description: string;
+  codeTypeId: number;
 }
 interface User{
   id: number;
@@ -85,12 +109,12 @@ const TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of
   styleUrl: './user-scheduler.component.css'
 })
 export class UserSchedulerComponent {
-  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService) {
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private itemService: ItemService) {
   }
-  fakeData: Room[] = [];
-  fakeEvents: RoomEvent[] = [];
-  fakeTags: Tag[] = [];
-  fakeUsers: User[] = [];
+  RoomData: Room[] = [];
+  UserData: User[] = [];
+  EventData: Event[] = [];
+  TagData: CodeValue[] = [];
   User: any;//get from session storage
   isMonthView: boolean = false;//initial view is week
   detailsInfo: needData[] = [];
@@ -133,69 +157,95 @@ export class UserSchedulerComponent {
     datesSet: this.handleViewChange.bind(this),
   };
   ngOnInit(){
-    // if(!this.userService.isLoggedIn()){
-    //   this.router.navigate(['/login']);
-    // }
-    this.fakeData = [//getAllRooms from backend
-      {id: 1, room_name: 'room1', type: 'meeting', rules: [1], capacity: 10},
-      {id: 2, room_name: 'room2', type: 'meeting', rules: [1, 2], capacity: 20},
-      {id: 3, room_name: 'room3', type: 'meeting', rules: [2], capacity: 30},
-      {id: 4, room_name: 'room4', type: 'meeting', rules: [1], capacity: 40},
-      {id: 5, room_name: 'room5', type: 'meeting', rules: [1, 2], capacity: 50},
-    ];
-    this.fakeTags = [//getALLTags from backend
-      {id: 1,type_name: 'projector', type_desc: 'can use projector'},
-      {id: 2,type_name: 'food', type_desc: 'can eat food'},
-    ];
-    this.fakeEvents = [//getEvents from backend
-      {id: '1', room_id: 1, title: 'meeting1', description: 'meeting1', start: TODAY_STR + 'T09:00:00', end: TODAY_STR + 'T13:00:00', participants: [1,2,3], OrganizerID: 1},
-      {id: '2', room_id: 2, title: 'meeting2', description: 'meeting2', start: TODAY_STR + 'T12:00:00', end: TODAY_STR + 'T15:00:00', participants: [2,3], OrganizerID: 2},
-      {id: '3', room_id: 3, title: 'meeting3', description: 'meeting3', start: TODAY_STR + 'T14:00:00', end: TODAY_STR + 'T17:00:00', participants: [1,2], OrganizerID: 3},
-      {id: '4', room_id: 4, title: 'meeting4', description: 'meeting4', start: TODAY_STR + 'T16:00:00', end: TODAY_STR + 'T19:00:00', participants: [1,3,5], OrganizerID: 4},
-      {id: '5', room_id: 5, title: 'meeting5', description: 'meeting5', start: TODAY_STR + 'T18:00:00', end: TODAY_STR + 'T21:00:00', participants: [2,4], OrganizerID: 5},
-    ];
-    this.fakeUsers = [//getAllUsers from backend
-      {id: 1, username: 'user1', email: '1@1.com'},
-      {id: 2, username: 'user2', email: '2@2.com'},
-      {id: 3, username: 'user3', email: '3@3.com'},
-      {id: 4, username: 'user4', email: '4@4.com'},
-      {id: 5, username: 'user5', email: '5@5.com'},
-    ];
-    this.User = this.userService.getUser();
-    if(!this.User){ 
-      this.User = {id: 1, username: 'user1', email: 'admin@admin.com'};
+    if(!this.userService.isLoggedIn()){
+      this.router.navigate(['/login']);
     }
-    this.detailsInfo = this.fakeEvents.map((event) => {
+    else{
+      this.User = this.userService.getUser();
+    }
+    forkJoin({
+      rooms: this.itemService.getAllRooms().pipe(
+        map((response: RoomResponse) => {
+          if (response.status === 'success') {
+            return response.data.rooms;
+          } else {
+            console.log('get room data failed');
+            return [] as Room[];
+          }
+        })
+      ),
+      users: this.itemService.getAllUsers().pipe(
+        map((response: UserResponse) => {
+          if (response.status === 'success') {
+            return response.data.users;
+          } else {
+            console.log('get user data failed');
+            return [] as User[];
+          }
+        })
+      ),
+      meetings: this.itemService.getMeetingByUserId(this.User.id).pipe(
+        map((response: EventResponse) => {
+          if (response.status === 'success') {
+            return response.data.meetings;
+          } else {
+            console.log('get meeting data failed');
+            return [] as Event[];
+          }
+        })
+      )
+    }).subscribe(({ rooms, users, meetings }) => {
+      this.RoomData = rooms;
+      this.UserData = users;
+      this.EventData = meetings;
+      this.itemService.getAllTags().subscribe((response: CodeValue[]) => {
+        if (response) {
+            this.TagData = response;
+            this.generateDetailsInfo();
+            console.log(this.detailsInfo);
+            this.calendarOptions.events = this.detailsInfo;
+        }else{
+          console.log('get tag data failed');
+        }
+      });
+
+    });
+  }
+  calendarVisible = signal(true);
+
+  currentEvents = signal<EventApi[]>([]);
+  generateDetailsInfo() {
+    this.detailsInfo = this.EventData.map((event) => {
       return {
         id: event.id,
         title: event.title,
         description: event.description,
         participants: event.participants.map((id) => {
-          const user = this.fakeUsers.find((user) => user.id === id);
+          const user = this.UserData.find((user) => user.id === id);
           if (!user) {
             throw new Error(`User with id ${id} not found`);
           }
           return user;
         }),
-        start: event.start,
-        end: event.end,
+        start: event.start_time,
+        end: event.end_time,
         Organizer:(() => {
-          const organizer = this.fakeUsers.find((user) => user.id === event.OrganizerID);
+          const organizer = this.UserData.find((user) => user.id === event.organizer);
           if (!organizer) {
-            throw new Error(`Organizer with ID ${event.OrganizerID} not found`);
+            throw new Error(`Organizer with ID ${event.organizer} not found`);
           }
           return organizer;
         })(),
 
         RoomDetail: (() => {
-          const room = this.fakeData.find((room) => room.id === event.room_id);
+          const room = this.RoomData.find((room) => room.id === event.room_id);
           if (!room) {
             throw new Error(`Room with ID ${event.room_id} not found`);
           }
           return {
             room_name: room.room_name,
             rules: room.rules.map((id) => {
-              const tag = this.fakeTags.find((tag) => tag.id === id);
+              const tag = this.TagData.find((tag) => tag.id === id);
               if (!tag) {
                 throw new Error(`Tag with ID ${id} not found`);
               }
@@ -205,13 +255,7 @@ export class UserSchedulerComponent {
         })(),
       };
     });
-    console.log(this.detailsInfo);
-    this.calendarOptions.events = this.detailsInfo;
   }
-  calendarVisible = signal(true);
-
-  currentEvents = signal<EventApi[]>([]);
-
   handleCalendarToggle() {
     this.calendarVisible.update((bool) => !bool);
   }

@@ -11,7 +11,7 @@
 }
 .switch{
     flex: 1;
-    background-image: url(../../assets/meeting-room.jpg);
+    background-image: url(/assets/meeting-room.jpg);
     background-size: cover;
 }
 .switch>div{

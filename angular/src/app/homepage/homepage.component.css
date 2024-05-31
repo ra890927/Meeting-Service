@@ -1,7 +1,7 @@
 .homepage{
     height: 100vh;
     overflow: hidden;
-    background-image: url(../../assets/meeting-room.jpg);
+    background-image: url(/assets/meeting-room.jpg);
     background-size: cover;
     /* background-position: center -200px; */
 }
