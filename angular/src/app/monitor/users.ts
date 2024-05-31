@@ -5,12 +5,11 @@
 //     role: 'admin' | 'user'  = 'user';
 // }
 
-export class rooms {
-    id: number = 0;
-    roomNumber: string = '';
-    tags: string[]=[];
-    capacity: number = 0;
-    // details: string = '';
+export interface rooms {
+    id: number;
+    roomNumber: string;
+    tags: string[];
+    capacity: number;
 }
 
 export interface users {

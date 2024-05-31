@@ -50,7 +50,7 @@ export class RoomComponent implements OnInit{
     tags: ['Food Allowed', 'Projector Available', 'Free WiFi'],
     capacity: 30,
   }];
-  roomsEditing: rooms | undefined;
+  roomsEditing: rooms = {id: 0, roomNumber: '', tags: [], capacity: 0};
   isEditing: boolean = false;
   roomNumberControl = new FormControl();
   capacityControl = new FormControl();
@@ -93,7 +93,6 @@ export class RoomComponent implements OnInit{
               tags: result.tags,
               capacity: result.capacity,
             });
-            // localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
             console.log('Room created');}
           else{
             console.log('Room creation failed');
@@ -117,7 +116,6 @@ export class RoomComponent implements OnInit{
             };
           });
           console.log('roomsList:', this.roomsList);
-
         });
         
       } else {
@@ -127,9 +125,6 @@ export class RoomComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    // const roomsJson = localStorage.getItem("roomsList");
-    // if (roomsJson) this.roomsList = JSON.parse(roomsJson);
-
     // get all tags from backend
     this.itemService.getAllTags().subscribe((response:any)=>{
       this.allTagsDetails = response;
@@ -193,20 +188,46 @@ export class RoomComponent implements OnInit{
     this.roomsEditing = rooms;
     this.roomNumberControl.setValue(rooms.roomNumber);
     this.capacityControl.setValue(rooms.capacity);
-    
-    localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+
   }
 
   save(): void {
     if (this.roomsEditing) {
-      this.roomsEditing.roomNumber = this.roomNumberControl.value;
-      this.roomsEditing.capacity = parseInt(this.capacityControl.value, 10);
-      localStorage.setItem("roomsList", JSON.stringify(this.roomsList));
+      this.adminService.updateRoom(
+        this.roomsEditing.id,
+        this.roomNumberControl.value,
+        this.capacityControl.value,
+        this.roomsEditing.tags.map((tag: string) => {
+          const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.tag === tag);
+          return tagDetail ? tagDetail.id : null;
+        }),
+        ''
+      ).subscribe((response: any) => {
+        if (response.status === 'success') {
+          const index = this.roomsList.findIndex(room => room.id === this.roomsEditing.id);
+          if (index !== -1) {
+            this.roomsList[index].roomNumber = this.roomNumberControl.value;
+            this.roomsList[index].tags = this.roomsEditing.tags;
+            this.roomsList[index].capacity = this.capacityControl.value;
+          }
+          this.isEditing = false;
+          this.roomsEditing = {id: 0, roomNumber: '', tags: [], capacity: 0};
+          this.roomNumberControl.setValue('');
+          this.capacityControl.setValue('');
+        }
+        else{
+          this.isEditing = false;
+          this.roomsEditing = {id: 0, roomNumber: '', tags: [], capacity: 0};
+          this.roomNumberControl.setValue('');
+          this.capacityControl.setValue('');
+          console.log('Update failed');
+          return
+        }
+      },(error) => {
+        console.log('A connection error occurred:', error);
+      }
+      );
     }
-    this.isEditing = false;
-    this.roomsEditing = undefined;
-    this.roomNumberControl.setValue('');
-    this.capacityControl.setValue('');
   }
 
 }
