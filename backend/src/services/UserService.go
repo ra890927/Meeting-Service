@@ -95,6 +95,6 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 		updatedUser.Password = string(hashValue)
 	}
 
-	updatedUser = utils.OverwriteValue(&userByID, updatedUser).(*models.User)
+	utils.OverwriteValue(updatedUser, &userByID)
 	return us.userDomain.UpdateUser(updatedUser)
 }

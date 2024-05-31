@@ -16,28 +16,23 @@ func IsEmptyValue(val reflect.Value) bool {
 	return false
 }
 
-func OverwriteValue(base, edit interface{}) interface{} {
-	va := reflect.ValueOf(base)
-	vb := reflect.ValueOf(edit)
+func OverwriteValue(base, edit interface{}) {
+	vbase := reflect.ValueOf(base)
+	vedit := reflect.ValueOf(edit)
 
-	if va.Kind() != reflect.Ptr || vb.Kind() != reflect.Ptr {
+	if vbase.Kind() != reflect.Ptr || vedit.Kind() != reflect.Ptr {
 		panic("Both arguments must be pointers to struct")
 	}
 
-	va = va.Elem()
-	vb = vb.Elem()
+	vbase = vbase.Elem()
+	vedit = vedit.Elem()
 
-	res := reflect.New(va.Type()).Elem()
-	res.Set(va)
+	for i := 0; i < vbase.NumField(); i++ {
+		fieldBase := vbase.Field(i)
+		fieldEdit := vedit.Field(i)
 
-	for i := 0; i < va.NumField(); i++ {
-		fieldRes := res.Field(i)
-		fieldB := vb.Field(i)
-
-		if !IsEmptyValue(fieldB) {
-			fieldRes.Set(fieldB)
+		if IsEmptyValue(fieldBase) {
+			fieldBase.Set(fieldEdit)
 		}
 	}
-
-	return res.Addr().Interface()
 }
