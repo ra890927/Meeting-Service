@@ -49,7 +49,7 @@ export class ItemService {
   }
   // get meeting by user id
   getMeetingByUserId(id: string): Observable<any>  {
-    return this.http.get(MEETING_API + "/GetMeetingsByParticipantId?id=" + id, httpOptions);
+    return this.http.get(MEETING_API + "/getMeetingsByParticipantId?id=" + String(id), httpOptions);
   }
   
   getMeetingByRoomIdAndTime(id: number, start: string, end: string): Observable<any>  {

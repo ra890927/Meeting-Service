@@ -13,8 +13,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatTooltipModule} from '@angular/material/tooltip';
 interface Tag{
-  type_name: string;
-  type_desc: string;
+  id: number;
+  tag: string;
+  description: string;
+  codeTypeId: number;
 }
 
 interface RoonInfo{
