@@ -4,6 +4,7 @@ import (
 	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
+	"meeting-center/src/utils"
 	"net/mail"
 
 	"golang.org/x/crypto/bcrypt"
@@ -85,7 +86,6 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 		}
 	}
 
-	updatedUser.OverwriteValue(&userByID)
 	if updatedUser.Password != userByID.Password {
 		// if updatedUser.Password have not be overwritten by OverwriteValue
 		hashValue, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
@@ -95,6 +95,6 @@ func (us userService) UpdateUser(operator models.User, updatedUser *models.User)
 		updatedUser.Password = string(hashValue)
 	}
 
-	// Update a user
-	return us.userDomain.UpdateUser(updatedUser)
+	mergedUser := utils.OverwriteValue(&userByID, updatedUser).(*models.User)
+	return us.userDomain.UpdateUser(mergedUser)
 }
