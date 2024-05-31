@@ -18,7 +18,6 @@ var (
 		},
 		[]string{
 			"group",
-			"api",
 			"method",
 		},
 	)
@@ -30,7 +29,6 @@ var (
 		},
 		[]string{
 			"group",
-			"api",
 			"method",
 		},
 	)
@@ -54,9 +52,8 @@ func RegisterMetricsMiddleware() gin.HandlerFunc {
 		if strings.HasPrefix(path, "/v1/api/") {
 			pathList := strings.Split(path, "/")
 			groupName := "/" + pathList[groupIndex]
-			apiName := "/" + pathList[groupIndex+1]
-			apiRequests.WithLabelValues(groupName, apiName, method).Inc()
-			apiDurations.WithLabelValues(groupName, apiName, method).Observe(duration)
+			apiRequests.WithLabelValues(groupName, method).Inc()
+			apiDurations.WithLabelValues(groupName, method).Observe(duration)
 		}
 	}
 }
