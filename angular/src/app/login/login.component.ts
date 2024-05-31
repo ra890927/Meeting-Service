@@ -49,9 +49,9 @@ export class LoginComponent {
   }
   //reactive form
   // username validation
-  userName = new FormControl('', [
+  email = new FormControl('', [
     Validators.required,
-    Validators.minLength(4),
+    Validators.email,
   ]);
 
   // password validation
@@ -60,7 +60,7 @@ export class LoginComponent {
   ]);
 
   formData = new FormGroup({
-    userName: this.userName,
+    email: this.email,
     password: this.password
   });
 
@@ -72,10 +72,10 @@ export class LoginComponent {
     this.loginError = false;
     this.connectionError = false;
     if (this.formData.valid) {
-      const {userName, password} = this.formData.value;
+      const {email, password} = this.formData.value;
 
-      if(userName && password){
-        this.authService.login(userName, password).subscribe(
+      if(email && password){
+        this.authService.login(email, password).subscribe(
         (res) => {
           if (res.status === 'success') {
             //set the token and user details in local storage
