@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-
+import { Component,inject } from '@angular/core';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-logo',
   standalone: true,
@@ -8,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './logo.component.css'
 })
 export class LogoComponent {
-
+  constructor(private route: Router) {
+  }
+  navigate() {
+    this.route.navigate(['/homepage']);
+  }
 }

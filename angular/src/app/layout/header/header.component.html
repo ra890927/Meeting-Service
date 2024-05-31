@@ -6,7 +6,7 @@
         <mat-icon>menu</mat-icon>
       </button> if rwd -->
       <!-- <span class="example-spacer"></span> -->
-      <span class="logo">Meeting.com</span>
+      <span class="logo" (click)="navigate('')">Meeting.com</span>
       <div class="nav-links">
         @if (userservice.isLoggedIn()) {
           <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
@@ -19,7 +19,7 @@
         @if (userservice.isLoggedIn()) {
           <div class="button-div">
             @if (isAdmin) {
-              <mat-icon (click) = "toAdmin()">admin_panel_settings</mat-icon>
+              <mat-icon (click) = "navigate('monitor')">admin_panel_settings</mat-icon>
             }
             <mat-icon (click) = "logout()">logout</mat-icon>
           </div>

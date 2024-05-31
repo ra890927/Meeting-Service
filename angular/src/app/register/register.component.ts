@@ -5,10 +5,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { FooterComponent } from '../layout/footer/footer.component';
 import { UserService } from '../API/user.service';
+import { co } from '@fullcalendar/core/internal-common';
+
+export function passwordMatchValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+    return password && confirmPassword && password.value !== confirmPassword.value ? { 'mismatch': true } : null;
+  };
+
+// }
+
+
+// = (control: AbstractControl): {[key: string]: boolean} | null => {
+//   const password = control.get('password');
+//   const confirmPassword = control.get('confirmPassword');
+//   return password && confirmPassword && password.value !== confirmPassword.value ? { 'mismatch': true } : null;
+// };
+  
+  }
 
 @Component({
   selector: 'app-register',
@@ -40,6 +59,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
 
   constructor(private fb: FormBuilder, private router: Router, private userService: UserService) {
+
     this.registerForm = this.fb.group({
       userName: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email]],
@@ -48,8 +68,19 @@ export class RegisterComponent {
         Validators.minLength(8),
         Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
       ]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
+      confirmPassword: ['', [Validators.required],[passwordMatchValidator()]]
+    });
+
+    // this.registerForm = new FormGroup({
+    //   userName: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    //   email: new FormControl('', [Validators.required, Validators.email]),
+    //   password: new FormControl('', [
+    //     Validators.required,
+    //     Validators.minLength(8),
+    //     Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$')
+    //   ]),
+    //   confirmPassword: new FormControl('', [Validators.required],[passwordMatchValidator()])
+    // });
   }
 
 
@@ -59,11 +90,6 @@ export class RegisterComponent {
   ngOnInit(): void {
   }
 
-  passwordMatchValidator(form: FormGroup) : {[key: string]: any} | null{
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-    return password && confirmPassword && password.value === confirmPassword.value ? null : { 'mismatch': true };
-  }
 
   getErrorMessage(field: string) {
     let control = this.registerForm.get(field);

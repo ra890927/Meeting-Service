@@ -5,4 +5,11 @@
     color: white;
     margin: 20px 30px;
     height: 5vh;
+    cursor: pointer;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+.logo:hover{
+    color: goldenrod;
 }

@@ -42,8 +42,8 @@ export class HeaderComponent {
   }
 
   // navigate to the admin page
-  toAdmin() {
-    this.router.navigate(['monitor']);
+  navigate(path: string) {
+    this.router.navigate([path]);
   }
 
   logout() {

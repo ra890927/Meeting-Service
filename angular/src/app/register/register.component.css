@@ -11,6 +11,15 @@
     color: rgb(75, 52, 52);
     margin: 20px 30px;
     height: 5vh;
+    cursor: pointer;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px #524949;
+}
+
+.logo:hover{
+    color: goldenrod;
+    text-shadow: 2px 2px 1px #727070;
+
 }
 
 .parentContainer{
