@@ -17,6 +17,7 @@ import {
   MatDialogActions,
   MatDialogClose,
 } from '@angular/material/dialog';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatButtonModule} from '@angular/material/button';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
@@ -65,7 +66,8 @@ interface fileFormat{
     MatChipsModule,
     MatAutocompleteModule,
     AsyncPipe,ReactiveFormsModule,
-    MatMenuModule],
+    MatMenuModule,
+    MatProgressSpinnerModule],
   templateUrl: './pop-up-form.component.html',
   styleUrl: './pop-up-form.component.css'
 })
@@ -77,6 +79,7 @@ export class PopUpFormComponent implements OnInit{
   uploadedFiles: fileFormat[] = [];
   tempParticipants: User[] = [];
   tempOrganizer: User = {id: 0, username: '', email: '', role: ''};
+  isUploading = false;
   availableUsers:User[] = [];
   canModify = false;
   @ViewChild('participantInput') participantInput: ElementRef<HTMLInputElement>|undefined;
@@ -124,11 +127,12 @@ export class PopUpFormComponent implements OnInit{
       this.announcer.announce('You are not allowed to upload files');
       return;
     }
+    this.isUploading = true;
     const files: FileList = e.target.files;
     for (let i = 0; i < files.length; i++) {
       //call the upload file api
       const file: File = files[i];
-      const url = `https://example.com/${file.name}`; // 替換為實際的上傳邏輯
+      const url = 'https://example.com/${file.name}';
       const id = '123'; // 替換為實際的上傳邏輯
       this.uploadedFiles.push({ id: id, file_name: file.name, url: url });
     }
