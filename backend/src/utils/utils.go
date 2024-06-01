@@ -1,6 +1,9 @@
 package utils
 
-import "reflect"
+import (
+	"reflect"
+	"time"
+)
 
 func IsEmptyValue(val reflect.Value) bool {
 	switch val.Kind() {
@@ -12,6 +15,14 @@ func IsEmptyValue(val reflect.Value) bool {
 		return val.Uint() == 0
 	case reflect.Slice:
 		return val.Len() == 0
+	// time.Time is a struct, so we need to check it separately
+	case reflect.Struct:
+		if val.Type().String() == "time.Time" {
+			// zero value of time.Time is
+			// "0001-01-01 00:00:00 +0000 UTC" (in time package)
+			// time.Unix(0, 0) (in unix timestamp)
+			return val.Interface().(time.Time).IsZero() || val.Interface().(time.Time).Unix() == 0
+		}
 	}
 	return false
 }
