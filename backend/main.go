@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
+	"meeting-center/src/io"
 	"meeting-center/src/middlewares"
 	"meeting-center/src/presentations"
 )
@@ -17,6 +17,7 @@ import (
 // @description This is a simple Meeting Center API
 
 func main() {
+	io.Init()
 	r := gin.Default()
 
 	// CORS middleware

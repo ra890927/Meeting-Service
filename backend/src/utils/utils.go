@@ -1,9 +1,33 @@
 package utils
 
 import (
+	"github.com/spf13/viper"
+	"os"
 	"reflect"
 	"time"
 )
+
+func InitConfig() error {
+	// get the base config first
+	viper.SetConfigName("base")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config")
+	// read base config file from ./config/base.yaml
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	// get the config file name from env
+	viper.SetConfigName(os.Getenv("CONFIG_FILE_NAME"))
+	// merge the base config and the config file
+	err = viper.MergeInConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func IsEmptyValue(val reflect.Value) bool {
 	switch val.Kind() {
