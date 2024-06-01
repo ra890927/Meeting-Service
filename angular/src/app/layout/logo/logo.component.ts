@@ -11,6 +11,6 @@ export class LogoComponent {
   constructor(private route: Router) {
   }
   navigate() {
-    this.route.navigate(['/homepage']);
+    this.route.navigate(['/']);
   }
 }
