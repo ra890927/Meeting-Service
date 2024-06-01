@@ -145,11 +145,16 @@ export class RoomComponent implements OnInit{
 
     // get all room from backend
     this.itemService.getAllRooms().subscribe((response:any)=>{
+      if (response.data.rooms === null) { 
+        this.roomsList = [];
+        return;
+      }
       this.roomsList = response.data.rooms.map((item: any) => {
         const tags = item.rules.map((ruleId: number) => {
           const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
           return tagDetail ? tagDetail.tag : null;
         }).filter((tag: any) => tag !== null);
+   
   
         return {
           id: item.id,
@@ -160,6 +165,7 @@ export class RoomComponent implements OnInit{
       });
 
     });
+    console.log('roomsList:', this.roomsList);
 
     
   }

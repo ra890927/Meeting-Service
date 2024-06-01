@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { UserService } from '../../API/user.service';
 import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -26,7 +27,8 @@ import { AdminService } from '../../API/admin.service';
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule
     
   ],
   templateUrl: './user.component.html',
@@ -50,6 +52,45 @@ export class UserComponent {
   }
 
   ngOnInit(): void {
+    // fake data
+    this.usersList = [
+      {
+        id: 1,
+        userName: 'John Doe',
+        email: '',
+        role: 'admin'
+      },
+      {
+        id: 2,
+        userName: 'Jane Doe',
+        email: '',
+        role: 'user'
+      },
+      {
+        id: 3,
+        userName: 'John Smith',
+        email: '',
+        role: 'user'
+      },
+      {
+        id: 4,
+        userName: 'Jane Smith',
+        email: '',
+        role: 'user'
+      },
+      {
+        id: 5,
+        userName: 'John Brown',
+        email: '',
+        role: 'user'
+      },
+      {
+        id: 6,
+        userName: 'Jane Brown',
+        email: '',
+        role: 'user'
+      }];
+
 
     // get all users from backend
     this.itemservice.getAllUsers().subscribe((response)=>{

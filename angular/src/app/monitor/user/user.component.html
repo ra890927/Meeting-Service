@@ -20,8 +20,17 @@
                     </mat-form-field>
                     <div class="column email" data-title="{{users.email}}">{{users.email}}</div>
                     <div class="column status role"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing || usersEditing?.id !== users.id }" (click)="changeStatus(users)">{{users.role}}</span></div>
-                    <div class="column controls actions">
-                        <mat-icon *ngIf="!isEditing" class="controls edit" matTooltip="Edit" (click)="edit(users)">edit</mat-icon>
+                    <div class="column actions">
+                        <button mat-icon-button [disabled]="isEditing && usersEditing?.id !== users.id" (click)="edit(users)"
+                        *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit"
+                        style="background-color: transparent; border: none; text-decoration: none;"
+                            [ngStyle]="{
+                                'opacity': (isEditing && usersEditing?.id !== users.id) ? 0.5 : 1,
+                                'cursor': (isEditing && usersEditing?.id !== users.id) ? 'default' : 'pointer',
+                                'pointer-events': (isEditing && usersEditing?.id !== users.id) ? 'none' : 'auto'
+                            }">
+                            <mat-icon>edit</mat-icon>
+                        </button>
                         <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
                         <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon> -->
                     </div> 

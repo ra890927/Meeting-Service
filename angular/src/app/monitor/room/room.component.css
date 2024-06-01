@@ -1,3 +1,9 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
 .room-div {
     display: flex;
     flex-direction: column;
@@ -107,8 +113,13 @@ mat-chip-row{
     position: relative;
 }
 
+.disabled-status {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .edit {
-    color: goldenrod;
+    color: goldenrod !important;
 }
 .save {
     color: goldenrod;
@@ -117,9 +128,6 @@ mat-chip-row{
     color: red;
 }
 
-.controls {
-    cursor: pointer;
-}
 .controls:hover {
     color: purple;
 }

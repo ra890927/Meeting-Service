@@ -73,10 +73,20 @@
                     <!-- Actions -->
                     <div class="column controls actions">
                         @if (!isEditing || roomsEditing.id !== rooms.id){
-                            <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(rooms)">edit</mat-icon>
+                            <button mat-icon-button [disabled]="isEditing && roomsEditing?.id !== rooms.id" (click)="edit(rooms)" class="controls edit" matTooltip="Edit"
+                                style="background-color: transparent; border: none; text-decoration: none;"
+                                [ngStyle]="{
+                                    'opacity': (isEditing && roomsEditing?.id !== rooms.id) ? 0.7 : 1,
+                                    'cursor': (isEditing && roomsEditing?.id !== rooms.id) ? 'default' : 'pointer',
+                                    'pointer-events': (isEditing && roomsEditing?.id !== rooms.id) ? 'none' : 'auto'
+                                }">
+                            <mat-icon>edit</mat-icon>
+                        </button>
                         }
                         @else {
+                            <button mat-icon-button>
                             <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                            </button>
                         }
                         <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(rooms)">delete</mat-icon> -->
                         <mat-icon class="controls delete" matTooltip="Delete" (click)="deleteAlarm('0ms', '0ms', rooms, 'Room')">delete</mat-icon>
