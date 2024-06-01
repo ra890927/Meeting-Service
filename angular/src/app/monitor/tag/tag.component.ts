@@ -59,17 +59,19 @@ export class TagComponent {
     // this.allTags.push({ id: 4, tag: 'Free WiFi', description: ''});
     // this.allTags.push({ id: 5, tag: 'Whiteboard', description: ''});
 
-    // get all tags from backend
-    this.itemService.getAllTags().subscribe((response:any)=>{
-      this.allTags = response.map((item: any) => ({
-        id: item.id,
-        tag: item.tag,
-        description: item.description
-      }));
 
-      this.codeTypeId = response[0].codeTypeId;
-      
-    });
+    this.itemService.getCodeTypeId().subscribe((response:any)=> {
+      // get code type id
+      this.codeTypeId = response.id;
+      const codeValues = response.code_values;
+      // get all tags from backend
+      this.allTags =  codeValues.map((item: any) => ({
+        id: item.id,
+        tag: item.code_value,
+        description: item.code_value_desc,
+        codeTypeId: item.code_type_id
+        }));
+      });
   }
 
   openDialog() {
@@ -96,6 +98,19 @@ export class TagComponent {
               });
               console.log('Tag created');
               console.log('createAllTags:', this.allTags);
+              
+              // get all tags from backend
+              this.itemService.getAllTags().subscribe((response:any)=>{
+                this.allTags = response.map((item: any) => ({
+                  id: item.id,
+                  tag: item.tag,
+                  description: item.description
+                }));
+                console.log('getallTags:', this.allTags);
+
+                this.codeTypeId = response[0].codeTypeId;
+                
+              });
             }
             else{
               console.log('Create failed');
@@ -104,18 +119,7 @@ export class TagComponent {
           }
         );
         
-        // get all tags from backend
-         this.itemService.getAllTags().subscribe((response:any)=>{
-          this.allTags = response.map((item: any) => ({
-            id: item.id,
-            tag: item.tag,
-            description: item.description
-          }));
-          console.log('getallTags:', this.allTags);
-
-          this.codeTypeId = response[0].codeTypeId;
-          
-        });
+        
 
       } else {
         console.log('The dialog was closed without any data');

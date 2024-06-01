@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../API/user.service';
 import { AuthService } from '../../API/auth.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -15,7 +16,8 @@ import { AuthService } from '../../API/auth.service';
     MatIconModule,
     MatButtonModule, 
     RouterLink, 
-    RouterLinkActive
+    RouterLinkActive,
+    MatTooltipModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'

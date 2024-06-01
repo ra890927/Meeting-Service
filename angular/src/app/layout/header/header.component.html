@@ -19,10 +19,10 @@
         @if (userservice.isLoggedIn()) {
           <div class="button-div">
             @if (isAdmin) {
-              <mat-icon (click) = "navigate('monitor')">admin_panel_settings</mat-icon>
+              <mat-icon (click)="navigate('monitor')" matTooltip="Admin">admin_panel_settings</mat-icon>
             }
             <!-- <div class="icon-container"> -->
-            <mat-icon (click) = "logout()">logout</mat-icon>
+            <mat-icon (click) = "logout()" matTooltip="Log out">logout</mat-icon>
             <!-- <span class="tooltip-text">log out</span> -->
             <!-- </div> -->
             

@@ -37,6 +37,17 @@ export class ItemService {
     )
 
   }
+
+  // get code type id
+  getCodeTypeId(): any {
+    return this.http.get(TAG_API + "/type/getAllCodeTypes", httpOptions).pipe(
+      map((response: any) => {
+        const filteredData = response.data.code_types.filter((item: any) => item.type_name === 'ROOM_RULE');
+        return filteredData[0];
+      })
+    )
+  }
+
   // get all rooms
   getAllRooms(): Observable<any> {
     return this.http.get(ROOM_API + 'getAllRooms', httpOptions);

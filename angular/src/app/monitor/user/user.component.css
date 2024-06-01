@@ -1,8 +1,21 @@
 .user-div {
     display: flex;
     justify-content: center;
-    background-color: #f5f1f1;
+    background-color: none;
     height: 80vh;
+}
+
+.search-bar-div{
+    z-index: 100;
+    margin-top: 20px;
+    width: 45vw;
+    display: flex;
+    justify-content: center;
+}
+
+.search-bar {
+    width: 40vw;
+    height: 85%;
 }
 
 .user-mat-card {

@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatInputModule } from '@angular/material/input';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -14,6 +14,9 @@ import { UserService } from '../../API/user.service';
 import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable, map, startWith } from 'rxjs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { co } from '@fullcalendar/core/internal-common';
 
 
 @Component({
@@ -28,7 +31,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatAutocompleteModule,
+    AsyncPipe
     
   ],
   templateUrl: './user.component.html',
@@ -48,48 +53,51 @@ export class UserComponent {
   userFromBackend: any;
   connectionError = false;
 
+  filteredOptions: Observable<users[]> | undefined;
+  emailSearchControl = new FormControl('');
+
   constructor(private userService: UserService, private itemservice:ItemService, private adminService: AdminService) {
   }
 
   ngOnInit(): void {
     // fake data
-    this.usersList = [
-      {
-        id: 1,
-        userName: 'John Doe',
-        email: '',
-        role: 'admin'
-      },
-      {
-        id: 2,
-        userName: 'Jane Doe',
-        email: '',
-        role: 'user'
-      },
-      {
-        id: 3,
-        userName: 'John Smith',
-        email: '',
-        role: 'user'
-      },
-      {
-        id: 4,
-        userName: 'Jane Smith',
-        email: '',
-        role: 'user'
-      },
-      {
-        id: 5,
-        userName: 'John Brown',
-        email: '',
-        role: 'user'
-      },
-      {
-        id: 6,
-        userName: 'Jane Brown',
-        email: '',
-        role: 'user'
-      }];
+    // this.usersList = [
+    //   {
+    //     id: 1,
+    //     userName: 'John Doe',
+    //     email: '',
+    //     role: 'admin'
+    //   },
+    //   {
+    //     id: 2,
+    //     userName: 'Jane Doe',
+    //     email: '',
+    //     role: 'user'
+    //   },
+    //   {
+    //     id: 3,
+    //     userName: 'John Smith',
+    //     email: '',
+    //     role: 'user'
+    //   },
+    //   {
+    //     id: 4,
+    //     userName: 'Jane Smith',
+    //     email: '',
+    //     role: 'user'
+    //   },
+    //   {
+    //     id: 5,
+    //     userName: 'John Brown',
+    //     email: '',
+    //     role: 'user'
+    //   },
+    //   {
+    //     id: 6,
+    //     userName: 'Jane Brown',
+    //     email: '',
+    //     role: 'user'
+    //   }];
 
 
     // get all users from backend
@@ -102,7 +110,20 @@ export class UserComponent {
           userName: user.username,
         };
       });
+
+      this.filteredOptions = this.emailSearchControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value || '')),
+      );
     });
+
+    
+  }
+
+  private _filter(value: string): users[] {
+    const filterValue = value.toLowerCase();
+    const userEmailArray: users[] = this.usersList;
+    return this.usersList.filter(userEmailArray => userEmailArray.email.toLowerCase().includes(filterValue));
   }
 
 
@@ -133,6 +154,7 @@ export class UserComponent {
     this.isEditing = !this.isEditing;
     this.usersEditing = users;
     this.userNameControl.setValue(users.userName);
+    console.log("filteredOptions", this.filteredOptions);
   }
 
   save(): void {

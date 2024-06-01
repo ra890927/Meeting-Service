@@ -17,6 +17,8 @@ import { cA } from '@fullcalendar/core/internal-common';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { DeleteAlarm } from '../delete-alarm/delete-alarm';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable, map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-room',
@@ -35,6 +37,7 @@ import { DeleteAlarm } from '../delete-alarm/delete-alarm';
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
+    MatTooltipModule
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
@@ -61,7 +64,57 @@ export class RoomComponent implements OnInit{
   allTags: string[] = [];
   allTagsDetails: string[] = []; 
 
-  constructor(public dialog: MatDialog, private itemService: ItemService, private adminService: AdminService) {
+  filteredOptions: Observable<rooms[]> | undefined;
+  roomNameSearchControl = new FormControl('');
+
+  constructor(public dialog: MatDialog, private itemService: ItemService, private adminService: AdminService) {}
+
+  ngOnInit(): void {
+    // get all tags from backend
+    this.itemService.getAllTags().subscribe((response:any)=>{
+      this.allTagsDetails = response;
+      console.log('allTagsDetails:', this.allTagsDetails);
+      this.allTags = response.map((item: any) => item.tag );
+      console.log('getAllTagsArray:', this.allTags);
+
+    // get all room from backend
+    this.itemService.getAllRooms().subscribe((response:any)=>{
+      if (response.data.rooms === null) { 
+        this.roomsList = [];
+        return;
+      }
+      console.log('response:', response);
+      this.roomsList = response.data.rooms.map((item: any) => {
+        const tags = item.rules.map((ruleId: number) => {
+          const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
+          return tagDetail ? tagDetail.tag : null;
+        }).filter((tag: any) => tag !== null);
+   
+  
+        return {
+          id: item.id,
+          roomNumber: item.room_name,
+          tags: tags,
+          capacity: item.capacity
+        };
+      });
+    });
+
+    });
+    console.log('roomsList:', this.roomsList);
+
+    this.filteredOptions = this.roomNameSearchControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
+    );
+
+    
+  }
+
+  private _filter(value: string): rooms[] {
+    const filterValue = value.toLowerCase();
+    const userRoomArray: rooms[] = this.roomsList;
+    return this.roomsList.filter(userRoomArray => userRoomArray.roomNumber.toLowerCase().includes(filterValue));
   }
 
   openDialog() {
@@ -89,30 +142,33 @@ export class RoomComponent implements OnInit{
           ''
         ).subscribe((response: any) => {
           if (response.status === 'success') {
-            console.log('Room created');}
+            console.log('Room created');
+
+            // get all room from backend
+            this.itemService.getAllRooms().subscribe((response:any)=>{
+              this.roomsList = response.data.rooms.map((item: any) => {
+                const tags = item.rules.map((ruleId: number) => {
+                  const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
+                  return tagDetail ? tagDetail.tag : null;
+                }).filter((tag: any) => tag !== null);
+          
+                return {
+                  id: item.id,
+                  roomNumber: item.room_name,
+                  tags: tags,
+                  capacity: item.capacity
+                };
+              });
+              console.log('roomsList:', this.roomsList);
+            });
+              
+          }
           else{
             console.log('Room creation failed');
             return;
           }
         });
 
-        // get all room from backend
-        this.itemService.getAllRooms().subscribe((response:any)=>{
-          this.roomsList = response.data.rooms.map((item: any) => {
-            const tags = item.rules.map((ruleId: number) => {
-              const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
-              return tagDetail ? tagDetail.tag : null;
-            }).filter((tag: any) => tag !== null);
-      
-            return {
-              id: item.id,
-              roomNumber: item.room_name,
-              tags: tags,
-              capacity: item.capacity
-            };
-          });
-          console.log('roomsList:', this.roomsList);
-        });
         
       } else {
         console.log('The dialog was closed without any data');
@@ -135,40 +191,7 @@ export class RoomComponent implements OnInit{
     });
   }
 
-  ngOnInit(): void {
-    // get all tags from backend
-    this.itemService.getAllTags().subscribe((response:any)=>{
-      this.allTagsDetails = response;
-      this.allTags = response.map((item: any) => item.tag );
-      
-    });
-
-    // get all room from backend
-    this.itemService.getAllRooms().subscribe((response:any)=>{
-      if (response.data.rooms === null) { 
-        this.roomsList = [];
-        return;
-      }
-      this.roomsList = response.data.rooms.map((item: any) => {
-        const tags = item.rules.map((ruleId: number) => {
-          const tagDetail: any = this.allTagsDetails.find((tagDetail: any) => tagDetail.id === ruleId);
-          return tagDetail ? tagDetail.tag : null;
-        }).filter((tag: any) => tag !== null);
-   
   
-        return {
-          id: item.id,
-          roomNumber: item.room_name,
-          tags: tags,
-          capacity: item.capacity
-        };
-      });
-
-    });
-    console.log('roomsList:', this.roomsList);
-
-    
-  }
 
   remove(tag: string, rooms: rooms): void {
     const index = rooms.tags.indexOf(tag);
@@ -205,11 +228,14 @@ export class RoomComponent implements OnInit{
     this.roomsEditing = rooms;
     this.roomNumberControl.setValue(rooms.roomNumber);
     this.capacityControl.setValue(rooms.capacity);
+    console.log("roomsEditing:", this.roomsEditing);
 
   }
 
   save(): void {
+    console.log('this.roomsEditing:', this.roomsEditing);
     if (this.roomsEditing) {
+      console.log('Room saved', { roomNumber: this.roomNumberControl.value, capacity: this.capacityControl.value, tags: this.roomsEditing.tags });
       this.adminService.updateRoom(
         this.roomsEditing.id,
         this.roomNumberControl.value,

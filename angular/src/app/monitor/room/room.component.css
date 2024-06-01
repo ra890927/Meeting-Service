@@ -3,7 +3,9 @@
     padding:0;
     box-sizing: border-box;
 }
-
+::ng-deep *{
+    --mdc-filled-text-field-container-color: transparent;
+}
 .room-div {
     display: flex;
     flex-direction: column;
@@ -25,6 +27,29 @@
     width: 60vw;
 }
 
+.search-bar-div {
+    z-index: 100;
+    /* margin-top: 20px; */
+    width: 45vw;
+    display: flex;
+    justify-content: center;
+
+}
+
+.search-bar {
+    width: 40vw;
+    text-decoration: none;
+    border: none;
+    border-bottom: 1px solid #000;
+    background-color: transparent;
+    font-size: 1.3em;
+    height: 100%;
+
+}
+.search-bar:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.1);
+}
 .room-mat-card {
     width: 60vw;
     height: 64vh;
