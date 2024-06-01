@@ -23,42 +23,6 @@ definitions:
       id:
         type: integer
     type: object
-  models.Room:
-    properties:
-      capacity:
-        type: integer
-      created_at:
-        type: string
-      id:
-        type: integer
-      room_name:
-        type: string
-      rules:
-        items:
-          type: string
-        type: array
-      type:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  models.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      id:
-        type: integer
-      password:
-        type: string
-      role:
-        type: string
-      updated_at:
-        type: string
-      username:
-        type: string
-    type: object
   presentations.CreateCodeTypeInput:
     properties:
       type_desc:
@@ -126,6 +90,27 @@ definitions:
       status:
         type: string
     type: object
+  presentations.CreateMeetingBody:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      organizer:
+        type: integer
+      participants:
+        items:
+          type: integer
+        type: array
+      room_id:
+        type: integer
+      start_time:
+        type: string
+      status_type:
+        type: string
+      title:
+        type: string
+    type: object
   presentations.CreateRoomInput:
     properties:
       capacity:
@@ -156,6 +141,39 @@ definitions:
                   type: integer
                 type: array
               type:
+                type: string
+            type: object
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.CreateUpdateGetMeetingResponse:
+    properties:
+      data:
+        properties:
+          meeting:
+            properties:
+              description:
+                type: string
+              end_time:
+                type: string
+              id:
+                type: string
+              organizer:
+                type: integer
+              participants:
+                items:
+                  type: integer
+                type: array
+              room_id:
+                type: integer
+              start_time:
+                type: string
+              status_type:
+                type: string
+              title:
                 type: string
             type: object
         type: object
@@ -196,6 +214,41 @@ definitions:
           code_types:
             items:
               $ref: '#/definitions/models.CodeType'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  presentations.GetAllMeetingsResponse:
+    properties:
+      data:
+        properties:
+          meetings:
+            items:
+              properties:
+                description:
+                  type: string
+                end_time:
+                  type: string
+                id:
+                  type: string
+                organizer:
+                  type: integer
+                participants:
+                  items:
+                    type: integer
+                  type: array
+                room_id:
+                  type: integer
+                start_time:
+                  type: string
+                status_type:
+                  type: string
+                title:
+                  type: string
+              type: object
             type: array
         type: object
       message:
@@ -424,6 +477,29 @@ definitions:
       message:
         type: string
       status:
+        type: string
+    type: object
+  presentations.UpdateMeetingBody:
+    properties:
+      description:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: string
+      organizer:
+        type: integer
+      participants:
+        items:
+          type: integer
+        type: array
+      room_id:
+        type: integer
+      start_time:
+        type: string
+      status_type:
+        type: string
+      title:
         type: string
     type: object
   presentations.UpdateRoomInput:
@@ -823,6 +899,136 @@ paths:
       summary: Get a code value by ID
       tags:
       - code
+  /meeting:
+    post:
+      consumes:
+      - application/json
+      description: Create a meeting
+      parameters:
+      - description: Meeting details
+        in: body
+        name: meeting
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.CreateMeetingBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Create a meeting
+      tags:
+      - Meeting
+    put:
+      consumes:
+      - application/json
+      description: Update a meeting
+      parameters:
+      - description: Meeting details
+        in: body
+        name: meeting
+        required: true
+        schema:
+          $ref: '#/definitions/presentations.UpdateMeetingBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Update a meeting
+      tags:
+      - Meeting
+  /meeting/{id}:
+    delete:
+      description: Delete a meeting
+      parameters:
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.DeleteMeetingResponse'
+      summary: Delete a meeting
+      tags:
+      - Meeting
+    get:
+      description: Get a meeting
+      parameters:
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.CreateUpdateGetMeetingResponse'
+      summary: Get a meeting
+      tags:
+      - Meeting
+  /meeting/getAllMeetings:
+    get:
+      description: Get all meetings
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get all meetings
+      tags:
+      - Meeting
+  /meeting/getMeetingsByParticipantId:
+    get:
+      description: Get meetings by participant ID
+      parameters:
+      - description: Participant ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get meetings by participant ID
+      tags:
+      - Meeting
+  /meeting/getMeetingsByRoomIdAndDatePeriod:
+    get:
+      description: Get meetings by room ID and date
+      parameters:
+      - description: Room ID
+        in: query
+        name: room_id
+        required: true
+        type: integer
+      - description: Date
+        in: query
+        name: date_from
+        required: true
+        type: string
+      - description: Date
+        in: query
+        name: date_to
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentations.GetAllMeetingsResponse'
+      summary: Get meetings by room ID and date
+      tags:
+      - Meeting
   /room/{id}:
     get:
       description: Get room by ID
