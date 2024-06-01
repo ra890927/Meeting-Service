@@ -228,6 +228,12 @@ export class RoomSchedulerComponent implements OnInit{
         const maxTime = '23:30';
         console.log(info.event.id);
         if (info.event.start&&info.event.end) {
+          if(info.event.start.getDate() !== info.event.end.getDate()){
+            this.error.set('Event must be within the same day');
+            this.success.set(null);
+            info.revert();
+            return;
+          }
           const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
           const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
           if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime || info.event.start < new Date() || info.event.extendedProps['organizer'] !== this.CurrentUser.id) {
@@ -382,9 +388,15 @@ export class RoomSchedulerComponent implements OnInit{
     if (selectInfo.allDay) {
       //set allday false and set start time to 7:00 and end time to 23:59
       let temp:String = selectInfo.startStr;
-      selectInfo.startStr = temp + 'T07:00:00';
-      selectInfo.endStr = temp + 'T24:00:00';
+      selectInfo.startStr = temp + 'T08:00:00';
+      selectInfo.endStr = temp + 'T11:30:00';
       selectInfo.allDay = false;
+    }
+    if(selectInfo.start.getDate() !== selectInfo.end.getDate()){
+      this.error.set('Event must be within the same day');
+      this.success.set(null);
+      calendarApi.unselect();
+      return;
     }
     const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
