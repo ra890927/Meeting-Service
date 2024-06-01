@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { FormControl, FormsModule, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms'
@@ -15,6 +15,8 @@ import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
 import { cA } from '@fullcalendar/core/internal-common';
 import { MatDividerModule } from '@angular/material/divider';
+
+import { DeleteAlarm } from '../delete-alarm/delete-alarm';
 
 @Component({
   selector: 'app-room',
@@ -32,7 +34,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule,
     ReactiveFormsModule,
     CommonModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css'
@@ -114,6 +116,21 @@ export class RoomComponent implements OnInit{
         
       } else {
         console.log('The dialog was closed without any data');
+      }
+    });
+  }
+
+  deleteAlarm(enterAnimationDuration: string, exitAnimationDuration: string, deleteClassType: rooms, deleteClass: string): void {
+    const dialogRef = this.dialog.open(DeleteAlarm, {
+      width: '250px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {deleteClassType, class: deleteClass},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.isDelete) {
+        console.log("Room delete: ", result.deleteClassType);
+        this.delete(result.deleteClassType);
       }
     });
   }

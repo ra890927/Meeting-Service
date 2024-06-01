@@ -14,6 +14,7 @@ import { tags } from '../users';
 import { ItemService } from '../../API/item.service';
 import { AdminService } from '../../API/admin.service';
 import { co } from '@fullcalendar/core/internal-common';
+import { DeleteAlarm } from '../delete-alarm/delete-alarm';
 
 
 @Component({
@@ -118,6 +119,21 @@ export class TagComponent {
 
       } else {
         console.log('The dialog was closed without any data');
+      }
+    });
+  }
+
+  deleteAlarm(enterAnimationDuration: string, exitAnimationDuration: string, deleteClassType: tags, deleteClass: string): void {
+    const dialogRef = this.dialog.open(DeleteAlarm, {
+      width: '250px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {deleteClassType, class: deleteClass},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.isDelete) {
+        console.log("Tag delete: ", result.deleteClassType);
+        this.delete(result.deleteClassType);
       }
     });
   }
