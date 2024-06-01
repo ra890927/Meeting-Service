@@ -29,6 +29,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 10px;
 }
 
 .detail-content-row-label{
@@ -43,13 +44,13 @@
 .rules{
     text-decoration: none;
     border:none;
-    background-color: #666;
+    background-color: #666666aa;
     color: white;
-    font-size: 10px;
+    font-size: 12px;
     cursor: pointer;
-    padding: 2px 5px;
+    padding: 3px 8px;
     margin-left: 20px;
-    border-radius: 30px;
+    border-radius: 20px;
 }
 .participants{
     display: flex;
