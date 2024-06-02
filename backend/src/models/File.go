@@ -14,7 +14,7 @@ type File struct {
 	FileName   string    `json:"file_name"`
 	FileExt    string    `json:"file_ext"`
 	CreatedAt  time.Time `json:"created_at" gorm:"autoCreateTime" swaggerignore:"true"`
-	UpdatedAt  time.Time `json:"updated_at" gorm:"autoCreateTime" swaggerignore:"true"`
+	UpdatedAt  time.Time `json:"updated_at" gorm:"autoUpdateTime" swaggerignore:"true"`
 }
 
 func (file *File) BeforeCreate(db *gorm.DB) (err error) {
