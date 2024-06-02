@@ -31,6 +31,7 @@ func main() {
 		meeingPresentation := presentations.NewMeetingPresentation()
 		roomPresentation := presentations.NewRoomPresentation()
 		userPresentation := presentations.NewUserPresentation()
+		filePresentation := presentations.NewFilePresentation()
 
 		eg := v1.Group("/user")
 		{
@@ -88,6 +89,14 @@ func main() {
 				sub.PUT("", roomPresentation.UpdateRoom)
 				sub.DELETE("/:id", roomPresentation.DeleteRoom)
 			}
+		}
+		eg = v1.Group("/file")
+		eg.Use(middlewares.AuthRequire())
+		{
+			eg.POST("", filePresentation.UploadFile)
+			eg.GET("/:id", filePresentation.GetFile)
+			eg.GET("/getFileURLsByMeetingID", filePresentation.GetFileURLsByMeetingID)
+			eg.DELETE("/:id", filePresentation.DeleteFile)
 		}
 	}
 

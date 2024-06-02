@@ -4,7 +4,7 @@ import (
 	"errors"
 	"meeting-center/src/domains"
 	"meeting-center/src/models"
-	"slices"
+	"meeting-center/src/utils"
 	"time"
 )
 
@@ -17,21 +17,6 @@ type MeetingService interface {
 	GetMeetingsByRoomIdAndDatePeriod(roomID int, dateFrom time.Time, dateTo time.Time) ([]models.Meeting, error)
 	GetMeetingsByParticipantId(participantID uint) ([]models.Meeting, error)
 }
-
-type MeetingPermission uint
-
-const (
-	Create MeetingPermission = 1 << iota
-	Update
-	Delete
-	Attach
-	Read
-	Admin       = Create | Update | Delete | Attach | Read
-	Organizer   = Create | Update | Delete | Attach | Read
-	Recorder    = Update | Attach | Read
-	Participant = Attach | Read
-	Other       = Read
-)
 
 type meetingService struct {
 	MeetingDomain domains.MeetingDomain
@@ -95,7 +80,7 @@ func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Mee
 	}
 
 	permission := ms.getPermission(operator, originalMeeting)
-	if (permission & Update) == 0 {
+	if !utils.CheckPermission(permission, utils.Update) {
 		return errors.New("only the organizer can update the meeting")
 	}
 
@@ -119,7 +104,7 @@ func (ms meetingService) DeleteMeeting(operator models.User, id string) error {
 	}
 
 	permission := ms.getPermission(operator, meeting)
-	if (permission & Delete) == 0 {
+	if !utils.CheckPermission(permission, utils.Delete) {
 		return errors.New("only the organizer can delete the meeting")
 	}
 
@@ -176,15 +161,11 @@ func (ms meetingService) GetMeetingsByParticipantId(participantID uint) ([]model
 	return participantMeetings, nil
 }
 
-func (ms meetingService) getPermission(operater models.User, meeting models.Meeting) MeetingPermission {
-	if operater.Role == "admin" {
-		return Admin
-	} else if operater.ID == meeting.OrganizerID {
-		return Organizer
-	} else if slices.Contains(meeting.Participants, operater.ID) {
-		return Participant
+func (ms meetingService) getPermission(operater models.User, meeting models.Meeting) utils.Permission {
+	if operater.Role == "admin" || operater.ID == meeting.OrganizerID {
+		return utils.Create | utils.Update | utils.Delete | utils.Read
 	} else {
-		return Other
+		return utils.Read
 	}
 }
 

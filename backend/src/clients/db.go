@@ -1,4 +1,4 @@
-package io
+package clients
 
 import (
 	"fmt"
@@ -27,6 +27,7 @@ func initDB() {
 	models := []interface{}{
 		&models.User{},
 		&models.Room{},
+		&models.File{},
 		&models.Meeting{},
 		&models.CodeType{},
 		&models.CodeValue{},
