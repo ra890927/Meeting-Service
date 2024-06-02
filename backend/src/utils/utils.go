@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/spf13/viper"
 	"os"
 	"reflect"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 func InitConfig() error {
@@ -25,6 +26,9 @@ func InitConfig() error {
 	if err != nil {
 		return err
 	}
+
+	viper.BindEnv("redis.password", "REDIS_PASSWORD")
+	viper.BindEnv("mysql.password", "MYSQL_ROOT_PASSWORD")
 
 	return nil
 }

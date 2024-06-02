@@ -3,21 +3,27 @@ package main
 import (
 	docs "meeting-center/docs"
 
+	"meeting-center/src/clients"
+	"meeting-center/src/middlewares"
+	"meeting-center/src/presentations"
+	"meeting-center/src/utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"meeting-center/src/io"
-	"meeting-center/src/middlewares"
-	"meeting-center/src/presentations"
 )
+
+func init() {
+	utils.InitConfig()
+	clients.InitDB()
+}
 
 // @title Meeting Center API
 // @version 1.0
 // @description This is a simple Meeting Center API
 
 func main() {
-	io.Init()
 	r := gin.Default()
 
 	// CORS middleware

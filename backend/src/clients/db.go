@@ -18,10 +18,7 @@ var (
 	dbOnce     sync.Once
 )
 
-func initDB() {
-
-	viper.BindEnv("mysql.password", "MYSQL_ROOT_PASSWORD")
-
+func InitDB() {
 	db := GetDBInstance()
 
 	models := []interface{}{
@@ -40,28 +37,20 @@ func initDB() {
 	}
 }
 
-func GetDSNFromConfig() (string, error) {
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+func getDSNFromConfig() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		viper.GetString("mysql.username"),
 		viper.GetString("mysql.password"),
 		viper.GetString("mysql.host"),
 		viper.GetString("mysql.port"),
 		viper.GetString("mysql.database"),
 	)
-
-	return dsn, nil
 }
 
 func GetDBInstance() *gorm.DB {
 	if dbInstance == nil {
 		dbOnce.Do(func() {
-			dsn, err := GetDSNFromConfig()
-			fmt.Println(dsn)
-			if err != nil {
-				panic("Get DSN error" + err.Error())
-			}
-			db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+			db, err := gorm.Open(mysql.Open(getDSNFromConfig()), &gorm.Config{})
 			if err != nil {
 				panic("Connect db error" + err.Error())
 			}
