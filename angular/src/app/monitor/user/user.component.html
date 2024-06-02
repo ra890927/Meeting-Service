@@ -26,25 +26,25 @@
                 <mat-list-item>
                     
                     <div class="users row">
-                        <div class="column name" *ngIf="!isEditing || usersEditing?.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
-                        <mat-form-field *ngIf="isEditing && usersEditing?.id === users.id" class="column name">
+                        <div class="column name" *ngIf="!isEditing || usersEditing.id !== users.id" data-title="{{users.userName}}">{{users.userName}}</div>
+                        <mat-form-field *ngIf="isEditing && usersEditing.id === users.id" class="column name">
                             <!-- <mat-label>User Name</mat-label> -->
                             <input matInput [formControl]="userNameControl">
                         </mat-form-field>
                         <div class="column email" data-title="{{users.email}}">{{users.email}}</div>
-                        <div class="column status role"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing || usersEditing?.id !== users.id }" (click)="changeStatus(users)">{{users.role}}</span></div>
+                        <div class="column status role"><span [ngClass]="{'admin': users.role === 'admin', 'user': users.role === 'user', 'disabled-status': !isEditing || usersEditing.id !== users.id }" (click)="changeStatus(users)">{{users.role}}</span></div>
                         <div class="column actions">
-                            <button mat-icon-button [disabled]="isEditing && usersEditing?.id !== users.id" (click)="edit(users)"
-                            *ngIf="!isEditing || usersEditing?.id !== users.id" class="controls edit" matTooltip="Edit"
+                            <button mat-icon-button [disabled]="isEditing && usersEditing.id !== users.id" (click)="edit(users)"
+                            *ngIf="!isEditing || usersEditing.id !== users.id" class="controls edit" matTooltip="Edit"
                             style="background-color: transparent; border: none; text-decoration: none;"
                                 [ngStyle]="{
-                                    'opacity': (isEditing && usersEditing?.id !== users.id) ? 0.5 : 1,
-                                    'cursor': (isEditing && usersEditing?.id !== users.id) ? 'default' : 'pointer',
-                                    'pointer-events': (isEditing && usersEditing?.id !== users.id) ? 'none' : 'auto'
+                                    'opacity': (isEditing && usersEditing.id !== users.id) ? 0.5 : 1,
+                                    'cursor': (isEditing && usersEditing.id !== users.id) ? 'default' : 'pointer',
+                                    'pointer-events': (isEditing && usersEditing.id !== users.id) ? 'none' : 'auto'
                                 }">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <mat-icon *ngIf="isEditing && usersEditing?.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                            <mat-icon *ngIf="isEditing && usersEditing.id === users.id" class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
                             <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(users)">delete</mat-icon> -->
                         </div> 
                     </div>

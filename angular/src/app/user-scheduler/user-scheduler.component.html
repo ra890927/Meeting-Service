@@ -30,14 +30,14 @@
         <full-calendar  [options]="calendarOptions" class="calendar">
             <ng-template  #eventContent let-arg>
                 <div *ngIf="isMonthView" class="month-view-event">
-                    <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || 'blue'"></span>
+                    <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || '#333'"></span>
                     <div class="time-text">{{arg.timeText}}</div>
                     <div class="booker-text" [style.fontWeight]="'bold'">Chris</div>
                 </div>
                     <div *ngIf="!isMonthView" class="event-container">
                     <div class="time-field">{{arg.timeText}}</div>
                     <div class="text-field">{{arg.event.extendedProps.organizer}}</div>
-                    <div class="text-field" style=" font-size: 1em;">{{arg.event.title}}</div>
+                    <div class="text-field" style=" font-size: 1.2em; margin: 5px;">{{arg.event.title}}</div>
                 </div>
             </ng-template>
         </full-calendar>

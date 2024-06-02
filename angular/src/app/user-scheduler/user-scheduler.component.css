@@ -107,9 +107,9 @@
     height: 90%;
     overflow-y: scroll;
 }
-.event-list-body::-webkit-scrollbar{
-    /* display: none; */
-}
+/* .event-list-body::-webkit-scrollbar{
+    display: none;
+} */
 .event-list-item-container{
     display: flex;
     flex-direction: column;
@@ -167,6 +167,8 @@
     align-items: center;
     width: 70%;
     height: 100%;
+    /* font-family: 'Courier New', Courier, monospace; */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .calendar{
@@ -183,8 +185,9 @@
 .time-field{
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
-    border-bottom: white 1px solid;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: rgba(255, 255, 255, 0.6) 1px solid;
 }
 .month-view-event {
     display: flex;
@@ -194,12 +197,17 @@
 }
 .event-dot {
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    margin-right: 5%;
+    width: 4px;
+    height: 4px;
+    margin-left: 8px;
     border-radius: 50%;
     margin-right: 4px;
 }
+
+.booker-text {
+    margin-left: 5px;
+}
+
 .date-time-container {
     display: flex;
     align-items: center;

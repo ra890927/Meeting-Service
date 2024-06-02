@@ -135,6 +135,11 @@ export class UserSchedulerComponent {
       minute: '2-digit',
       hour12: false
     },
+    slotLabelFormat: {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    },
     defaultAllDay: false,
     events: [],
     weekends: true,

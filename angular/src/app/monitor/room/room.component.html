@@ -82,12 +82,12 @@
                         <!-- Actions -->
                         <div class="column controls actions">
                             @if (!isEditing || roomsEditing.id !== rooms.id){
-                                <button mat-icon-button [disabled]="isEditing && roomsEditing?.id !== rooms.id" (click)="edit(rooms)" class="controls edit" matTooltip="Edit"
+                                <button mat-icon-button [disabled]="isEditing && roomsEditing.id !== rooms.id" (click)="edit(rooms)" class="controls edit" matTooltip="Edit"
                                     style="background-color: transparent; border: none; text-decoration: none;"
                                     [ngStyle]="{
-                                        'opacity': (isEditing && roomsEditing?.id !== rooms.id) ? 0.7 : 1,
-                                        'cursor': (isEditing && roomsEditing?.id !== rooms.id) ? 'default' : 'pointer',
-                                        'pointer-events': (isEditing && roomsEditing?.id !== rooms.id) ? 'none' : 'auto'
+                                        'opacity': (isEditing && roomsEditing.id !== rooms.id) ? 0.7 : 1,
+                                        'cursor': (isEditing && roomsEditing.id !== rooms.id) ? 'default' : 'pointer',
+                                        'pointer-events': (isEditing && roomsEditing.id !== rooms.id) ? 'none' : 'auto'
                                     }">
                                 <mat-icon>edit</mat-icon>
                             </button>

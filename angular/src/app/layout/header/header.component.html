@@ -6,7 +6,7 @@
         <mat-icon>menu</mat-icon>
       </button> if rwd -->
       <!-- <span class="example-spacer"></span> -->
-      <span class="logo" (click)="navigate('')">Meeting.com</span>
+      <span class="logo" (click)="navigate('')" matTooltip="Home Page">Meeting.com</span>
       <div class="nav-links">
         @if (userservice.isLoggedIn()) {
           <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
