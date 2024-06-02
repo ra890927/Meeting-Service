@@ -2,13 +2,13 @@ package repos
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"meeting-center/src/clients"
 	"mime/multipart"
 	"time"
 
 	"cloud.google.com/go/storage"
+	"github.com/spf13/viper"
 )
 
 type gcsRepo struct {
@@ -36,8 +36,6 @@ func (gr gcsRepo) UploadFile(ctx context.Context, file multipart.File, objectNam
 	obj := bucket.Object(objectName)
 	writer := obj.NewWriter(ctx)
 
-	fmt.Println(objectName)
-
 	if _, err := io.Copy(writer, file); err != nil {
 		return err
 	}
@@ -49,10 +47,11 @@ func (gr gcsRepo) UploadFile(ctx context.Context, file multipart.File, objectNam
 }
 
 func (gr gcsRepo) GetSignedURL(ctx context.Context, objectName string) (string, error) {
+	duration := time.Duration(viper.GetInt64("gcs.signedUrlDuration"))
 	opts := &storage.SignedURLOptions{
 		Scheme:  storage.SigningSchemeV4,
 		Method:  "GET",
-		Expires: time.Now().Add(5 * time.Minute),
+		Expires: time.Now().Add(duration * time.Minute),
 	}
 
 	url, err := gr.gcs.Bucket().SignedURL(objectName, opts)

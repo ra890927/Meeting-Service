@@ -41,3 +41,7 @@ func GetGCSInstance() *GcsInstance {
 func (gcs GcsInstance) Bucket() *storage.BucketHandle {
 	return gcs.client.Bucket(gcs.bucketName)
 }
+
+func (gcs GcsInstance) Close() error {
+	return gcs.client.Close()
+}
