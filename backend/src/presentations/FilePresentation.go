@@ -1,7 +1,6 @@
 package presentations
 
 import (
-	"fmt"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"mime/multipart"
@@ -213,8 +212,6 @@ func (fp filePresentation) GetFile(c *gin.Context) {
 		})
 		return
 	}
-
-	fmt.Println("redirect")
 
 	c.Redirect(http.StatusMovedPermanently, signedUrl)
 }
