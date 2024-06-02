@@ -4,27 +4,27 @@
     box-sizing: border-box;
 }
 /* width */
-::ng-deep ::-webkit-scrollbar {
+/* ::ng-deep ::-webkit-scrollbar {
   width: 10px;
-}
+} */
 
 /* Track */
-::ng-deep ::-webkit-scrollbar-track {
+/* ::ng-deep ::-webkit-scrollbar-track {
   background: #f1f1f1; 
-}
+} */
  
 /* Handle */
-::ng-deep ::-webkit-scrollbar-thumb {
+/* ::ng-deep ::-webkit-scrollbar-thumb {
   background: #fffbd5; 
-}
+} */
 
 /* Handle on hover */
-::ng-deep ::-webkit-scrollbar-thumb:hover {
+/* ::ng-deep ::-webkit-scrollbar-thumb:hover {
   background: #f5ffcf; 
-}
+} */
 .calendarContainer {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     height: 80vh;
@@ -32,11 +32,12 @@
 .reservation-header{
     position: absolute;
     top: 15vh;
-    right: 30px;
+    right: 15px;
     font-size: 60px;
-    font-weight: bold;
+    font-weight: 600;
     writing-mode: vertical-rl; 
     transform: rotate(360deg); 
+    font-family: Courier;
 }
 .cards_container {
     display: flex;
@@ -49,14 +50,16 @@
 }
 .rooms{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 70%;
     height: 100%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 .found{
     width: 80%;
     height: 80%;
+    margin-left: 3vw;
 }
 .not-found{
     padding: 5%;
@@ -111,20 +114,36 @@
     width: 80%;
     text-align: left;
     font-size: 1.2em;
+    margin: 5px;
 }
 .time-field{
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
-    border-bottom: white 1px solid;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: rgba(255, 255, 255, 0.6) 1px solid;
 }
 
 .button-change{
     position: absolute;
     width: fit-content;
-    top:-1px;
-    right: -1px;
+    font-size: 20px;
+    bottom: 0px;
+    right: 0px;
+    color: rgb(200, 0, 0);
+    /* color: white; */
+    /* text-shadow: 2px 2px 2px #808080; */
 }
+
+.button-change:hover{
+    color: rgb(220, 220, 220);
+}
+/* 
+::ng-deep mat-icon-button {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  } */
 
 .month-view-event {
     display: flex;
@@ -132,14 +151,16 @@
     height: 100%;
     align-items: center;
 }
+
 .event-dot {
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    margin-right: 5%;
+    width: 4px;
+    height: 4px;
+    margin-left: 8px;
     border-radius: 50%;
     margin-right: 4px;
 }
+
 .date-time-container {
     display: flex;
     align-items: center;
@@ -245,49 +266,37 @@ input{
     color: #4CAF50;
 }
 
-.error-card{
-    width: 250px;
-    height: 150px;
-    background-color: #ff0000;
-    opacity: 1.0;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 3vh;
-    right: 5vw;
-    border-radius: 17px;
-    margin: 10px;
-    z-index: 100;
-    overflow: hidden;
-}
 .success-card{
-    width: 120px;
-    height: 100px;
-    background-color: #4CAF50;
-    opacity: 1.0;
-    color: white;
+    width: fit-content;
+    height: 4vh;
+    background-color: rgba(250, 234, 211, 0.5);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    border: solid 1px rgb(253, 249, 238);
+    color: rgb(73, 73, 73);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     position: absolute;
-    right:7.5vh;
-    top:5vh;
+    right: 4%;
+    top: 16vh;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 .card-header{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.0em;
-    width: 100%;
+    text-align: center;
+    font-size: 1.4em;
     font-weight: 600;
-    height: 30%;
+    height: 100%;
 }
 .card-body{
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5em;
+    font-size: 1.2em;
     text-align: center;
-    width: 100%;
-    height: 80%;
+    height: 100%;
+    margin-left: 6px;
 }

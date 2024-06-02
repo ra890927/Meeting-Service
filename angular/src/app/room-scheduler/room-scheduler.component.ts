@@ -170,6 +170,11 @@ export class RoomSchedulerComponent implements OnInit{
       minute: '2-digit',
       hour12: false
     },
+    slotLabelFormat: {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    },
     defaultAllDay: false,
     events: [],
     weekends: true,
@@ -200,7 +205,10 @@ export class RoomSchedulerComponent implements OnInit{
         const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
         const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
         if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime || info.event.start < new Date() || info.event.extendedProps['organizer'] !== this.CurrentUser.id) {
-          this.error.set('time is invalid or you are not the organizer');
+          this.error.set('time is invalid or you are not the organizer.');
+          setTimeout(() => {
+            this.error.set(null);
+          }, 1000); 
           this.success.set(null);
           info.revert();
         }else{
@@ -208,17 +216,26 @@ export class RoomSchedulerComponent implements OnInit{
             if(response.status === 'success'){
               info.event.setStart(info.event.startStr);
               info.event.setEnd(info.event.endStr);
-              this.success.set('Event updated successfully');
+              this.success.set('Event updated successfully.');
+              setTimeout(() => {
+                this.success.set(null);
+              }, 1000);  
               this.error.set(null);
             }else{
               info.revert();
-              this.error.set('Failed to update event');
+              this.error.set('Failed to update event.');
+              setTimeout(() => {
+                this.error.set(null);
+              }, 1000); 
               this.success.set(null);
             }
           });
         }
       }else{
         this.error.set('time is invalid');
+        setTimeout(() => {
+          this.error.set(null);
+        }, 1000); 
         this.success.set(null);
         info.revert();
       }
@@ -230,6 +247,9 @@ export class RoomSchedulerComponent implements OnInit{
         if (info.event.start&&info.event.end) {
           if(info.event.start.getDate() !== info.event.end.getDate()){
             this.error.set('Event must be within the same day');
+            setTimeout(() => {
+              this.error.set(null);
+            }, 1000);
             this.success.set(null);
             info.revert();
             return;
@@ -237,7 +257,10 @@ export class RoomSchedulerComponent implements OnInit{
           const eventStartTime = info.event.start.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
           const eventEndTime = info.event.end.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
           if (eventEndTime < eventStartTime||eventStartTime < minTime || eventEndTime > maxTime || info.event.start < new Date() || info.event.extendedProps['organizer'] !== this.CurrentUser.id) {
-            this.error.set('time is invalid or you are not the organizer');
+            this.error.set('time is invalid or you are not the organizer.');
+            setTimeout(() => {
+              this.error.set(null);
+            }, 1000); 
             info.revert();
           }else{
             console.log(info.event.id);
@@ -245,10 +268,16 @@ export class RoomSchedulerComponent implements OnInit{
               if(response.status === 'success'){
                 info.event.setStart(info.event.startStr);
                 info.event.setEnd(info.event.endStr);
-                this.success.set('Event updated successfully');
+                this.success.set('Event updated successfully.');
+                setTimeout(() => {
+                  this.success.set(null);
+                }, 1000); 
                 this.error.set(null);
               }else{
-                this.error.set('Failed to update event');
+                this.error.set('Failed to update event.');
+                setTimeout(() => {
+                  this.error.set(null);
+                }, 1000); 
                 this.success.set(null);
                 info.revert();
               }
@@ -256,6 +285,9 @@ export class RoomSchedulerComponent implements OnInit{
           }
         }else{
           this.error.set('time is invalid');
+          setTimeout(() => {
+            this.error.set(null);
+          }, 1000); 
           this.success.set(null);
           info.revert();
         }
@@ -308,7 +340,11 @@ export class RoomSchedulerComponent implements OnInit{
     });
   }
   errorClick(){
+    // 設置一個超時計時器
+  setTimeout(() => {
     this.error.set(null);
+  }, 1000); // 10000 毫秒 = 10 秒
+    // this.error.set(null);
   }
   successClick(){
     this.success.set(null);
@@ -394,6 +430,9 @@ export class RoomSchedulerComponent implements OnInit{
     }
     if(selectInfo.start.getDate() !== selectInfo.end.getDate()){
       this.error.set('Event must be within the same day');
+      setTimeout(() => {
+        this.error.set(null);
+      }, 1000); 
       this.success.set(null);
       calendarApi.unselect();
       return;
@@ -418,10 +457,16 @@ export class RoomSchedulerComponent implements OnInit{
               end: selectInfo.endStr,
               allDay: selectInfo.allDay
             });
-            this.success.set('Event created successfully');
+            this.success.set('Event created successfully.');
+            setTimeout(() => {
+              this.success.set(null);
+            }, 1000); 
             this.error.set(null);
           }else{
-            this.error.set('Failed to create event');
+            this.error.set('Failed to create event.');
+            setTimeout(() => {
+              this.error.set(null);
+            }, 1000); 
             this.success.set(null);
             console.log('post event failed');
           }
@@ -445,14 +490,20 @@ export class RoomSchedulerComponent implements OnInit{
         clickInfo.event.setProp('title', data.title);
         this.itemService.putMeeting(clickInfo.event.id, data.description, data.endTime, data.organizer, data.participants, this.selectedRoom.id, data.startTime, 'approved', data.title).subscribe((response: any) => {
           if(response.status === 'success'){
-            this.success.set('Event updated successfully');
+            this.success.set('Event updated successfully.');
+            setTimeout(() => {
+              this.success.set(null);
+            }, 1000); 
             this.error.set(null);
             clickInfo.event.setExtendedProp('description', data.description);
             clickInfo.event.setExtendedProp('participants', data.participants);
             clickInfo.event.setStart(data.startTime);
             clickInfo.event.setEnd(data.endTime);
           }else{
-            this.error.set('Failed to update event');
+            this.error.set('Failed to update event.');
+            setTimeout(() => {
+              this.error.set(null);
+            }, 1000); 
             this.success.set(null);
             console.log('put event failed');
           }
@@ -467,8 +518,7 @@ export class RoomSchedulerComponent implements OnInit{
       return;
     }
     const dialogRef = this.dialog.open(PopUpDeleteConfirmComponent, {
-      width: '50%',
-      height: '50%',
+      width: '250px',
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data) {
@@ -476,10 +526,16 @@ export class RoomSchedulerComponent implements OnInit{
           if (response.status === 'success') {
             console.log('delete event success');
             this.error.set(null);
-            this.success.set('Event deleted successfully');
+            this.success.set('Event deleted successfully.');
+            setTimeout(() => {
+              this.success.set(null);
+            }, 1000); 
             event.remove();
           } else {
-            this.error.set('Failed to delete event');
+            this.error.set('Failed to delete event.');
+            setTimeout(() => {
+              this.error.set(null);
+            }, 1000); 
             this.success.set(null);
             console.log('delete event failed');
           }
