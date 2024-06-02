@@ -49,6 +49,29 @@ func (m *MockMeetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo tim
 	return args.Get(0).([]models.Meeting), args.Error(1)
 }
 
+func TestNewMeetingDomain(t *testing.T) {
+	mockMeetingRepo := new(MockMeetingRepo)
+
+	t.Run("With 0 input", func(t *testing.T) {
+		md := domains.NewMeetingDomain()
+		assert.NotNil(t, md)
+	})
+
+	t.Run("With 1 input", func(t *testing.T) {
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		assert.NotNil(t, md)
+	})
+
+	t.Run("With more than 1 input", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("NewMeetingDomain did not panic")
+			}
+		}()
+		domains.NewMeetingDomain(mockMeetingRepo, mockMeetingRepo)
+	})
+}
+
 func TestDomainCreateMeeting(t *testing.T) {
 	meeting := &models.Meeting{
 		Title:       "Board Meeting",
@@ -56,11 +79,21 @@ func TestDomainCreateMeeting(t *testing.T) {
 	}
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("CreateMeeting", meeting).Return(nil)
+	mockMeetingRepo.On("CreateMeeting", meeting).Return(nil).Once()
 	md := domains.NewMeetingDomain(mockMeetingRepo)
-	err := md.CreateMeeting(meeting)
 
-	assert.NoError(t, err)
+	t.Run("With Normal Case", func(t *testing.T) {
+		err := md.CreateMeeting(meeting)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("CreateMeeting", meeting).Return(assert.AnError).Once()
+		err := md.CreateMeeting(meeting)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestDomainUpdateMeeting(t *testing.T) {
@@ -71,22 +104,47 @@ func TestDomainUpdateMeeting(t *testing.T) {
 	}
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("UpdateMeeting", meeting).Return(nil)
 	md := domains.NewMeetingDomain(mockMeetingRepo)
-	err := md.UpdateMeeting(meeting)
 
-	assert.NoError(t, err)
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("UpdateMeeting", meeting).Return(nil).Once()
+
+		err := md.UpdateMeeting(meeting)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("UpdateMeeting", meeting).Return(assert.AnError).Once()
+
+		err := md.UpdateMeeting(meeting)
+
+		assert.Error(t, err)
+	})
+
 }
 
 func TestDomainDeleteMeeting(t *testing.T) {
 	id := "1"
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("DeleteMeeting", id).Return(nil)
 	md := domains.NewMeetingDomain(mockMeetingRepo)
-	err := md.DeleteMeeting(id)
 
-	assert.NoError(t, err)
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("DeleteMeeting", id).Return(nil).Once()
+
+		err := md.DeleteMeeting(id)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("DeleteMeeting", id).Return(assert.AnError).Once()
+
+		err := md.DeleteMeeting(id)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestDomainGetMeeting(t *testing.T) {
@@ -97,13 +155,25 @@ func TestDomainGetMeeting(t *testing.T) {
 	}
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("GetMeeting", id).Return(meeting, nil)
-	md := domains.NewMeetingDomain(mockMeetingRepo)
-	fetchedMeeting, err := md.GetMeeting(id)
 
-	assert.NoError(t, err)
-	assert.Equal(t, meeting.Title, fetchedMeeting.Title)
-	assert.Equal(t, meeting.Description, fetchedMeeting.Description)
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeeting", id).Return(meeting, nil).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeeting, err := md.GetMeeting(id)
+
+		assert.NoError(t, err)
+		assert.Equal(t, meeting.Title, fetchedMeeting.Title)
+		assert.Equal(t, meeting.Description, fetchedMeeting.Description)
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeeting", id).Return(models.Meeting{}, assert.AnError).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeeting, err := md.GetMeeting(id)
+
+		assert.Error(t, err)
+		assert.Equal(t, models.Meeting{}, fetchedMeeting)
+	})
 }
 
 func TestDomainGetAllMeetings(t *testing.T) {
@@ -117,14 +187,25 @@ func TestDomainGetAllMeetings(t *testing.T) {
 			Description: "Weekly Team Meeting",
 		},
 	}
-
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("GetAllMeetings").Return(meetings, nil)
-	md := domains.NewMeetingDomain(mockMeetingRepo)
-	fetchedMeetings, err := md.GetAllMeetings()
 
-	assert.NoError(t, err)
-	assert.Equal(t, len(meetings), len(fetchedMeetings))
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("GetAllMeetings").Return(meetings, nil).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeetings, err := md.GetAllMeetings()
+
+		assert.NoError(t, err)
+		assert.Equal(t, len(meetings), len(fetchedMeetings))
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("GetAllMeetings").Return([]models.Meeting{}, assert.AnError).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeetings, err := md.GetAllMeetings()
+
+		assert.Error(t, err)
+		assert.Empty(t, fetchedMeetings)
+	})
 }
 
 func TestDomainGetMeetingsByRoomId(t *testing.T) {
@@ -143,12 +224,23 @@ func TestDomainGetMeetingsByRoomId(t *testing.T) {
 	}
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("GetMeetingsByRoomId", roomID).Return(meetings, nil)
-	md := domains.NewMeetingDomain(mockMeetingRepo)
-	fetchedMeetings, err := md.GetMeetingsByRoomId(roomID)
 
-	assert.NoError(t, err)
-	assert.Equal(t, len(meetings), len(fetchedMeetings))
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeetingsByRoomId", roomID).Return(meetings, nil).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeetings, err := md.GetMeetingsByRoomId(roomID)
+
+		assert.NoError(t, err)
+		assert.Equal(t, len(meetings), len(fetchedMeetings))
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeetingsByRoomId", roomID).Return([]models.Meeting{}, assert.AnError).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		_, err := md.GetMeetingsByRoomId(roomID)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestDomainGetMeetingsByDatePeriod(t *testing.T) {
@@ -170,10 +262,21 @@ func TestDomainGetMeetingsByDatePeriod(t *testing.T) {
 	}
 
 	mockMeetingRepo := new(MockMeetingRepo)
-	mockMeetingRepo.On("GetMeetingsByDatePeriod", dateFrom, dateTo).Return(meetings, nil)
-	md := domains.NewMeetingDomain(mockMeetingRepo)
-	fetchedMeetings, err := md.GetMeetingsByDatePeriod(dateFrom, dateTo)
 
-	assert.NoError(t, err)
-	assert.Equal(t, len(meetings), len(fetchedMeetings))
+	t.Run("With Normal Case", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeetingsByDatePeriod", dateFrom, dateTo).Return(meetings, nil).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		fetchedMeetings, err := md.GetMeetingsByDatePeriod(dateFrom, dateTo)
+
+		assert.NoError(t, err)
+		assert.Equal(t, len(meetings), len(fetchedMeetings))
+	})
+
+	t.Run("Error in Repo", func(t *testing.T) {
+		mockMeetingRepo.On("GetMeetingsByDatePeriod", dateFrom, dateTo).Return([]models.Meeting{}, assert.AnError).Once()
+		md := domains.NewMeetingDomain(mockMeetingRepo)
+		_, err := md.GetMeetingsByDatePeriod(dateFrom, dateTo)
+
+		assert.Error(t, err)
+	})
 }
