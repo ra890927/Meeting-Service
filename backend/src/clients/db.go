@@ -1,4 +1,4 @@
-package io
+package clients
 
 import (
 	"sync"
@@ -21,6 +21,7 @@ func init() {
 	models := []interface{}{
 		&models.User{},
 		&models.Room{},
+		&models.File{},
 		&models.Meeting{},
 		&models.CodeType{},
 		&models.CodeValue{},
