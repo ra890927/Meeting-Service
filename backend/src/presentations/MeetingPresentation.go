@@ -164,8 +164,7 @@ func (mp meetingPresentation) CreateMeeting(c *gin.Context) {
 // @Success 200 {object} CreateUpdateGetMeetingResponse
 // @Router /meeting [put]
 func (mp meetingPresentation) UpdateMeeting(c *gin.Context) {
-	var operator models.User
-	operator = c.MustGet("validate_user").(models.User)
+	operator := c.MustGet("validate_user").(models.User)
 
 	var body UpdateMeetingBody
 	var response CreateUpdateGetMeetingResponse
