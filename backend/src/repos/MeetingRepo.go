@@ -1,7 +1,7 @@
 package repos
 
 import (
-	"meeting-center/src/io"
+	"meeting-center/src/clients"
 	"meeting-center/src/models"
 	"time"
 
@@ -24,7 +24,7 @@ type meetingRepo struct {
 
 func NewMeetingRepo(dbArgs ...*gorm.DB) MeetingRepo {
 	if len(dbArgs) == 0 {
-		return MeetingRepo(&meetingRepo{db: io.GetDBInstance()})
+		return MeetingRepo(&meetingRepo{db: clients.GetDBInstance()})
 	} else if len(dbArgs) == 1 {
 		return MeetingRepo(&meetingRepo{db: dbArgs[0]})
 	} else {

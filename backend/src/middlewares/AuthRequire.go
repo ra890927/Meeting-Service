@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"meeting-center/src/io"
+	"meeting-center/src/clients"
 	"meeting-center/src/models"
 )
 
@@ -25,7 +25,7 @@ func AuthRequire() gin.HandlerFunc {
 			}
 		}
 
-		redisClient := io.GetRedisInstance()
+		redisClient := clients.GetRedisInstance()
 
 		// Check if the token is valid
 		marshaledValue, err := redisClient.Get(redisClient.Context(), token.Value).Result()
