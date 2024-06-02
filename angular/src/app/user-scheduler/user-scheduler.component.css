@@ -206,6 +206,8 @@
 
 .booker-text {
     margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .date-time-container {

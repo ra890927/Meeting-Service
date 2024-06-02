@@ -44,17 +44,19 @@ import { Observable, map, startWith } from 'rxjs';
 })
 export class RoomComponent implements OnInit{
   
-  roomsList: rooms[] = [{ 
-    id: 1,
-    roomNumber: 'lab639',
-    tags: ['Food Allowed'],
-    capacity: 10,
-  },
-  { id: 2,
-    roomNumber: 'lab637',
-    tags: ['Food Allowed', 'Projector Available', 'Free WiFi'],
-    capacity: 30,
-  }];
+  roomsList: rooms[] = [
+  //   { 
+  //   id: 1,
+  //   roomNumber: 'lab639',
+  //   tags: ['Food Allowed'],
+  //   capacity: 10,
+  // },
+  // { id: 2,
+  //   roomNumber: 'lab637',
+  //   tags: ['Food Allowed', 'Projector Available', 'Free WiFi'],
+  //   capacity: 30,
+  // }
+];
   roomsEditing: rooms = {id: 0, roomNumber: '', tags: [], capacity: 0};
   isEditing: boolean = false;
   roomNumberControl = new FormControl();
@@ -98,22 +100,27 @@ export class RoomComponent implements OnInit{
           capacity: item.capacity
         };
       });
-    });
-
-    });
-    console.log('roomsList:', this.roomsList);
-
-    this.filteredOptions = this.roomNameSearchControl.valueChanges.pipe(
+      console.log('checkroomsList:', this.roomsList);
+      this.filteredOptions = this.roomNameSearchControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '')),
     );
 
+    });
+
+    });
+    
+
+    
     
   }
 
   private _filter(value: string): rooms[] {
     const filterValue = value.toLowerCase();
     const userRoomArray: rooms[] = this.roomsList;
+    if (filterValue === '') {
+      return this.roomsList;
+    }
     return this.roomsList.filter(userRoomArray => userRoomArray.roomNumber.toLowerCase().includes(filterValue));
   }
 
@@ -159,6 +166,11 @@ export class RoomComponent implements OnInit{
                   capacity: item.capacity
                 };
               });
+              this.filteredOptions = this.roomNameSearchControl.valueChanges.pipe(
+                startWith(''),
+                map(value => this._filter(value || '')),
+              );
+          
               console.log('roomsList:', this.roomsList);
             });
               
@@ -213,7 +225,12 @@ export class RoomComponent implements OnInit{
       (res) => {
         if (res.status === 'success') {
           this.roomsList = this.roomsList.filter(t => t.id !== rooms.id);
-          console.log('Room deleted');
+          console.log('Room deleted', this.roomsList);
+          this.filteredOptions = this.roomNameSearchControl.valueChanges.pipe(
+            startWith(''),
+            map(value => this._filter(value || '')),
+          );
+      
         }
         else{
           console.log('Delete failed');

@@ -140,6 +140,7 @@ export class UserSchedulerComponent {
       minute: '2-digit',
       hour12: false
     },
+    nowIndicator: true,
     defaultAllDay: false,
     events: [],
     weekends: true,

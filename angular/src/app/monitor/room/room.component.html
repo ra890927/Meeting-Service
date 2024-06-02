@@ -1,15 +1,19 @@
 <div class="room-div">
     <div class="parentDiv"> 
         <div class="inputDiv">
-            <button mat-raised-button color="primary" (click)="openDialog()">Add Room</button>   
+            <div class="button-div">
+            <button mat-raised-button color="primary" (click)="openDialog()">Add Room</button>  
+            </div>
+            <div class="search-icon"><mat-icon>search</mat-icon></div>
             <div class="search-bar-div">
-                <!-- <mat-form-field class="search-bar"> -->
-                    <!-- <mat-label>Search Email</mat-label> -->
-                    <input type="text" class="search-bar"
+                
+                <mat-form-field class="search-bar">
+                    <!-- <mat-label>Search Room</mat-label> -->
+                    <input type="text"
                         placeholder="Search Room"
                         matInput
                         [formControl]="roomNameSearchControl">
-                <!-- </mat-form-field> -->
+                </mat-form-field>
             </div>
         </div>
     </div>

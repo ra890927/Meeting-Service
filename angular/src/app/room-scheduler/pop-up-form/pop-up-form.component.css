@@ -101,3 +101,14 @@
     width: 40%;
     margin: 5px;
 }
+
+.label{
+    position: relative;
+    top:0%;
+    left: 0%;
+}
+
+::placeholder{
+    
+    color: grey;
+}

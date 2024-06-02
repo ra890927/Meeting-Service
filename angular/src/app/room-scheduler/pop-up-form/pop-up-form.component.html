@@ -28,7 +28,8 @@
                 </mat-chip-row>
             }
         </mat-chip-grid>
-        <input placeholder="Add Participant" #participantInput [formControl]="participantCtrl"
+        <mat-hint>Press Enter to add participants</mat-hint>
+        <input placeholder="add participants" #participantInput [formControl]="participantCtrl"
             [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"/>
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">

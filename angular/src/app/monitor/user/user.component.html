@@ -1,22 +1,22 @@
 <div class="user-div">
-        <mat-card class="user-mat-card">
-            <div class="search-bar-div">
-            <mat-form-field class="search-bar">
-                <!-- <mat-label>Search Email</mat-label> -->
-                <input type="text"
-                    placeholder="Search Email"
-                    matInput
-                    [formControl]="emailSearchControl">
-            </mat-form-field>
-            </div>
-            
+    <div class="search-bar-div">
+        <!-- <div class="search-icon"><mat-icon>search</mat-icon></div> -->
+        <mat-form-field class="search-bar">
+            <!-- <mat-label>Search Email</mat-label> -->
+            <input type="text"
+                placeholder="Search Email"
+                matInput
+                [formControl]="emailSearchControl">
+        </mat-form-field>
+    </div>
+    <mat-card class="user-mat-card">
         <mat-list>
             <mat-list-item>
                 <div class="list-header">
                     <div class="list-column name">Name</div>
                     <div class="list-column email">E-mail</div>
                     <div class="list-column role">Role</div>
-                    <div class="list-column action">Actions</div>
+                    <div class="list-column actions">Actions</div>
                 </div>
             </mat-list-item>
         </mat-list>

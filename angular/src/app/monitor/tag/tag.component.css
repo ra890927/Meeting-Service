@@ -22,12 +22,12 @@
     margin: 20px 0px;
     display: flex;
     justify-content: flex-start;
-    width: 45vw;
+    width: 70vw;
 }
 
 .tag-mat-card {
-    width: 45vw;
-    height: 64vh;
+    width: 70vw;
+    height: 60vh;
 }
 
 .scrollable-list {
@@ -69,17 +69,17 @@
 
 
 .name {
-    width: 20vw;
+    width: 30vw;
     /* padding: auto; */
 }
 
 .description {
-    width: 20vw;
+    width: 30vw;
     /* padding: auto; */
 }
 
 .actions {
-    width: 5vw;
+    width: 10vw;
     text-align: center;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .custom-divider {
-    width: 47vw;
+    width: 70vw;
 }
 
 

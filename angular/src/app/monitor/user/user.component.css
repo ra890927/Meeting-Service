@@ -1,28 +1,28 @@
 .user-div {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
     background-color: #f5f1f1;
     height: 80vh;
 }
 
 .search-bar-div{
     z-index: 100;
-    margin-top: 20px;
-    width: 45vw;
+    width: 30vw;
     display: flex;
     justify-content: center;
+    align-items: end;
 }
 
 .search-bar {
-    width: 40vw;
+    width: 65vw;
     height: 85%;
 }
 
 .user-mat-card {
-    width: 45vw;
-    height: 70vh;
-    margin: 20px;
-
+    width: 70vw;
+    height: 60vh;
 }
 
 .scrollable-list {
@@ -37,8 +37,7 @@
 }
 
 .list-column {
-    /* flex: 1; */
-    padding: 8px 10px;
+    padding: 8px;
     text-align: left;
     
 }
@@ -56,7 +55,6 @@
 }
 
 .users.row .column {
-    /* flex: 1; */
     padding: 8px;
     white-space: nowrap;
     overflow: hidden;
@@ -65,23 +63,20 @@
 }
 
 .name {
-    width: 10vw;
-}
-
-.email {
     width: 20vw;
 }
 
-.role{
-    width: 5vw;
+.email {
+    width: 30vw;
 }
 
-.column.role {
+.role{
+    width: 10vw;
     text-align: center;
 }
 
 .actions{
-    width: 5vw;
+    width: 10vw;
     text-align: center;
 }
 
@@ -129,7 +124,7 @@
 }
 
 .custom-divider {
-    width: 42vw;
+    width: 70vw;
 }
 
 .mat-divider.mat-divider-inset {

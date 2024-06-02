@@ -176,6 +176,7 @@ export class RoomSchedulerComponent implements OnInit{
       hour12: false
     },
     defaultAllDay: false,
+    nowIndicator: true,
     events: [],
     weekends: true,
     editable: this.isLogin,
@@ -568,7 +569,6 @@ export class RoomSchedulerComponent implements OnInit{
     this.selectedRoom = this.filteredRooms[0];
     this.handleRoomChange(this.selectedRoom);
   }
-
 }
 
 

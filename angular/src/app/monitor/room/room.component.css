@@ -21,39 +21,48 @@
 }
 
 .inputDiv {
-    margin: 20px;
+    /* margin: 20px; */
     display: flex;
     justify-content: flex-start;
-    width: 60vw;
+    width: 70vw;
+    /* height: 5vh; */
+}
+
+.button-div {
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
 }
 
 .search-bar-div {
     z-index: 100;
-    /* margin-top: 20px; */
+    /* margin-top: 60px; */
+    /* height: 10vh; */
     width: 45vw;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: end;
+    /* margin-left: 20px; */
 
 }
 
 .search-bar {
-    width: 40vw;
-    text-decoration: none;
-    border: none;
-    border-bottom: 1px solid #000;
-    background-color: transparent;
-    font-size: 1.3em;
-    height: 100%;
-    /* border-radius: 4px; */
+    width: 20vw;
+    height: 85%;
+}
 
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::after  {
+    border-bottom-color: rgba(120, 120, 120, 0.6)!important;
 }
-.search-bar:focus {
-    outline: none;
-    background-color: rgba(0, 0, 0, 0.1);
-}
+
 .room-mat-card {
-    width: 60vw;
-    height: 64vh;
+    width: 70vw;
+    height: 60vh;
     /* margin: 20px; */
 
 }
@@ -105,12 +114,12 @@ mat-chip-row{
 }
 
 .capacity{
-    width: 5vw;
+    width: 10vw;
     text-align: center;
 }
 
 .actions{
-    width: 5vw;
+    width: 10vw;
     text-align: center;
 }
 

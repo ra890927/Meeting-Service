@@ -14,7 +14,7 @@
     }
     <div class = "cards_container">
         <div class = "search-switch">
-            <mat-icon class="search-icon"  (click)="toggleSearchContainer()" [ngClass]="{ 'search': isSearchContainerOpen, 'search_off': !isSearchContainerOpen }">
+            <mat-icon class="search-icon"   (click)="toggleSearchContainer()" [ngClass]="{ 'search': isSearchContainerOpen, 'search_off': !isSearchContainerOpen }">
                 {{ isSearchContainerOpen ? 'search_off' : 'search' }}
             </mat-icon>
         </div>
@@ -22,15 +22,15 @@
                 <div class="people-container">
                     <label class="people-label">People</label>
                     <input type="number" class="people-badge" [(ngModel)]="capacity" min="0" max="100">
-                    <label class="tags-label">Tags</label>
                     <mat-select class="select-container" [(ngModel)]="selectedTags" multiple>
-                        <mat-option *ngFor="let tag of TagData" [value]="tag.id">
+                        <mat-option *ngFor="let tag of TagData" [value]="tag.id" class="tag-names">
                             {{ tag.tag }}
                         </mat-option>
                     </mat-select>
+                    <label class="tags-label">Tags</label>
                 </div>
                 <!-- Date and Time Picker for Start Date -->
-                <div class="date-time-container">
+                <div class="date-time-container date-start">
                     <mat-form-field>
                         <mat-label>Start Date</mat-label>
                         <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate">
@@ -40,7 +40,7 @@
                     <mat-form-field s>
                         <mat-label>Start Time</mat-label>
                         <input matInput [(ngModel)]="startTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
-                        <mat-hint style="color: grey">ex:07:02</mat-hint>
+                        <!-- <mat-hint style="color: grey">ex:07:02</mat-hint> -->
                     </mat-form-field>
                 </div>
                 <!-- Date and Time Picker for End Date -->
@@ -54,20 +54,20 @@
                     <mat-form-field>
                         <mat-label>End Time</mat-label>
                         <input matInput [(ngModel)]="endTime" placeholder="HH:MM" pattern="(0[7-9]|1[0-9]|2[0:3]):[0-5][0-9]" maxlength="5">
-                        <mat-hint style="color: grey">ex:17:02</mat-hint>
+                        <!-- <mat-hint style="color: grey">ex:17:02</mat-hint> -->
                     </mat-form-field>
                 </div>
                 <div class="button-container">
                     <button class="button-style"(click)="applyFilter()">Search</button>
                 </div>
           </div>
-        <div class = "card_container">
+        <div class = "card_container-room">
             <mat-card class = "card" *ngFor="let room of filteredRooms" [ngClass]="{ 'selected': selectedRoom === room }" (click)="handleRoomChange(room)">
                 <mat-card-header>
-                <mat-card-title>{{ room.room_name }}</mat-card-title>
+                <mat-card-title class="room-card-title">{{ room.room_name }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                <p>Up to {{ room.capacity }} people</p>
+                <div>Up to {{ room.capacity }} people</div>
                 @for(rule of room.rules; track rule){
                     @if(TagsTable[rule] !== undefined){
                         <button  class="show-details" matTooltip={{TagsTable[rule].tag_desc}}>
@@ -85,8 +85,10 @@
                 <div *ngIf="isMonthView" class="month-view-event">
                     <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || '#333'"></span>
                     <div class="time-text">{{arg.timeText}}</div>
-                    <div class="booker-text" [style.fontWeight]="'bold'">Chris</div>
-                    <mat-icon style="font-size: 16px; width: fit-content; height: fit-content;position:absolute; right: 0%; " (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                    <div class="booker-text" [style.fontWeight]="'bold'">{{UserTable[arg.event.extendedProps.organizer].username}}</div>
+                    @if(!(arg.event.extendedProps['organizer'] !== this.CurrentUser.id && !this.isadmin)){ 
+                        <mat-icon class="button-change-month" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                    }
                 </div>
                 <div *ngIf="!isMonthView" class="event-container">
                     <div class="time-field">{{arg.timeText}}</div>
@@ -97,8 +99,9 @@
                         <div class="text-field" matTooltip="Booker"></div>
                     }
                     <div class="text-field" matTooltip="Title">{{arg.event.title}}</div>
-                    
-                    <mat-icon class="button-change" (click)="deleteEvent(arg.event, $event)">close</mat-icon>
+                    @if(!(arg.event.extendedProps['organizer'] !== this.CurrentUser.id && !this.isadmin)){  
+                        <mat-icon class="button-change" (click)="deleteEvent(arg.event, $event)">cancel</mat-icon>
+                    }
 
                 </div>
             </ng-template>
