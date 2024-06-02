@@ -17,6 +17,12 @@ type fileService struct {
 	meetingDomain domains.MeetingDomain
 }
 
+type FileServiceArg struct {
+	GcsDomain     domains.GcsDomain
+	FileDomain    domains.FileDomain
+	MeetingDomain domains.MeetingDomain
+}
+
 type FileService interface {
 	UploadFile(ctx context.Context, operator models.User, file *models.File, object multipart.File) (string, error)
 	GetAllSignedURLsByMeeting(ctx context.Context, operator models.User, meetingID string) ([]models.File, []string, error)
@@ -24,28 +30,21 @@ type FileService interface {
 	DeleteFile(ctx context.Context, operater models.User, id string) error
 }
 
-func NewFileService(fileServiceArgs ...interface{}) FileService {
-	gcsDomain := domains.NewGcsDomain()
-	fileDomain := domains.NewFileDomain()
-	meetingDomain := domains.NewMeetingDomain()
-
-	for _, arg := range fileServiceArgs {
-		switch val := arg.(type) {
-		case domains.GcsDomain:
-			gcsDomain = val
-		case domains.FileDomain:
-			fileDomain = val
-		case domains.MeetingDomain:
-			meetingDomain = val
-		default:
-			panic("Unknown type")
+func NewFileService(fileServiceArgs ...FileServiceArg) FileService {
+	if len(fileServiceArgs) == 0 {
+		return fileService{
+			gcsDomain:     domains.NewGcsDomain(),
+			fileDomain:    domains.NewFileDomain(),
+			meetingDomain: domains.NewMeetingDomain(),
 		}
-	}
-
-	return fileService{
-		gcsDomain:     gcsDomain,
-		fileDomain:    fileDomain,
-		meetingDomain: meetingDomain,
+	} else if len(fileServiceArgs) == 1 {
+		return fileService{
+			gcsDomain:     fileServiceArgs[0].GcsDomain,
+			fileDomain:    fileServiceArgs[0].FileDomain,
+			meetingDomain: fileServiceArgs[0].MeetingDomain,
+		}
+	} else {
+		panic("too many arguments")
 	}
 }
 
