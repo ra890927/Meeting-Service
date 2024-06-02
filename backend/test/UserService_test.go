@@ -116,3 +116,4 @@ func TestServiceGetAllUsersError(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, users)
 }
+

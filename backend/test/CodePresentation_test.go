@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"fmt"
 	"meeting-center/src/models"
 	"meeting-center/src/presentations"
 	"net/http/httptest"
@@ -79,6 +80,22 @@ func TestCodePresentationTestSuite(t *testing.T) {
 	suite.Run(t, new(CodePresentationTestSuite))
 }
 
+func (suite *CodePresentationTestSuite) TestNewCodePresentation() {
+
+	mockService := new(MockCodeService)
+	cp := presentations.NewCodePresentation(mockService)
+	assert.NotNil(suite.T(), cp)
+
+
+	cp = presentations.NewCodePresentation()
+	assert.NotNil(suite.T(), cp)
+
+
+	assert.Panics(suite.T(), func() {
+		presentations.NewCodePresentation(mockService, mockService)
+	})
+}
+
 func (suite *CodePresentationTestSuite) TestCreateCodeType() {
 	// Arrange
 	codeType := &models.CodeType{
@@ -86,7 +103,7 @@ func (suite *CodePresentationTestSuite) TestCreateCodeType() {
 		TypeDesc: "This is a test type",
 	}
 
-	suite.cs.On("CreateCodeType", codeType).Return(nil)
+	suite.cs.On("CreateCodeType", codeType).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -104,6 +121,32 @@ func (suite *CodePresentationTestSuite) TestCreateCodeType() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+	suite.cs.On("CreateCodeType", codeType).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	reqBody = `{"type_name": "TestType", "type_desc": "This is a test type"}`
+	req = httptest.NewRequest("POST", "/code/type", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+	// create a request to pass to the handler with invalid JSON
+	reqBody = `{"type_name": "", "type_desc": "This is a test type"}`
+	req = httptest.NewRequest("POST", "/code/type", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }
 
 func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
@@ -114,7 +157,8 @@ func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
 		CodeValueDesc: "This is a test value",
 	}
 
-	suite.cs.On("CreateCodeValue", codeValue).Return(nil)
+
+	suite.cs.On("CreateCodeValue", codeValue).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -132,11 +176,52 @@ func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("CreateCodeValue", codeValue).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	reqBody = `{"code_type_id": 1, "code_value": "TestValue", "code_value_desc": "This is a test value"}`
+	req = httptest.NewRequest("POST", "/code/value", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+	// create a request to pass to the handler with invalid JSON
+	reqBody = `{"code_type_id": 1, "code_value": "", "code_value_desc": "This is a test value"}`
+	req = httptest.NewRequest("POST", "/code/value", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }
+
 
 func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 	// Arrange
-	suite.cs.On("GetAllCodeTypes").Return([]models.CodeType{}, nil)
+	codeTypes := []models.CodeType{
+		{
+			ID:       1,
+			TypeName: "Type1",
+			TypeDesc: "Description1",
+		},
+		{
+			ID:       2,
+			TypeName: "Type2",
+			TypeDesc: "Description2",
+		},
+	}
+
+	suite.cs.On("GetAllCodeTypes").Return(codeTypes, nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -145,6 +230,7 @@ func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 
 	// create a request to pass to the handler
 	req := httptest.NewRequest("GET", "/code/types", nil)
+	req.Header.Set("Content-Type", "application/json")
 
 	// create a response recorder
 	w := httptest.NewRecorder()
@@ -152,12 +238,85 @@ func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("GetAllCodeTypes").Return([]models.CodeType{}, fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	req = httptest.NewRequest("GET", "/code/types", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
 }
+
+func (suite *CodePresentationTestSuite) TestGetCodeValueByID() {
+	// Arrange
+	codeValueID := 1
+	codeValue := &models.CodeValue{
+		ID:            codeValueID,
+		CodeTypeID:    1,
+		CodeValue:     "TestValue",
+		CodeValueDesc: "This is a test value",
+	}
+
+	suite.cs.On("GetCodeValueByID", codeValueID).Return(codeValue, nil).Once()
+
+	// Act
+	gin.SetMode(gin.TestMode)
+	r := gin.Default()
+	r.GET("/code/value", suite.CodeService.GetCodeValueByID)
+
+	// create a request to pass to the handler
+	req := httptest.NewRequest("GET", "/code/value?id=1", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 200, w.Code)
+
+	req = httptest.NewRequest("GET", "/code/value?id=invalid", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
+
+	suite.cs.On("GetCodeValueByID", codeValueID).Return(nil, fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	req = httptest.NewRequest("GET", "/code/value?id=1", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+}
+
 
 func (suite *CodePresentationTestSuite) TestGetCodeTypeByID() {
 	// Arrange
 	codeTypeID := 1
-	suite.cs.On("GetCodeTypeByID", codeTypeID).Return(&models.CodeType{}, nil)
+	codeType := &models.CodeType{
+		ID:       codeTypeID,
+		TypeName: "TestType",
+		TypeDesc: "This is a test type",
+	}
+
+	suite.cs.On("GetCodeTypeByID", codeTypeID).Return(codeType, nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -166,6 +325,7 @@ func (suite *CodePresentationTestSuite) TestGetCodeTypeByID() {
 
 	// create a request to pass to the handler
 	req := httptest.NewRequest("GET", "/code/type?id=1", nil)
+	req.Header.Set("Content-Type", "application/json")
 
 	// create a response recorder
 	w := httptest.NewRecorder()
@@ -173,6 +333,29 @@ func (suite *CodePresentationTestSuite) TestGetCodeTypeByID() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+	req = httptest.NewRequest("GET", "/code/type?id=invalid", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
+
+	suite.cs.On("GetCodeTypeByID", codeTypeID).Return(nil, fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	req = httptest.NewRequest("GET", "/code/type?id=1", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
 }
 
 func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
@@ -183,7 +366,8 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
 		TypeDesc: "This is a test type",
 	}
 
-	suite.cs.On("UpdateCodeType", codeType).Return(nil)
+
+	suite.cs.On("UpdateCodeType", codeType).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -201,7 +385,35 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("UpdateCodeType", codeType).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	reqBody = `{"id": 1, "type_name": "TestType", "type_desc": "This is a test type"}`
+	req = httptest.NewRequest("PUT", "/code/type", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+	// create a request to pass to the handler with invalid JSON
+	reqBody = `{"id": 1, "type_name": "", "type_desc": "This is a test type"}`
+	req = httptest.NewRequest("PUT", "/code/type", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }
+
 
 func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 	// Arrange
@@ -212,7 +424,8 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 		CodeValueDesc: "This is a test value",
 	}
 
-	suite.cs.On("UpdateCodeValue", codeValue).Return(nil)
+
+	suite.cs.On("UpdateCodeValue", codeValue).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -230,13 +443,43 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("UpdateCodeValue", codeValue).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	reqBody = `{"id": 1, "code_type_id": 1, "code_value": "TestValue", "code_value_desc": "This is a test value"}`
+	req = httptest.NewRequest("PUT", "/code/value", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+	// create a request to pass to the handler with invalid JSON
+	reqBody = `{"id": 1, "code_type_id": 1, "code_value": "", "code_value_desc": "This is a test value"}`
+	req = httptest.NewRequest("PUT", "/code/value", bytes.NewBufferString(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }
+
 
 func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	// Arrange
-	codeValueID := 1
-	codeValieIDStr := strconv.Itoa(codeValueID)
-	suite.cs.On("DeleteCodeType", codeValueID).Return(nil)
+	codeTypeID := 1
+	codeTypeIDStr := strconv.Itoa(codeTypeID)
+
+
+	suite.cs.On("DeleteCodeType", codeTypeID).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -244,10 +487,7 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	r.DELETE("/code/type", suite.CodeService.DeleteCodeType)
 
 	// create a request to pass to the handler
-	req := httptest.NewRequest("DELETE", "/code/type", nil)
-	q := req.URL.Query()
-	q.Add("id", codeValieIDStr)
-	req.URL.RawQuery = q.Encode()
+	req := httptest.NewRequest("DELETE", "/code/type?id="+codeTypeIDStr, nil)
 	req.Header.Set("Content-Type", "application/json")
 
 	// create a response recorder
@@ -256,13 +496,41 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("DeleteCodeType", codeTypeID).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	req = httptest.NewRequest("DELETE", "/code/type?id="+codeTypeIDStr, nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+
+	req = httptest.NewRequest("DELETE", "/code/type?id=invalid", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }
+
 
 func (suite *CodePresentationTestSuite) TestDeleteCodeValue() {
 	// Arrange
 	codeValueID := 1
 	codeValueIDStr := strconv.Itoa(codeValueID)
-	suite.cs.On("DeleteCodeValue", codeValueID).Return(nil)
+
+
+	suite.cs.On("DeleteCodeValue", codeValueID).Return(nil).Once()
 
 	// Act
 	gin.SetMode(gin.TestMode)
@@ -270,10 +538,7 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeValue() {
 	r.DELETE("/code/value", suite.CodeService.DeleteCodeValue)
 
 	// create a request to pass to the handler
-	req := httptest.NewRequest("DELETE", "/code/value", nil)
-	q := req.URL.Query()
-	q.Add("id", codeValueIDStr)
-	req.URL.RawQuery = q.Encode()
+	req := httptest.NewRequest("DELETE", "/code/value?id="+codeValueIDStr, nil)
 	req.Header.Set("Content-Type", "application/json")
 
 	// create a response recorder
@@ -282,4 +547,28 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
+
+
+	suite.cs.On("DeleteCodeValue", codeValueID).Return(fmt.Errorf("some error")).Once()
+
+	// create a request to pass to the handler
+	req = httptest.NewRequest("DELETE", "/code/value?id="+codeValueIDStr, nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 500, w.Code)
+
+	req = httptest.NewRequest("DELETE", "/code/value?id=invalid", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// create a response recorder
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	// Assert
+	assert.Equal(suite.T(), 400, w.Code)
 }

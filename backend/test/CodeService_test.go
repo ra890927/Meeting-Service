@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"testing"
@@ -74,23 +75,39 @@ func TestCodeServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(CodeServiceTestSuite))
 }
 
-func (suite *CodeServiceTestSuite) TestCreateCodeType() {
+func (suite *CodeServiceTestSuite) TestNewCodeService() {
 	// Arrange
+	mockDomain := new(MockCodeDomain)
+
+	// Act and Assert
+
+	// Test case with one argument
+	cs := services.NewCodeService(mockDomain)
+	assert.NotNil(suite.T(), cs)
+
+	// Test case with no arguments
+	cs = services.NewCodeService()
+	assert.NotNil(suite.T(), cs)
+
+	// Test case with multiple arguments should panic
+	assert.Panics(suite.T(), func() {
+		services.NewCodeService(mockDomain, mockDomain)
+	})
+}
+
+func (suite *CodeServiceTestSuite) TestCreateCodeType() {
 	codeType := &models.CodeType{
 		TypeName: "TestType",
 		TypeDesc: "This is a test type",
 	}
 	suite.cr.On("CreateCodeType", codeType).Return(nil)
 
-	// Act
 	err := suite.cd.CreateCodeType(codeType)
 
-	// Assert
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *CodeServiceTestSuite) TestCreateCodeValue() {
-	// Arrange
 	codeValue := &models.CodeValue{
 		CodeTypeID:    1,
 		CodeValue:     "TestValue",
@@ -98,106 +115,114 @@ func (suite *CodeServiceTestSuite) TestCreateCodeValue() {
 	}
 	suite.cr.On("CreateCodeValue", codeValue).Return(nil)
 
-	// Act
 	err := suite.cd.CreateCodeValue(codeValue)
 
-	// Assert
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *CodeServiceTestSuite) TestGetAllCodeTypes() {
-	// Arrange
 	suite.cr.On("GetAllCodeTypes").Return([]models.CodeType{}, nil)
 
-	// Act
 	_, err := suite.cd.GetAllCodeTypes()
 
-	// Assert
 	assert.NoError(suite.T(), err)
 }
+
 func (suite *CodeServiceTestSuite) TestGetCodeTypeByID() {
-	// Arrange
 	suite.cr.On("GetCodeTypeByID", 1).Return(&models.CodeType{}, nil)
 
-	// Act
 	_, err := suite.cd.GetCodeTypeByID(1)
 
-	// Assert
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *CodeServiceTestSuite) TestGetCodeValueByID() {
-	// Arrange
 	suite.cr.On("GetCodeValueByID", 1).Return(&models.CodeValue{}, nil)
 
-	// Act
 	_, err := suite.cd.GetCodeValueByID(1)
 
-	// Assert
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *CodeServiceTestSuite) TestUpdateCodeType() {
-	// Arrange
 	codeType := &models.CodeType{
 		ID:       1,
 		TypeName: "TestType",
 		TypeDesc: "This is a test type",
 	}
-	suite.cr.On("GetCodeTypeByID", codeType.ID).Return(codeType, nil)
-	suite.cr.On("UpdateCodeType", codeType).Return(nil)
+	suite.cr.On("GetCodeTypeByID", codeType.ID).Return(codeType, nil).Once()
+	suite.cr.On("UpdateCodeType", codeType).Return(nil).Once()
 
-	// Act
 	err := suite.cd.UpdateCodeType(codeType)
 
-	// Assert
 	assert.NoError(suite.T(), err)
+
+	suite.cr.On("GetCodeTypeByID", codeType.ID).Return((*models.CodeType)(nil), errors.New("not found")).Once()
+
+	err = suite.cd.UpdateCodeType(codeType)
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "codeType not found", err.Error())
 }
 
 func (suite *CodeServiceTestSuite) TestUpdateCodeValue() {
-	// Arrange
 	codeValue := &models.CodeValue{
 		ID:            1,
 		CodeTypeID:    1,
 		CodeValue:     "TestValue",
 		CodeValueDesc: "This is a test value",
 	}
-	suite.cr.On("GetCodeValueByID", codeValue.ID).Return(codeValue, nil)
-	suite.cr.On("UpdateCodeValue", codeValue).Return(nil)
+	suite.cr.On("GetCodeValueByID", codeValue.ID).Return(codeValue, nil).Once()
+	suite.cr.On("UpdateCodeValue", codeValue).Return(nil).Once()
 
-	// Act
 	err := suite.cd.UpdateCodeValue(codeValue)
 
-	// Assert
 	assert.NoError(suite.T(), err)
+
+	suite.cr.On("GetCodeValueByID", codeValue.ID).Return((*models.CodeValue)(nil), errors.New("not found")).Once()
+
+	err = suite.cd.UpdateCodeValue(codeValue)
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "codeValue not found", err.Error())
 }
 
 func (suite *CodeServiceTestSuite) TestDeleteCodeType() {
-	// Arrange
+	codeTypeID := 1
 	codeType := &models.CodeType{
-		ID: 1,
+		ID: codeTypeID,
 	}
-	suite.cr.On("GetCodeTypeByID", codeType.ID).Return(codeType, nil)
-	suite.cr.On("DeleteCodeType", codeType.ID).Return(nil)
+	suite.cr.On("GetCodeTypeByID", codeTypeID).Return(codeType, nil).Once()
+	suite.cr.On("DeleteCodeType", codeTypeID).Return(nil).Once()
 
-	// Act
-	err := suite.cd.DeleteCodeType(1)
+	err := suite.cd.DeleteCodeType(codeTypeID)
 
-	// Assert
 	assert.NoError(suite.T(), err)
+
+	suite.cr.On("GetCodeTypeByID", codeTypeID).Return((*models.CodeType)(nil), errors.New("not found")).Once()
+
+	err = suite.cd.DeleteCodeType(codeTypeID)
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "codeType not found", err.Error())
 }
 
 func (suite *CodeServiceTestSuite) TestDeleteCodeValue() {
-	// Arrange
+	codeValueID := 1
 	codeValue := &models.CodeValue{
-		ID: 1,
+		ID: codeValueID,
 	}
-	suite.cr.On("GetCodeValueByID", codeValue.ID).Return(codeValue, nil)
-	suite.cr.On("DeleteCodeValue", codeValue.ID).Return(nil)
+	suite.cr.On("GetCodeValueByID", codeValueID).Return(codeValue, nil).Once()
+	suite.cr.On("DeleteCodeValue", codeValueID).Return(nil).Once()
 
-	// Act
-	err := suite.cd.DeleteCodeValue(codeValue.ID)
+	err := suite.cd.DeleteCodeValue(codeValueID)
 
-	// Assert
 	assert.NoError(suite.T(), err)
+
+	suite.cr.On("GetCodeValueByID", codeValueID).Return((*models.CodeValue)(nil), errors.New("not found")).Once()
+
+	err = suite.cd.DeleteCodeValue(codeValueID)
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "codeValue not found", err.Error())
 }

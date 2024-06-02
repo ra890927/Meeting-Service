@@ -1,12 +1,14 @@
 package test
 
 import (
+	"errors"
 	"meeting-center/src/models"
 	"meeting-center/src/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
 )
 
 type MockRoomDomain struct {
@@ -30,65 +32,113 @@ func (m *MockRoomDomain) DeleteRoom(id int) error {
 
 func (m *MockRoomDomain) GetRoomByID(id int) (*models.Room, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Room), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).(*models.Room), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (m *MockRoomDomain) GetAllRooms() ([]*models.Room, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Room), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).([]*models.Room), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
-func TestServiceCreateRoom(t *testing.T) {
-	mockRoomDomain := new(MockRoomDomain)
-	rs := services.NewRoomService(mockRoomDomain)
+type RoomServiceTestSuite struct {
+	suite.Suite
+	rs services.RoomService
+	rd *MockRoomDomain
+}
 
+func (suite *RoomServiceTestSuite) SetupTest() {
+	suite.rd = new(MockRoomDomain)
+	suite.rs = services.NewRoomService(suite.rd)
+}
+
+func TestRoomServiceTestSuite(t *testing.T) {
+	suite.Run(t, new(RoomServiceTestSuite))
+}
+
+func (suite *RoomServiceTestSuite) TestNewRoomService() {
+	// Arrange
+	mockDomain := new(MockRoomDomain)
+
+	// Act and Assert
+
+	// Test case with one argument
+	rs := services.NewRoomService(mockDomain)
+	assert.NotNil(suite.T(), rs)
+
+	// Test case with no arguments
+	rs = services.NewRoomService()
+	assert.NotNil(suite.T(), rs)
+
+	// Test case with multiple arguments should panic
+	assert.Panics(suite.T(), func() {
+		services.NewRoomService(mockDomain, mockDomain)
+	})
+}
+
+func (suite *RoomServiceTestSuite) TestCreateRoom() {
 	room := &models.Room{
 		RoomName: "Conference Room A",
 		Type:     "Board Meeting",
 		Capacity: 11,
 	}
+	suite.rd.On("CreateRoom", room).Return(nil).Once()
 
-	mockRoomDomain.On("CreateRoom", room).Return(nil)
+	err := suite.rs.CreateRoom(room)
 
-	err := rs.CreateRoom(room)
+	assert.NoError(suite.T(), err)
 
-	assert.NoError(t, err)
+	// Test error case
+	suite.rd.On("CreateRoom", room).Return(errors.New("some error")).Once()
+
+	err = suite.rs.CreateRoom(room)
+
+	assert.Error(suite.T(), err)
 }
 
-func TestServiceUpdateRoom(t *testing.T) {
-	mockRoomDomain := new(MockRoomDomain)
-	rs := services.NewRoomService(mockRoomDomain)
+func (suite *RoomServiceTestSuite) TestUpdateRoom() {
 	room := &models.Room{
 		ID:       1,
 		RoomName: "Updated Conference Room",
 		Type:     "Executive Meeting",
 		Capacity: 12,
 	}
+	suite.rd.On("UpdateRoom", room).Return(nil).Once()
 
-	mockRoomDomain.On("UpdateRoom", room).Return(nil)
+	err := suite.rs.UpdateRoom(room)
 
-	err := rs.UpdateRoom(room)
+	assert.NoError(suite.T(), err)
 
-	assert.NoError(t, err)
+	// Test error case
+	suite.rd.On("UpdateRoom", room).Return(errors.New("some error")).Once()
+
+	err = suite.rs.UpdateRoom(room)
+
+	assert.Error(suite.T(), err)
 }
 
-func TestServiceDeleteRoom(t *testing.T) {
-	mockRoomDomain := new(MockRoomDomain)
-	rs := services.NewRoomService(mockRoomDomain)
-
+func (suite *RoomServiceTestSuite) TestDeleteRoom() {
 	id := 1
+	suite.rd.On("DeleteRoom", id).Return(nil).Once()
 
-	mockRoomDomain.On("DeleteRoom", id).Return(nil)
+	err := suite.rs.DeleteRoom(id)
 
-	err := rs.DeleteRoom(id)
+	assert.NoError(suite.T(), err)
 
-	assert.NoError(t, err)
+	// Test error case
+	suite.rd.On("DeleteRoom", id).Return(errors.New("some error")).Once()
+
+	err = suite.rs.DeleteRoom(id)
+
+	assert.Error(suite.T(), err)
 }
 
-func TestServiceGetRoomByID(t *testing.T) {
-	mockRoomDomain := new(MockRoomDomain)
-	rs := services.NewRoomService(mockRoomDomain)
-
+func (suite *RoomServiceTestSuite) TestGetRoomByID() {
 	id := 1
 	room := &models.Room{
 		RoomName: "Conference Room A",
@@ -96,18 +146,23 @@ func TestServiceGetRoomByID(t *testing.T) {
 		Capacity: 10,
 	}
 
-	mockRoomDomain.On("GetRoomByID", id).Return(room, nil)
+	suite.rd.On("GetRoomByID", id).Return(room, nil).Once()
 
-	fetchedRoom, err := rs.GetRoomByID(id)
+	fetchedRoom, err := suite.rs.GetRoomByID(id)
 
-	assert.NoError(t, err)
-	assert.Equal(t, room, fetchedRoom)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), room, fetchedRoom)
+
+	// Test error case
+	suite.rd.On("GetRoomByID", id).Return(nil, errors.New("some error")).Once()
+
+	fetchedRoom, err = suite.rs.GetRoomByID(id)
+
+	assert.Error(suite.T(), err)
+	assert.Nil(suite.T(), fetchedRoom)
 }
 
-func TestServiceGetAllRooms(t *testing.T) {
-	mockRoomDomain := new(MockRoomDomain)
-	rs := services.NewRoomService(mockRoomDomain)
-
+func (suite *RoomServiceTestSuite) TestGetAllRooms() {
 	rooms := []*models.Room{
 		{
 			RoomName: "Conference Room A",
@@ -120,12 +175,18 @@ func TestServiceGetAllRooms(t *testing.T) {
 			Capacity: 20,
 		},
 	}
+	suite.rd.On("GetAllRooms").Return(rooms, nil).Once()
 
-	mockRoomDomain.On("GetAllRooms").Return(rooms, nil)
+	allRooms, err := suite.rs.GetAllRooms()
 
-	allRooms, err := rs.GetAllRooms()
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), rooms, allRooms)
 
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(allRooms))
-	assert.Equal(t, rooms, allRooms)
+	// Test error case
+	suite.rd.On("GetAllRooms").Return(nil, errors.New("some error")).Once()
+
+	allRooms, err = suite.rs.GetAllRooms()
+
+	assert.Error(suite.T(), err)
+	assert.Nil(suite.T(), allRooms)
 }
