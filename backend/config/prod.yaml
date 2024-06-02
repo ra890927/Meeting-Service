@@ -8,3 +8,5 @@ mysql:
 redis:
   host: localhost
   password: ${REDIS_PASSWORD}
+gcs:
+  bucketname: meeting-center-storage-prod
