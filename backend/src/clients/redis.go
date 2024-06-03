@@ -1,9 +1,11 @@
 package clients
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -14,11 +16,7 @@ var (
 func GetRedisInstance() *redis.Client {
 	if redisInstance == nil {
 		redisOnce.Do(func() {
-			redisClient := redis.NewClient(&redis.Options{
-				Addr:     "localhost:6379",
-				Password: "", // no password set
-				DB:       0,  // use default DB
-			})
+			redisClient := redis.NewClient(getRedisOptionsFromConfig())
 
 			_, err := redisClient.Ping(redisClient.Context()).Result()
 			if err != nil {
@@ -30,4 +28,12 @@ func GetRedisInstance() *redis.Client {
 	}
 
 	return redisInstance
+}
+
+func getRedisOptionsFromConfig() *redis.Options {
+	return &redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", viper.GetString("redis.host"), viper.GetInt("redis.port")),
+		Password: viper.GetString("redis.password"),
+		DB:       viper.GetInt("redis.database"),
+	}
 }

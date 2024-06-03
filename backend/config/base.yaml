@@ -1,0 +1,11 @@
+app:
+  port: 8080
+mysql:
+  port: 3306
+  database: MEETING_SERVICE
+redis:
+  port: 6379
+  database: 0
+gcs:
+  credential: ./docs/meeting-center-0f48b48e9bd5.json
+  signedUrlDuration: 5

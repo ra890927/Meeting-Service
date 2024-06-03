@@ -1,13 +1,16 @@
 package clients
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"meeting-center/src/models"
+
+	"github.com/spf13/viper"
 )
 
 var (
@@ -15,7 +18,7 @@ var (
 	dbOnce     sync.Once
 )
 
-func init() {
+func InitDB() {
 	db := GetDBInstance()
 
 	models := []interface{}{
@@ -34,13 +37,22 @@ func init() {
 	}
 }
 
+func getDSNFromConfig() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		viper.GetString("mysql.username"),
+		viper.GetString("mysql.password"),
+		viper.GetString("mysql.host"),
+		viper.GetString("mysql.port"),
+		viper.GetString("mysql.database"),
+	)
+}
+
 func GetDBInstance() *gorm.DB {
 	if dbInstance == nil {
 		dbOnce.Do(func() {
-			dsn := "./sqlite.db"
-			db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+			db, err := gorm.Open(mysql.Open(getDSNFromConfig()), &gorm.Config{})
 			if err != nil {
-				panic("Connect db error")
+				panic("Connect db error" + err.Error())
 			}
 
 			sqlDB, err := db.DB()
@@ -48,9 +60,9 @@ func GetDBInstance() *gorm.DB {
 				panic("Get DB instance error")
 			}
 
-			sqlDB.SetMaxIdleConns(10)
-			sqlDB.SetMaxOpenConns(100)
-			sqlDB.SetConnMaxLifetime(time.Hour)
+			sqlDB.SetMaxIdleConns(viper.GetInt("mysql.maxIdleConns"))
+			sqlDB.SetMaxOpenConns(viper.GetInt("mysql.maxOpenConns"))
+			sqlDB.SetConnMaxLifetime(time.Duration(viper.GetInt("mysql.connMaxLifetime")) * time.Second)
 
 			dbInstance = db
 		})
