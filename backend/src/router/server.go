@@ -4,16 +4,25 @@ import (
 	"context"
 	"log"
 	"meeting-center/src/clients"
+	"meeting-center/src/mail"
 	"net/http"
 	"time"
 
+	"github.com/gocraft/work"
+	"github.com/jasonlvhit/gocron"
 	"github.com/spf13/viper"
 )
 
-var HttpSrvHandler *http.Server
+var (
+	HttpSrvHandler *http.Server
+	Scheduler      *gocron.Scheduler
+	WorkerPool     *work.WorkerPool
+)
 
 func HttpServerRun() {
 	r := InitRouter()
+	Scheduler = mail.GetSchedulerInstance()
+	WorkerPool = mail.GetWorkerPoolInstance()
 
 	addr := ":" + viper.GetString("app.port")
 	HttpSrvHandler = &http.Server{
@@ -21,7 +30,13 @@ func HttpServerRun() {
 		Handler: r,
 	}
 	go func() {
-		log.Printf("[INFO] HttpServerRun: %s\n", addr)
+		log.Print("[INFO] Woker pool start")
+		// WorkerPool.Start()
+
+		log.Print("[INFO] Scheduler start")
+		Scheduler.Start()
+
+		log.Print("[INFO] HttpServerRun:", addr)
 		if err := HttpSrvHandler.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("[ERROR] HttpServerRun: %s err: %v", addr, err)
 		}
@@ -31,6 +46,8 @@ func HttpServerRun() {
 func HttpServerStop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
+	WorkerPool.Stop()
 
 	if err := HttpSrvHandler.Shutdown(ctx); err != nil {
 		log.Fatal("[ERROR] HttpServerStop err:", err)
