@@ -29,7 +29,9 @@
         <div class="detail-content-row-value">{{data.RoomDetail.room_name}}</div>
         <div class="rules-container">
             @for (rule of data.RoomDetail.rules; track rule) {
-                <button class="rules" matTooltip={{rule.description}}>{{rule.tag}}</button> 
+                @if (rule.id !== 0) {
+                    <button class="rules" matTooltip={{rule.description}}>{{rule.tag}}</button> 
+                }
             }
         </div>
     </div>

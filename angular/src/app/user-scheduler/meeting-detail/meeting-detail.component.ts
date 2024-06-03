@@ -49,7 +49,7 @@ interface MeetingDetail{
 export class MeetingDetailComponent {
   constructor(public dialogRef: MatDialogRef<MeetingDetailComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MeetingDetail) {
-      console.log(data);
+      console.log("dialog meeting:",data);
     }
 
 }

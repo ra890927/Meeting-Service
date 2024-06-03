@@ -193,6 +193,7 @@ export class UserSchedulerComponent {
       meetings: this.itemService.getMeetingByUserId(this.User.id).pipe(
         map((response: EventResponse) => {
           if (response.status === 'success') {
+            console.log("response.data.meetings", response.data.meetings);
             return response.data.meetings;
           } else {
             console.log('get meeting data failed');
@@ -245,15 +246,37 @@ export class UserSchedulerComponent {
 
         RoomDetail: (() => {
           const room = this.RoomData.find((room) => room.id === event.room_id);
+          console.log("room data", this.RoomData);
+          console.log("event", event);
           if (!room) {
-            throw new Error(`Room with ID ${event.room_id} not found`);
+            return {
+              room_name: 'Room not found',
+              rules: [], 
+
+              // room.rules.map((id) => {
+              //   const tag = this.TagData.find((tag) => tag.id === id);
+              //   console.log(this.TagData);
+              //   if (!tag) {
+              //     throw new Error(`Tag with ID ${id} not found`);
+              //   }
+              //   return tag;
+              // }),
+            };
+            // throw new Error(`Room with ID ${event.room_id} not found`);
           }
           return {
             room_name: room.room_name,
             rules: room.rules.map((id) => {
               const tag = this.TagData.find((tag) => tag.id === id);
+              console.log(this.TagData);
               if (!tag) {
-                throw new Error(`Tag with ID ${id} not found`);
+                return {
+                  id: 0,
+                  tag: 'Tag not found',
+                  description: 'Tag not found',
+                  codeTypeId: 0
+                };
+                // throw new Error(`Tag with ID ${id} not found`);
               }
               return tag;
             }),
@@ -261,6 +284,7 @@ export class UserSchedulerComponent {
         })(),
       };
     });
+    console.log("detailsInfo", this.detailsInfo);
   }
   handleCalendarToggle() {
     this.calendarVisible.update((bool) => !bool);
