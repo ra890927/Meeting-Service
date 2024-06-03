@@ -9,3 +9,11 @@ redis:
 gcs:
   credential: ./docs/meeting-center-0f48b48e9bd5.json
   signedUrlDuration: 5
+mail:
+  namespace: email_jobs
+  concurrency: 10
+  redigo:
+    maxActive: 5
+    maxIdle: 5
+    wait: true
+    port: 6379
