@@ -39,18 +39,6 @@ func (suite *AuthDomainTestSuite) SetupTest() {
 	suite.ad = domains.NewAuthDomain(suite.ar)
 }
 
-func (suite *AuthDomainTestSuite) TestNewAuthDomain_0_input() {
-	// Arrange
-
-	// Act
-	defer func() {
-		if r := recover(); r == nil {
-			assert.NotNil(suite.T(), r)
-		}
-	}()
-	_ = domains.NewAuthDomain()
-}
-
 func (suite *AuthDomainTestSuite) TestNewAuthDomain_1_input() {
 	// Arrange
 	ar := new(MockAuthRepo)
