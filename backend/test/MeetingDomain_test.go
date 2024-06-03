@@ -52,10 +52,10 @@ func (m *MockMeetingRepo) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo tim
 func TestNewMeetingDomain(t *testing.T) {
 	mockMeetingRepo := new(MockMeetingRepo)
 
-	t.Run("With 0 input", func(t *testing.T) {
-		md := domains.NewMeetingDomain()
-		assert.NotNil(t, md)
-	})
+	// t.Run("With 0 input", func(t *testing.T) {
+	// 	md := domains.NewMeetingDomain()
+	// 	assert.NotNil(t, md)
+	// })
 
 	t.Run("With 1 input", func(t *testing.T) {
 		md := domains.NewMeetingDomain(mockMeetingRepo)

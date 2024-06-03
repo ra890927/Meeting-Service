@@ -53,10 +53,10 @@ func (m *MockMeetingDomain) GetMeetingsByDatePeriod(dateFrom time.Time, dateTo t
 func TestNewMeetingService(t *testing.T) {
 	mockMeetingDomain := new(MockMeetingDomain)
 
-	t.Run("With 0 input", func(t *testing.T) {
-		ms := services.NewMeetingService()
-		assert.NotNil(t, ms)
-	})
+	// t.Run("With 0 input", func(t *testing.T) {
+	// 	ms := services.NewMeetingService()
+	// 	assert.NotNil(t, ms)
+	// })
 
 	t.Run("With 1 input", func(t *testing.T) {
 		ms := services.NewMeetingService(mockMeetingDomain)

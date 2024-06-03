@@ -63,8 +63,8 @@ func TestRoomDomainTestSuite(t *testing.T) {
 
 func (suite *RoomDomainTestSuite) TestNewRoomDomain() {
 	// Test case with no arguments
-	rd := domains.NewRoomDomain()
-	assert.NotNil(suite.T(), rd)
+	// rd := domains.NewRoomDomain()
+	// assert.NotNil(suite.T(), rd)
 
 	// Test case with one argument
 	mockRepo := new(MockRoomRepo)

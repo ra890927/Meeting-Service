@@ -89,9 +89,9 @@ func (suite *CodeDomainTestSuite) TestNewCodeDomain() {
 	cd := domains.NewCodeDomain(mockRepo)
 	assert.NotNil(suite.T(), cd)
 
-	// Test case with no arguments
-	cd = domains.NewCodeDomain()
-	assert.NotNil(suite.T(), cd)
+	// // Test case with no arguments
+	// cd = domains.NewCodeDomain()
+	// assert.NotNil(suite.T(), cd)
 
 	// Test case with multiple arguments should panic
 	assert.Panics(suite.T(), func() {

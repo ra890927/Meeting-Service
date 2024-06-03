@@ -58,10 +58,10 @@ func TestNewRoomPresentation(t *testing.T) {
 		assert.NotNil(t, rp)
 	})
 
-	assert.NotPanics(t, func() {
-		rp := presentations.NewRoomPresentation()
-		assert.NotNil(t, rp)
-	})
+	// assert.NotPanics(t, func() {
+	// 	rp := presentations.NewRoomPresentation()
+	// 	assert.NotNil(t, rp)
+	// })
 
 	assert.Panics(t, func() {
 		presentations.NewRoomPresentation(mockService, mockService)

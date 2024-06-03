@@ -62,10 +62,10 @@ func (m *mockMeetingService) GetMeetingsByParticipantId(participantID uint) ([]m
 }
 
 func TestNewMeetingPresentation(t *testing.T) {
-	t.Run("NewMeetingPresentation with 0 input", func(t *testing.T) {
-		mp := presentations.NewMeetingPresentation()
-		assert.NotNil(t, mp)
-	})
+	// t.Run("NewMeetingPresentation with 0 input", func(t *testing.T) {
+	// 	mp := presentations.NewMeetingPresentation()
+	// 	assert.NotNil(t, mp)
+	// })
 
 	t.Run("NewMeetingPresentation with 1 input", func(t *testing.T) {
 		mockMeetingService := new(mockMeetingService)

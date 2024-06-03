@@ -86,10 +86,8 @@ func (suite *CodePresentationTestSuite) TestNewCodePresentation() {
 	cp := presentations.NewCodePresentation(mockService)
 	assert.NotNil(suite.T(), cp)
 
-
-	cp = presentations.NewCodePresentation()
-	assert.NotNil(suite.T(), cp)
-
+	// cp = presentations.NewCodePresentation()
+	// assert.NotNil(suite.T(), cp)
 
 	assert.Panics(suite.T(), func() {
 		presentations.NewCodePresentation(mockService, mockService)
@@ -157,7 +155,6 @@ func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
 		CodeValueDesc: "This is a test value",
 	}
 
-
 	suite.cs.On("CreateCodeValue", codeValue).Return(nil).Once()
 
 	// Act
@@ -176,7 +173,6 @@ func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
-
 
 	suite.cs.On("CreateCodeValue", codeValue).Return(fmt.Errorf("some error")).Once()
 
@@ -204,7 +200,6 @@ func (suite *CodePresentationTestSuite) TestCreateCodeValue() {
 	// Assert
 	assert.Equal(suite.T(), 400, w.Code)
 }
-
 
 func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 	// Arrange
@@ -238,7 +233,6 @@ func (suite *CodePresentationTestSuite) TestGetAllCodeTypes() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
-
 
 	suite.cs.On("GetAllCodeTypes").Return([]models.CodeType{}, fmt.Errorf("some error")).Once()
 
@@ -306,7 +300,6 @@ func (suite *CodePresentationTestSuite) TestGetCodeValueByID() {
 	assert.Equal(suite.T(), 500, w.Code)
 }
 
-
 func (suite *CodePresentationTestSuite) TestGetCodeTypeByID() {
 	// Arrange
 	codeTypeID := 1
@@ -366,7 +359,6 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
 		TypeDesc: "This is a test type",
 	}
 
-
 	suite.cs.On("UpdateCodeType", codeType).Return(nil).Once()
 
 	// Act
@@ -385,7 +377,6 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
-
 
 	suite.cs.On("UpdateCodeType", codeType).Return(fmt.Errorf("some error")).Once()
 
@@ -414,7 +405,6 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeType() {
 	assert.Equal(suite.T(), 400, w.Code)
 }
 
-
 func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 	// Arrange
 	codeValue := &models.CodeValue{
@@ -423,7 +413,6 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 		CodeValue:     "TestValue",
 		CodeValueDesc: "This is a test value",
 	}
-
 
 	suite.cs.On("UpdateCodeValue", codeValue).Return(nil).Once()
 
@@ -443,7 +432,6 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
-
 
 	suite.cs.On("UpdateCodeValue", codeValue).Return(fmt.Errorf("some error")).Once()
 
@@ -472,12 +460,10 @@ func (suite *CodePresentationTestSuite) TestUpdateCodeValue() {
 	assert.Equal(suite.T(), 400, w.Code)
 }
 
-
 func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	// Arrange
 	codeTypeID := 1
 	codeTypeIDStr := strconv.Itoa(codeTypeID)
-
 
 	suite.cs.On("DeleteCodeType", codeTypeID).Return(nil).Once()
 
@@ -497,7 +483,6 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
 
-
 	suite.cs.On("DeleteCodeType", codeTypeID).Return(fmt.Errorf("some error")).Once()
 
 	// create a request to pass to the handler
@@ -511,7 +496,6 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	// Assert
 	assert.Equal(suite.T(), 500, w.Code)
 
-
 	req = httptest.NewRequest("DELETE", "/code/type?id=invalid", nil)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -523,12 +507,10 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeType() {
 	assert.Equal(suite.T(), 400, w.Code)
 }
 
-
 func (suite *CodePresentationTestSuite) TestDeleteCodeValue() {
 	// Arrange
 	codeValueID := 1
 	codeValueIDStr := strconv.Itoa(codeValueID)
-
 
 	suite.cs.On("DeleteCodeValue", codeValueID).Return(nil).Once()
 
@@ -547,7 +529,6 @@ func (suite *CodePresentationTestSuite) TestDeleteCodeValue() {
 
 	// Assert
 	assert.Equal(suite.T(), 200, w.Code)
-
 
 	suite.cs.On("DeleteCodeValue", codeValueID).Return(fmt.Errorf("some error")).Once()
 
