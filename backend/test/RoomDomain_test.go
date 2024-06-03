@@ -4,11 +4,11 @@ import (
 	"errors"
 	"testing"
 
-	"meeting-center/src/domains"
-	"meeting-center/src/models" 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"meeting-center/src/domains"
+	"meeting-center/src/models"
 )
 
 type MockRoomRepo struct {
@@ -68,7 +68,7 @@ func (suite *RoomDomainTestSuite) TestNewRoomDomain() {
 
 	// Test case with one argument
 	mockRepo := new(MockRoomRepo)
-	rd = domains.NewRoomDomain(mockRepo)
+	rd := domains.NewRoomDomain(mockRepo)
 	assert.NotNil(suite.T(), rd)
 
 	// Test case with too many arguments should panic
