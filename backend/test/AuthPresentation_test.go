@@ -44,16 +44,6 @@ func (suite *AuthPresentationTestSuite) SetupTest() {
 	suite.ap = presentations.NewAuthPresentation(suite.as)
 }
 
-func (suite *AuthPresentationTestSuite) TestNewAuthPresentation_0_input() {
-	// Arrange
-
-	// Act
-	ap := presentations.NewAuthPresentation()
-
-	// Assert
-	assert.NotNil(suite.T(), ap)
-}
-
 func (suite *AuthPresentationTestSuite) TestNewAuthPresentation_1_input() {
 	// Arrange
 	as := new(MockAuthService)

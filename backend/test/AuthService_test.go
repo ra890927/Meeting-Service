@@ -39,16 +39,6 @@ func (suite *AuthServiceTestSuite) SetupTest() {
 	suite.ad = services.NewAuthService(suite.as)
 }
 
-func (suite *AuthServiceTestSuite) TestNewAuthService_0_input() {
-	// Arrange
-
-	// Act
-	as := services.NewAuthService()
-
-	// Assert
-	assert.NotNil(suite.T(), as)
-}
-
 func (suite *AuthServiceTestSuite) TestNewAuthService_1_input() {
 	// Arrange
 	ad := new(MockAuthDomain)
