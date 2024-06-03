@@ -108,7 +108,7 @@ func InitRouter() *gin.Engine {
 		{
 			eg.POST("", filePresentation.UploadFile)
 			eg.GET("/:id", filePresentation.GetFile)
-			eg.GET("/getFileURLsByMeetingID", filePresentation.GetFileURLsByMeetingID)
+			eg.GET("/getFileURLsByMeetingID/:meeting_id", filePresentation.GetFileURLsByMeetingID)
 			eg.DELETE("/:id", filePresentation.DeleteFile)
 		}
 	}
