@@ -30,6 +30,7 @@ type FileResponse struct {
 	Url        string `json:"url"`
 	UploaderID uint   `json:"uploader_id"`
 	FileName   string `json:"file_name"`
+	FileID     string `json:"file_id"`
 }
 
 type UploadFileResponse struct {
@@ -39,6 +40,7 @@ type UploadFileResponse struct {
 		Url        string `json:"url"`
 		UploaderID uint   `json:"uploader_id"`
 		FileName   string `json:"file_name"`
+		FileID     string `json:"file_id"`
 	} `json:"data"`
 }
 
@@ -49,6 +51,7 @@ type GetFileURLsByMeetingIDResponse struct {
 		Url        string `json:"url"`
 		UploaderID uint   `json:"uploader_id"`
 		FileName   string `json:"file_name"`
+		FileID     string `json:"file_id"`
 	} `json:"data"`
 }
 
@@ -139,6 +142,7 @@ func (fp filePresentation) UploadFile(c *gin.Context) {
 			Url:        url,
 			UploaderID: operator.ID,
 			FileName:   form.FormFile.Filename,
+			FileID:     file.ID,
 		},
 	}
 
@@ -183,6 +187,7 @@ func (fp filePresentation) GetFileURLsByMeetingID(c *gin.Context) {
 			Url:        urls[i],
 			UploaderID: files[i].UploaderID,
 			FileName:   files[i].FileName,
+			FileID:     files[i].ID,
 		})
 	}
 
