@@ -1,20 +1,19 @@
 app:
-  port: 8080
+    port: 8080
 mysql:
-  port: 3306
-  database: MEETING_SERVICE
+    port: 3306
 redis:
-  port: 6379
-  database: 0
-gcs:
-  credential: ./docs/meeting-center-0f48b48e9bd5.json
-  signedUrlDuration: 5
-mail:
-  sender: chichichipeipei@gmail.com
-  namespace: email_jobs
-  concurrency: 10
-  redigo:
-    maxActive: 5
-    maxIdle: 5
-    wait: true
     port: 6379
+    database: 0
+gcs:
+    credential: ./docs/meeting-center-0f48b48e9bd5.json
+    signedUrlDuration: 5
+mail:
+    sender: chichichipeipei@gmail.com
+    namespace: email_jobs
+    concurrency: 10
+    redigo:
+        maxActive: 5
+        maxIdle: 5
+        wait: true
+        port: 6379
