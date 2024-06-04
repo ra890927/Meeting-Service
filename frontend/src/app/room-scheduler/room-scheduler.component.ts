@@ -288,7 +288,13 @@ export class RoomSchedulerComponent implements OnInit{
     }
   };
   ngOnInit(){
-    this.CurrentUser = this.userService.getUser();
+    if(!this.userService.isLoggedIn()){
+      this.CurrentUser = {id: 0, username: '', email: '', role: ''};
+    }
+    else{
+      this.CurrentUser = this.userService.getUser();
+    }
+    // this.CurrentUser = this.userService.getUser();
     this.isLogin = this.userService.isLoggedIn();
     this.calendarOptions.editable = this.isLogin;
     this.calendarOptions.selectable = this.isLogin;

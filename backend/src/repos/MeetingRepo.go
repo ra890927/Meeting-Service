@@ -67,7 +67,7 @@ func (mr meetingRepo) GetMeeting(id string) (models.Meeting, error) {
 
 func (mr meetingRepo) GetAllMeetings() ([]models.Meeting, error) {
 	var meetings []models.Meeting
-	result := mr.db.Find(&meetings)
+	result := mr.db.Order("start_time ASC").Find(&meetings)
 	if result.Error != nil {
 		return []models.Meeting{}, result.Error
 	}

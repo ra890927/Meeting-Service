@@ -219,6 +219,10 @@ export class UserSchedulerComponent {
   }
   calendarVisible = signal(true);
 
+  isEventInFuture(eventStart: string): boolean {
+    return new Date(eventStart) > new Date();
+  }
+
   currentEvents = signal<EventApi[]>([]);
   generateDetailsInfo() {
     this.detailsInfo = this.EventData.map((event) => {
@@ -247,6 +251,7 @@ export class UserSchedulerComponent {
           const room = this.RoomData.find((room) => room.id === event.room_id);
           console.log("room data", this.RoomData);
           console.log("event", event);
+          console.log("now", new Date());
           if (!room) {
             return {
               room_name: 'Room not found',

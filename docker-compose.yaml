@@ -1,0 +1,103 @@
+version: '3'
+networks:
+  app-network:
+    driver: bridge
+services:
+  db:
+    image: mysql:8.4.0
+    networks:
+      - app-network
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./sqls:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysql --user=root --password=$MYSQL_ROOT_PASSWORD --host=localhost --execute 'SHOW TABLES IN MEETING_SERVICE;'"]
+  redis:
+    image: redis:7.2.5
+    networks:
+      - app-network
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    command: redis-server --requirepass $REDIS_PASSWORD
+    volumes:
+      - ./redis:/data
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+  grafana:
+    image: grafana/grafana:11.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    env_file:
+      - .env
+    depends_on:
+      - prometheus
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+    env_file:
+      - .env
+    command: 
+      - --config.file=/etc/prometheus/prometheus.yaml
+    depends_on:
+      - backend
+  sql_exporter:
+    image: prom/mysqld-exporter:main
+    container_name: sql_exporter
+    ports:
+      - "9104:9104"
+    volumes:
+      - ./.my.cnf:/.my.cnf
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - '9100:9100'
+  frontend:
+    image: meeting-center-frontend:lastest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+    ports:
+      - '4200:80'
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_BACKEND_URL: http://140.113.215.132:8080
+
+volumes:
+  grafana-storage:
+  prometheus-data:
