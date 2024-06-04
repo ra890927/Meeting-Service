@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"meeting-center/src/domains"
+	"meeting-center/src/mail"
 	"meeting-center/src/models"
 	"meeting-center/src/utils"
 	"time"
@@ -69,6 +70,9 @@ func (ms meetingService) CreateMeeting(operator models.User, meeting *models.Mee
 	if err != nil {
 		return errors.New("error when creating meeting")
 	}
+
+	mail.SendEmailByMeeting(*meeting)
+
 	return nil
 }
 
@@ -93,6 +97,9 @@ func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Mee
 	if err != nil {
 		return errors.New("error when updating meeting")
 	}
+
+	mail.SendEmailByMeeting(*meeting)
+
 	return nil
 }
 
