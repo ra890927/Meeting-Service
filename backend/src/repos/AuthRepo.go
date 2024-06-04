@@ -64,7 +64,7 @@ func (ar authRepo) Login(user *models.User) (*models.User, *string, error) {
 	cnt := 0
 	token := ""
 	for {
-		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().String()+strconv.Itoa(cnt)), bcrypt.DefaultCost)
+		hash, err := bcrypt.GenerateFromPassword([]byte(existingUser.Email+time.Now().Format(time.RFC3339)+strconv.Itoa(cnt)), bcrypt.DefaultCost)
 		if err != nil {
 			return nil, nil, err
 		}
