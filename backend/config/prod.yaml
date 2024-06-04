@@ -1,12 +1,14 @@
 mysql:
-  host: db
-  username: root
-  password: ${MYSQL_ROOT_PASSWORD}
-  maxIdleConns: 10
-  maxOpenConns: 100
-  maxLifetimeSec: 3600
+    host: db
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD}
+    maxIdleConns: 10
+    maxOpenConns: 100
+    maxLifetimeSec: 3600
 redis:
-  host: redis
-  password: ${REDIS_PASSWORD}
+    host: redis
+    password: ${REDIS_PASSWORD}
 gcs:
-  bucketname: meeting-center-storage-prod
+    bucketname: meeting-center-storage-prod
+mail:
+    apiKey: ${SENDGRID_API_KEY}

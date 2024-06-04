@@ -29,6 +29,7 @@ func InitConfig() error {
 
 	viper.BindEnv("redis.password", "REDIS_PASSWORD")
 	viper.BindEnv("mysql.password", "MYSQL_ROOT_PASSWORD")
+	viper.BindEnv("mail.apiKey", "SENDGRID_API_KEY")
 
 	return nil
 }
