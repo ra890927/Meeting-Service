@@ -129,6 +129,7 @@
     text-align: left;
     font-size: 1.2em;
     margin: 5px;
+    overflow: hidden;
 }
 .time-field{
     width: 100%;
@@ -136,6 +137,10 @@
     font-size: 12px;
     font-weight: bold;
     border-bottom: rgba(255, 255, 255, 0.6) 1px solid;
+    overflow: hidden;
+}
+::ng-deep .fc-timegrid-event{
+    overflow: hidden;
 }
 
 .button-change{
@@ -275,6 +280,8 @@ input{
     --mat-select-enabled-arrow-color: white; /* Change this to your desired color */
     --fc-event-bg-color: #537b4a;
     --fc-event-border-color: #6e7e6a;
+    --mat-full-pseudo-checkbox-selected-icon-color: rgba(120, 130, 142, 0.8);
+    --mat-option-selected-state-label-text-color: rgba(120, 130, 142);
 }
 ::ng-deep .mat-mdc-select-value {
     display: none;
@@ -362,4 +369,8 @@ input{
 ::ng-deep .fc-timegrid-event-harness{
     opacity: 0.9;
     background-color: rgba(181,196,177)!important;
+}
+
+.event-container{
+    overflow: hidden;
 }
