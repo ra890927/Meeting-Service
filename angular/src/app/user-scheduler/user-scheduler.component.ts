@@ -151,11 +151,11 @@ export class UserSchedulerComponent {
     selectOverlap: false,
     eventOverlap: false,
     validRange: {
-      start: '7:00:00',
-      end: '23:59:59'
+      start: '8:00:00',
+      end: '23:30:00'
     },
-    slotMaxTime: '23:59:59',
-    slotMinTime: '7:00:00',
+    slotMaxTime: '23:30:00',
+    slotMinTime: '8:00:00',
     firstDay: 7,
     eventClick: this.handleEventClick.bind(this),
     eventsSet: this.handleEvents.bind(this),
@@ -251,17 +251,7 @@ export class UserSchedulerComponent {
             return {
               room_name: 'Room not found',
               rules: [], 
-
-              // room.rules.map((id) => {
-              //   const tag = this.TagData.find((tag) => tag.id === id);
-              //   console.log(this.TagData);
-              //   if (!tag) {
-              //     throw new Error(`Tag with ID ${id} not found`);
-              //   }
-              //   return tag;
-              // }),
-            };
-            // throw new Error(`Room with ID ${event.room_id} not found`);
+            }
           }
           return {
             room_name: room.room_name,
@@ -275,7 +265,6 @@ export class UserSchedulerComponent {
                   description: 'Tag not found',
                   codeTypeId: 0
                 };
-                // throw new Error(`Tag with ID ${id} not found`);
               }
               return tag;
             }),
