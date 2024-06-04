@@ -10,6 +10,7 @@ gcs:
   credential: ./docs/meeting-center-0f48b48e9bd5.json
   signedUrlDuration: 5
 mail:
+  sender: chichichipeipei@gmail.com
   namespace: email_jobs
   concurrency: 10
   redigo:
