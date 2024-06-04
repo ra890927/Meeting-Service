@@ -1,0 +1,148 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+}
+
+.detail-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 10%;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+.detail-header-title{
+    font-size: 20px;
+    font-weight: 600;
+}
+.detail-content{
+    padding: 20px;
+    overflow-y: scroll;
+    height: 80% ;
+}
+.detail-content::-webkit-scrollbar {
+    display: none;
+}
+.detail-content-row{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.detail-content-row-label{
+    font-size: 16px;
+    font-weight: 600;
+    margin-right: 20px;
+}
+.detail-content-row-value{
+    font-size: 16px;
+    color: #666;
+}
+
+.get-file-button {
+    border: 2px solid #787878;
+    background: rgb(199, 184, 161);
+    border-radius: 10px;
+    padding-right: 3px;
+    /* box-shadow: 1px 1px 3px rgb(80, 80, 80); */
+    cursor: pointer;
+}
+
+.get-file-button:hover {
+    /* background-color: #f5f5f5; */
+    opacity: 0.8;
+}
+
+.attach-icon {
+    color: white;
+
+}
+
+.attach_file {
+    height: 60%;
+    width: 50%;
+    color: white;
+    text-decoration: none;
+    margin: 0px 2px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin: 5px;
+}
+
+.file-name {
+    width: 60%;
+    margin: 0px 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.button-set {
+    margin: 0px 5px;
+}
+
+.rules{
+    text-decoration: none;
+    border:none;
+    background-color: #666666aa;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 3px 8px;
+    margin-left: 20px;
+    border-radius: 20px;
+}
+.participants{
+    display: flex;
+}
+
+.participant{
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 2px 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 30px;
+}
+.username{
+    font-weight: 600;
+    margin-right: 5px;
+}
+.email{
+    font-size: 12px;
+    color: #666;
+}
+.textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    text-decoration: none;
+    outline: none;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    resize: none;
+  }
+.action-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 10%;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface{
+    overflow-y: hidden !important;
+}

@@ -1,0 +1,27 @@
+.footer-div{
+    position: absolute;
+    width: 100%;
+    height: 5vh;
+    bottom:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.wave{
+    position: absolute;
+    /* height: 10vh; */
+    width: 100%;
+    bottom: 0;
+    transform:rotate(0deg);
+    transition: 0.3s;
+}
+
+.text{
+    position: absolute;
+    font-family: 'Courier New', Courier, monospace;
+    /* transform: translate(-50%, -50%); */
+    font-size: 16px;
+    color: rgb(188, 180, 180);
+}

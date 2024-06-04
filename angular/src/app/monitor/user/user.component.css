@@ -1,0 +1,139 @@
+.user-div {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    background-color: #f5f1f1;
+    height: 80vh;
+}
+
+.search-bar-div{
+    z-index: 100;
+    width: 30vw;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.search-bar {
+    width: 65vw;
+    height: 85%;
+}
+
+.user-mat-card {
+    width: 70vw;
+    height: 60vh;
+}
+
+.scrollable-list {
+    max-height: 70vh;
+    overflow-y: auto;
+    /* border: 1px solid #ccc; */
+}
+
+.list-header {
+    display: flex;
+    justify-content: center;
+}
+
+.list-column {
+    padding: 8px;
+    text-align: left;
+    
+}
+
+.list-header .list-column {
+    font-weight: bold;
+    background-color: #f5f1f1;
+}
+
+.users.row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.users.row .column {
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative; 
+}
+
+.name {
+    width: 20vw;
+}
+
+.email {
+    width: 30vw;
+}
+
+.role{
+    width: 10vw;
+    text-align: center;
+}
+
+.actions{
+    width: 10vw;
+    text-align: center;
+}
+
+.disabled-status {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.edit {
+    color: goldenrod;
+}
+.save {
+    color: goldenrod;
+}
+.delete {
+    color: red;
+}
+
+.controls {
+    cursor: pointer;
+}
+.controls:hover {
+    color: purple;
+}
+
+.status span {
+    padding: 2px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user {
+    background-color: orange;
+    color: white;
+}
+
+.admin {
+    background-color: red;
+    color: white;
+}
+
+.divider-div{
+    display: flex;
+    justify-content: center;
+}
+
+.custom-divider {
+    width: 70vw;
+}
+
+.mat-divider.mat-divider-inset {
+    margin-left: 0px;
+}
+
+.mat-mdc-list-item .mat-divider-inset, .mat-mdc-list-option .mat-divider-inset {
+    position: relative;
+}
+
+
+

@@ -1,0 +1,75 @@
+<div class="detail-header">
+    <div class="detail-header-title">Meeting Info.</div>
+</div>
+<div class="detail-content">
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Meeting Title</div>
+        <div class="detail-content-row-value">{{data.title}}</div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Organizer</div>
+        <div class="detail-content-row-value">{{data.Organizer.username}}</div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">
+            Meeting time
+        </div>
+        <div class="detail-content-row-value">
+            {{data.start | date: 'yyyy-MM-dd HH:mm'}} ~ {{data.end | date: 'HH:mm'}}
+        </div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Description</div>
+    </div>
+    <div class="textarea-container">
+        <textarea class="textarea" readonly>{{data.description}}</textarea>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Location</div>
+        <div class="detail-content-row-value">{{data.RoomDetail.room_name}}</div>
+        <div class="rules-container">
+            @for (rule of data.RoomDetail.rules; track rule) {
+                @if (rule.id !== 0) {
+                    <button class="rules" matTooltip={{rule.description}}>{{rule.tag}}</button> 
+                }
+            }
+        </div>
+    </div>
+    <div class="detail-content-row">
+        <div class="detail-content-row-label">Participants</div>
+        <div class="detail-content-row-value">
+            <div class="participants">
+                @for (participant of data.participants; track participant) {
+                    <div class="participant">
+                        <div class="participant-name"><span class="username">{{participant.username}}</span><span class="email">{{participant.email}}</span></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="detail-content-row">
+        <div>
+              <button class="get-file-button" [matMenuTriggerFor]="menu">
+                <mat-icon class="attach-icon">attach_file</mat-icon>
+                <span class="attach_file">attachment</span>
+              </button>
+              <mat-menu #menu="matMenu">
+                @for(file of uploadedFiles; track file){
+                <div class="dropdown-item">
+                  <div class="file-name">{{ file.file_name }}</div>
+                  <div class="button-set">
+                    @if(data.id !== undefined){
+                        <button mat-icon-button color="primary" (click)="download(file)">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                    }
+                  </div>
+                </div>
+                }
+              </mat-menu>
+          </div>    
+    </div>   
+</div>
+<div class="action-container">
+    <button mat-button mat-dialog-close>Close</button>
+</div>

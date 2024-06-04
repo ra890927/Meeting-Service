@@ -1,0 +1,37 @@
+
+<div class="header-div">
+  <img src="/assets/meeting-room.jpg" class="image">
+  <mat-toolbar>
+      <!-- <button mat-icon-button>
+        <mat-icon>menu</mat-icon>
+      </button> if rwd -->
+      <!-- <span class="example-spacer"></span> -->
+      <span class="logo" (click)="navigate('')" matTooltip="Home Page">Meeting.com</span>
+      <div class="nav-links">
+        @if (currentUrl === 'profile' || currentUrl === 'reservation') {
+          @if (userservice.isLoggedIn()) {
+            <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
+          }
+          @else {
+            <a routerLink="/login" routerLinkActive="active">Login</a>
+          }
+        <a routerLink="/reservation" routerLinkActive="active">Reservation</a>
+        }
+      </div>
+        @if (userservice.isLoggedIn()) {
+          <div class="button-div">
+            @if (isAdmin) {
+              <!-- <button mat-icon-button (click)="adminSwitch()" matTooltip="Admin" [ngClass]="{'active-admin': currentUrl === 'monitor'}">
+                <mat-icon>admin_panel_settings</mat-icon>
+                </button> -->
+              <mat-icon (click)="adminSwitch()" matTooltip="Admin" [ngClass]="{'active-admin': currentUrl === 'monitor'}">admin_panel_settings</mat-icon>
+            }
+            <!-- <div class="icon-container"> -->
+            <mat-icon (click) = "logout()" matTooltip="Log out">logout</mat-icon>
+            <!-- <span class="tooltip-text">log out</span> -->
+            <!-- </div> -->
+            
+          </div>
+        }
+  </mat-toolbar>
+</div>
