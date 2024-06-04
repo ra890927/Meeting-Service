@@ -31,7 +31,7 @@ func HttpServerRun() {
 	}
 	go func() {
 		log.Print("[INFO] Woker pool start")
-		// WorkerPool.Start()
+		WorkerPool.Start()
 
 		log.Print("[INFO] Scheduler start")
 		Scheduler.Start()
