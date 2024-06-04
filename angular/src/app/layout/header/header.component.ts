@@ -1,13 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 // angular material import
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../API/user.service';
 import { AuthService } from '../../API/auth.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -17,7 +18,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatButtonModule, 
     RouterLink, 
     RouterLinkActive,
-    MatTooltipModule
+    MatTooltipModule,
+    CommonModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
@@ -27,9 +29,11 @@ export class HeaderComponent {
   authservice = inject(AuthService);
   router = inject(Router);
   isAdmin = false;
-  constructor() { }
+  currentUrl: string | undefined;
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.currentUrl = this.route.snapshot.url.join('/');
     this.authservice.whoami().subscribe(
       response => {
         console.log(response);
@@ -46,7 +50,18 @@ export class HeaderComponent {
   // navigate to the admin page
   navigate(path: string) {
     this.router.navigate([path]);
+    
   }
+
+  adminSwitch() {
+    if (this.currentUrl === 'monitor') {
+      this.navigate('/profile');
+    }
+    else {
+      this.navigate('/monitor');
+    }
+  }
+
 
   logout() {
     console.log('logout');

@@ -35,7 +35,7 @@
             <input matInput type="number" [(ngModel)]="capacity" min="1" required>
         </mat-form-field>
         @if(showErrorMessage){
-            <mat-error >
+            <mat-error class="error-message">
                 {{errorMessage}}
             </mat-error>
         }

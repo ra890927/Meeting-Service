@@ -8,18 +8,23 @@
       <!-- <span class="example-spacer"></span> -->
       <span class="logo" (click)="navigate('')" matTooltip="Home Page">Meeting.com</span>
       <div class="nav-links">
-        @if (userservice.isLoggedIn()) {
-          <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
-        }
-        @else {
-          <a routerLink="/login" routerLinkActive="active">Login</a>
-        }
+        @if (currentUrl === 'profile' || currentUrl === 'reservation') {
+          @if (userservice.isLoggedIn()) {
+            <a class="profile" routerLink="/profile" routerLinkActive="active">Profile</a>
+          }
+          @else {
+            <a routerLink="/login" routerLinkActive="active">Login</a>
+          }
         <a routerLink="/reservation" routerLinkActive="active">Reservation</a>
+        }
       </div>
         @if (userservice.isLoggedIn()) {
           <div class="button-div">
             @if (isAdmin) {
-              <mat-icon (click)="navigate('monitor')" matTooltip="Admin">admin_panel_settings</mat-icon>
+              <!-- <button mat-icon-button (click)="adminSwitch()" matTooltip="Admin" [ngClass]="{'active-admin': currentUrl === 'monitor'}">
+                <mat-icon>admin_panel_settings</mat-icon>
+                </button> -->
+              <mat-icon (click)="adminSwitch()" matTooltip="Admin" [ngClass]="{'active-admin': currentUrl === 'monitor'}">admin_panel_settings</mat-icon>
             }
             <!-- <div class="icon-container"> -->
             <mat-icon (click) = "logout()" matTooltip="Log out">logout</mat-icon>

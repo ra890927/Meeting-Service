@@ -4,6 +4,13 @@
     margin: 10px;
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    /* margin-bottom: 10px; */
+    flex-wrap: wrap;
+}
+
 .buttonContainer {
     display: flex;
     justify-content: space-between;

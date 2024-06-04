@@ -37,14 +37,25 @@
                     }
                     <div class="column controls actions">
                     @if (!isEditing || tagEditing !== tag){
-                        <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon> 
+                        <!-- <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon>  -->
+                        <button mat-icon-button [disabled]="isEditing && tagEditing.id !== tag.id" (click)="edit(tag)" class="controls edit" matTooltip="Edit"
+                                    style="background-color: transparent; border: none; text-decoration: none;"
+                                    [ngStyle]="{
+                                        'opacity': (isEditing && tagEditing.id !== tag.id) ? 0.7 : 1,
+                                        'cursor': (isEditing && tagEditing.id !== tag.id) ? 'default' : 'pointer',
+                                        'pointer-events': (isEditing && tagEditing.id !== tag.id) ? 'none' : 'auto'
+                                    }">
+                                <mat-icon>edit</mat-icon>
+                            </button>
                     }
                     @else {
-                    <mat-icon class="controls save" matTooltip="Save" (click)="save()">save</mat-icon>
+                        <button mat-icon-button class="controls save" matTooltip="Save" (click)="save()">
+                            <mat-icon>save</mat-icon>
+                        </button>
                     }
-                    <!-- <mat-icon class="controls delete" matTooltip="Delete" (click)="delete(tag)">delete</mat-icon> -->
-                    <mat-icon class="controls delete" matTooltip="Delete" (click)="deleteAlarm('0ms', '0ms', tag, 'Tag')">delete</mat-icon>
-                
+                    <button mat-icon-button class="controls delete" matTooltip="Delete" (click)="deleteAlarm('0ms', '0ms', tag, 'Tag')">
+                        <mat-icon>delete</mat-icon>
+                    </button>  
                     </div>
                 </div>
                 <div class="divider-div">

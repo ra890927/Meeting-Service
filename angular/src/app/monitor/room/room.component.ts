@@ -348,6 +348,13 @@ export class AddRoom {
       this.dialogRef.close({ roomNumber: this.roomNumber, capacity: this.capacity, tags: this.tags });
     } else {
       this.showErrorMessage = true;
+      if (!this.roomNumber) {
+        this.errorMessage = 'Please ensure the room number is filled in.';
+      }
+      else if (this.capacity <= 0) {
+        this.errorMessage = 'Please ensure the capacity is greater than 0.';
+      }
+      else
       this.errorMessage = 'Please ensure the capacity is greater than 0 and the room number is filled in.';
     }
   }
