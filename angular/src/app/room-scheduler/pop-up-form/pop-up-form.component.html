@@ -65,11 +65,9 @@
                   <div class="file-name">{{ file.file_name }}</div>
                   <div class="button-set">
                     @if(data.id !== undefined){
-                      <a [href]="file.url" download  >
-                        <button mat-icon-button color="primary" [disabled]="!canUpload">
+                        <button mat-icon-button color="primary" [disabled]="!canUpload" (click)="download(file)">
                           <mat-icon>download</mat-icon>
                         </button>
-                      </a>
                     }
                     <button mat-icon-button color="warn" (click)="canUpload ? deleteFile(file): null">
                       <mat-icon>delete</mat-icon>

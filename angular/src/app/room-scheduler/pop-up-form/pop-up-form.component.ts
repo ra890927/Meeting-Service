@@ -171,6 +171,12 @@ export class PopUpFormComponent implements OnInit{
       }
     }
   }
+  download(file: fileFormat){
+    if(file.url){
+      const downloadUrl = `${file.url}`;
+      window.open(downloadUrl);
+    }
+  }
   deleteFile(file: fileFormat) {
     if(this.data.id === undefined){
       const index_up = this.uploadedFiles.indexOf(file);
