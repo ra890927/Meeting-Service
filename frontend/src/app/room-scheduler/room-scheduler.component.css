@@ -1,0 +1,376 @@
+*{
+    margin: 0;  
+    padding: 0;
+    box-sizing: border-box;
+}
+.calendarContainer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 80vh;
+}
+.reservation-header{
+    position: absolute;
+    top: 15vh;
+    right: 15px;
+    font-size: 60px;
+    font-weight: 600;
+    writing-mode: vertical-rl; 
+    transform: rotate(360deg); 
+    font-family: Courier;
+}
+.cards_container {
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: center;
+    justify-content: space-around;
+    /* border: 1px solid #d3d3d3; */
+    width: 30%;
+    height:90%;
+}
+.rooms{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.found{
+    width: 80%;
+    height: 80%;
+    margin-left: 3vw;
+}
+.not-found{
+    padding: 5%;
+    height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+}
+.search_container{
+    /* border: 1px solid black; */
+    height:50%;
+    width: 80%;
+}
+.card_container-room{
+    display: flex;
+    overflow-y: scroll;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    height: 100%;
+    border: 5px solid rgba(240, 240, 240, 0.8);
+    border-radius: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    /* font-family: 'Courier New', Courier, monospace; */
+}
+.card_container::-webkit-scrollbar {
+    display: none;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    padding: auto;
+    /* border-left:#d3d3d3 15px solid; */
+    /* border-right:#d3d3d3 15px solid; */
+    color: rgb(0, 0, 0);
+    background-color: rgb(218,218,218);
+    border-radius: 0px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    
+}
+
+.selected {
+    background-color: rgba(147,147,145);
+    color: white;
+}
+
+.selected .show-details{
+    background-color: rgba(147,147,145);
+    color: white;
+    background-color: rgb(216,202,175,0.5);
+    border: 1.5px solid #d3d3d3;
+
+
+}
+
+.room-card-title{
+    font-size: 1.4em;
+    font-weight: bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.show-details{
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 5px;
+    /* margin: 4px 2px; */
+    cursor: pointer;
+    /* color: white; */
+    border: 1.5px solid #978080a8;
+    border-radius: 10px;
+    text-decoration: none;
+    padding: 3px 5px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+    
+}
+
+.text-field{
+    width: 80%;
+    text-align: left;
+    font-size: 1.2em;
+    margin: 5px;
+    overflow: hidden;
+}
+.time-field{
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: rgba(255, 255, 255, 0.6) 1px solid;
+    overflow: hidden;
+}
+::ng-deep .fc-timegrid-event{
+    overflow: hidden;
+}
+
+.button-change{
+    position: absolute;
+    width: fit-content;
+    font-size: 20px;
+    bottom: 0px;
+    right: 0px;
+    color: rgb(253, 249, 238);
+    /* color: white; */
+    /* text-shadow: 2px 2px 2px #808080; */
+}
+
+.button-change:hover{
+    /* color: rgb(220, 220, 220); */
+    opacity: 0.8;
+}
+
+.button-change-month {
+    position: absolute;
+    width: fit-content;
+    font-size: 20px;
+    bottom: -2px;
+    right: 0px;
+    color: rgb(200, 0, 0);
+    /* color: white; */
+    /* text-shadow: 2px 2px 2px #808080; */
+}
+
+.button-change-month:hover {
+    color: rgb(86, 86, 86);
+}
+
+
+/* 
+::ng-deep mat-icon-button {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  } */
+
+.month-view-event {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.event-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-left: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.booker-text {
+    margin-left: 5px;
+}
+
+.date-start {
+    margin-top: 10px;
+}
+
+.date-time-container {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Adjust the gap as needed */
+}
+  
+mat-form-field {
+    flex: 1;
+}
+/* search bar */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input{
+    text-decoration: none;
+}
+.people-container {
+    display: flex;
+    align-items: center;
+    background-color: rgb(120, 130, 142);
+    border-radius: 5px;
+    padding: 4px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.15em;
+}
+  
+.people-label {
+    color: white;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+  
+.people-badge {
+    background-color: rgba(255, 255, 255, 0.949);
+    border-radius: 5% 10%;
+    text-align: center;
+    width:20%;
+    height: 100%;
+    padding: 2px 8px;
+    font-weight: bold;
+    margin-right: 20%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+.people-badge:focus{
+    outline: none;
+}
+/* .people-input {
+    flex-grow: 1;
+} */
+.tags-label {
+    position: relative;
+    color: white;
+    left: -25%;
+    font-weight: bold;
+}
+.select-container{
+    height: 100%;
+    width: 300px;
+    overflow: visible !important;
+}
+.tag-names{
+    width: 300px;
+}
+::ng-deep .mat-mdc-select-panel{
+    width: 300px!important;
+    overflow: visible !important;
+}
+::ng-deep :root {
+    --mat-select-enabled-arrow-color: white; /* Change this to your desired color */
+    --fc-event-bg-color: #537b4a;
+    --fc-event-border-color: #6e7e6a;
+    --mat-full-pseudo-checkbox-selected-icon-color: rgba(120, 130, 142, 0.8);
+    --mat-option-selected-state-label-text-color: rgba(120, 130, 142);
+}
+::ng-deep .mat-mdc-select-value {
+    display: none;
+}
+
+::ng-deep .mat-mdc-select-trigger {
+    width: fit-content !important;
+}
+.button-container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.button-style{
+    padding: 0.25em 1em;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid #d3d3d3;
+    background: rgb(120, 130, 142);
+    outline: none;
+    color: white;
+    cursor: pointer;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin-bottom: 10px;
+}
+/* search bar */
+.search-switch{
+    width: 80%;
+    height: fit-content;
+    display: flex;
+    justify-content:right;
+    align-items:center;
+}
+.search-icon{
+    width: fit-content;
+    height: fit-content;
+}
+.search-icon {
+    font-size: 3rem;
+}
+  
+.search-icon.search {
+    color: #ff0000;
+}
+  
+.search-icon.search_off {
+    color: #4CAF50;
+}
+
+.success-card{
+    width: fit-content;
+    height: 4vh;
+    background-color: rgba(250, 234, 211, 0.5);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    border: solid 1px rgb(253, 249, 238);
+    color: rgb(73, 73, 73);
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 4%;
+    top: 16vh;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.card-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 600;
+    height: 100%;
+}
+.card-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    text-align: center;
+    height: 100%;
+    margin-left: 6px;
+}
+::ng-deep .fc-timegrid-event-harness{
+    opacity: 0.9;
+    background-color: rgba(181,196,177)!important;
+}
+
+.event-container{
+    overflow: hidden;
+}

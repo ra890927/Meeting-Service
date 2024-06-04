@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>New Tag</h1>
+<div mat-dialog-content>
+    <div class="inputContainer">
+        <mat-form-field>
+            <mat-label>Tag Name</mat-label>
+            <input matInput [(ngModel)]="tagName" required>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="tagDescription" required>
+        </mat-form-field>
+        @if(showErrorMessage){
+            <mat-error class="error-message">
+                {{errorMessage}}
+            </mat-error>
+        }
+    </div>
+    <div class="buttonContainer">
+        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Add</button>
+    </div>
+
+</div>

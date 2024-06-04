@@ -1,0 +1,69 @@
+<div class="tag-div">
+    <div class="parentDiv"> 
+        <div class="inputDiv">
+            <button mat-raised-button color="primary" (click)="openDialog()">Add Tag</button>  
+        </div>
+    </div>
+
+    <mat-card class="tag-mat-card">
+        <mat-list class="scrollable-list">
+            <mat-list-item>
+                <div class="list-header">
+                    <div class="list-column name">Tag Name</div>
+                    <div class="list-column description">Description</div>
+                    <div class="list-column actions">Actions</div>
+                </div>
+            </mat-list-item>
+
+            <mat-list-item *ngFor="let tag of allTags; last as last">
+                <div class="tags row">
+                    @if (!isEditing || tagEditing !== tag){
+                        <div class="column name">{{tag.tag}}</div>
+                    }
+                    @else {
+                        <mat-form-field class="column name">
+                            <!-- <mat-label>Room Number</mat-label> -->
+                            <input matInput [formControl]="tagNameControl">
+                        </mat-form-field>
+                    } 
+                    @if (!isEditing || tagEditing !== tag){
+                        <div class="column description">{{tag.description}}</div>
+                    }
+                    @else {
+                        <mat-form-field class="column description">
+                            <!-- <mat-label>Room Number</mat-label> -->
+                            <input matInput [formControl]="tagDescriptionControl">
+                        </mat-form-field>
+                    }
+                    <div class="column controls actions">
+                    @if (!isEditing || tagEditing !== tag){
+                        <!-- <mat-icon class="controls edit" matTooltip="Edit" (click)="edit(tag)">edit</mat-icon>  -->
+                        <button mat-icon-button [disabled]="isEditing && tagEditing.id !== tag.id" (click)="edit(tag)" class="controls edit" matTooltip="Edit"
+                                    style="background-color: transparent; border: none; text-decoration: none;"
+                                    [ngStyle]="{
+                                        'opacity': (isEditing && tagEditing.id !== tag.id) ? 0.7 : 1,
+                                        'cursor': (isEditing && tagEditing.id !== tag.id) ? 'default' : 'pointer',
+                                        'pointer-events': (isEditing && tagEditing.id !== tag.id) ? 'none' : 'auto'
+                                    }">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                    }
+                    @else {
+                        <button mat-icon-button class="controls save" matTooltip="Save" (click)="save()">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    }
+                    <button mat-icon-button class="controls delete" matTooltip="Delete" (click)="deleteAlarm('0ms', '0ms', tag, 'Tag')">
+                        <mat-icon>delete</mat-icon>
+                    </button>  
+                    </div>
+                </div>
+                <div class="divider-div">
+                <mat-divider class="custom-divider" [inset]="true" *ngIf="!last"></mat-divider>
+                </div>
+            </mat-list-item>
+            
+
+        </mat-list>
+    </mat-card>
+</div>

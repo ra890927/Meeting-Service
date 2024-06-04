@@ -79,6 +79,26 @@ func TestCodeDomainTestSuite(t *testing.T) {
 	suite.Run(t, new(CodeDomainTestSuite))
 }
 
+func (suite *CodeDomainTestSuite) TestNewCodeDomain() {
+	// Arrange
+	mockRepo := new(MockCodeRepo)
+
+	// Act and Assert
+
+	// Test case with one argument
+	cd := domains.NewCodeDomain(mockRepo)
+	assert.NotNil(suite.T(), cd)
+
+	// // Test case with no arguments
+	// cd = domains.NewCodeDomain()
+	// assert.NotNil(suite.T(), cd)
+
+	// Test case with multiple arguments should panic
+	assert.Panics(suite.T(), func() {
+		domains.NewCodeDomain(mockRepo, mockRepo)
+	})
+}
+
 func (suite *CodeDomainTestSuite) TestCreateCodeType() {
 	// Arrange
 	codeType := &models.CodeType{

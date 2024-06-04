@@ -23,13 +23,14 @@ type filePresentation struct {
 
 type UploadFileForm struct {
 	MeetingID string                `form:"meeting_id"`
-	FormFile  *multipart.FileHeader `form:"file"`
+	FormFile  *multipart.FileHeader `form:"file" swaggertype:"object" description:"The file to upload"`
 }
 
 type FileResponse struct {
 	Url        string `json:"url"`
 	UploaderID uint   `json:"uploader_id"`
 	FileName   string `json:"file_name"`
+	FileID     string `json:"file_id"`
 }
 
 type UploadFileResponse struct {
@@ -39,6 +40,7 @@ type UploadFileResponse struct {
 		Url        string `json:"url"`
 		UploaderID uint   `json:"uploader_id"`
 		FileName   string `json:"file_name"`
+		FileID     string `json:"file_id"`
 	} `json:"data"`
 }
 
@@ -49,6 +51,7 @@ type GetFileURLsByMeetingIDResponse struct {
 		Url        string `json:"url"`
 		UploaderID uint   `json:"uploader_id"`
 		FileName   string `json:"file_name"`
+		FileID     string `json:"file_id"`
 	} `json:"data"`
 }
 
@@ -72,7 +75,8 @@ func NewFilePresentation(fileServiceArgs ...services.FileService) FilePresentati
 // @Tags File
 // @Accept json
 // @Produce json
-// @Param file form UploadFileForm true "File details"
+// @Param meeting_id formData string true "Meeting ID"
+// @Param file formData file true "File to upload"
 // @Success 200 {object} UploadFileResponse
 // @Router /file [post]
 func (fp filePresentation) UploadFile(c *gin.Context) {
@@ -138,6 +142,7 @@ func (fp filePresentation) UploadFile(c *gin.Context) {
 			Url:        url,
 			UploaderID: operator.ID,
 			FileName:   form.FormFile.Filename,
+			FileID:     file.ID,
 		},
 	}
 
@@ -149,7 +154,7 @@ func (fp filePresentation) UploadFile(c *gin.Context) {
 // @Tags File
 // @Param meeting_id path string true "Meeting ID"
 // @Success 200 {object} GetFileURLsByMeetingIDResponse
-// @Router /file/getFileURLsByMeetingID [get]
+// @Router /file/getFileURLsByMeetingID/{meeting_id} [get]
 func (fp filePresentation) GetFileURLsByMeetingID(c *gin.Context) {
 	var response GetFileURLsByMeetingIDResponse
 
@@ -182,6 +187,7 @@ func (fp filePresentation) GetFileURLsByMeetingID(c *gin.Context) {
 			Url:        urls[i],
 			UploaderID: files[i].UploaderID,
 			FileName:   files[i].FileName,
+			FileID:     files[i].ID,
 		})
 	}
 

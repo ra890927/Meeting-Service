@@ -1,0 +1,91 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.login-container{
+    display: flex;
+    position: absolute;
+    height: 95vh;
+    width: 100%;
+}
+.switch{
+    flex: 1;
+    background-image: url(/assets/meeting-room.jpg);
+    background-size: cover;
+}
+.switch>div{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    height: 90vh;
+}
+.switch>div>div{
+    width: fit-content;
+    height: fit-content;
+    margin: 25% 20px;
+}
+.button-style{
+    position: relative;
+    padding: 0.25em 1em;
+    font-size: 5em;
+    font-weight: bold;
+    border: none;
+    background: none;
+    outline: none;
+    color: white;
+    mix-blend-mode: screen;
+    font-family: 'Courier New', Courier, monospace;
+}
+.button-style::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: black;
+    border-radius: 0.3em;
+    content: '';
+    mix-blend-mode: color-burn;
+    transition: 0.3s;
+}
+.button-style:hover {
+    color: black; 
+  }
+  
+.button-style:hover::before {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+.login-form{
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+.log-title{
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2em;
+    margin-bottom: 3em;
+
+}
+.login-form-inner{
+    width: 50%;
+    height: 40vh;
+}
+
+.form-container{
+    width: 100%;
+}
+.error{
+    width: 100%;
+    color: red;
+    font-size: 1em;
+    text-align: right;
+}
+
+.buttons{
+    display: flex;
+    justify-content: right;
+}

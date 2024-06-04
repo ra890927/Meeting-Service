@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 5s  # 設置抓取間隔，預設為 1 分鐘
+  evaluation_interval: 5s  # 設置規則評估間隔，預設為 1 分鐘
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'backend'
+    metrics_path: '/metrics'  # 設置後端服務的指標端點路徑
+    static_configs:
+      - targets: ['140.113.215.132:8080']  # 設置後端服務的主機和埠
+  - job_name: 'mysql'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['140.113.215.132:9104']
+  - job_name: 'lab639 computer'
+    static_configs:
+      - targets: ['140.113.215.132:9100']
+
+  # 可以添加其他的抓取目標，例如其他服務或節點
+  # - job_name: 'other-service'
+  #   static_configs:
+  #     - targets: ['other-service:8080']
+
+# rule_files:
+  # - "alert.rules"  # 可以指定警報規則檔案
+
+# 可以設置 Alertmanager 的相關設置
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']

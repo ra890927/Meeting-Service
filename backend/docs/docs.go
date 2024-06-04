@@ -500,6 +500,295 @@ const docTemplate = `{
                 }
             }
         },
+        "/file": {
+            "post": {
+                "description": "Upload a file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "File"
+                ],
+                "summary": "Upload a file",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Meeting ID",
+                        "name": "meeting_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UploadFileResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/getFileURLsByMeetingID/{meeting_id}": {
+            "get": {
+                "description": "Get files by meeting ID",
+                "tags": [
+                    "File"
+                ],
+                "summary": "Get files by meeting ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Meeting ID",
+                        "name": "meeting_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetFileURLsByMeetingIDResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file/{id}": {
+            "delete": {
+                "description": "Delete a file",
+                "tags": [
+                    "File"
+                ],
+                "summary": "Delete a file",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.DeleteFileResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting": {
+            "put": {
+                "description": "Update a meeting",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Update a meeting",
+                "parameters": [
+                    {
+                        "description": "Meeting details",
+                        "name": "meeting",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.UpdateMeetingBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a meeting",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Create a meeting",
+                "parameters": [
+                    {
+                        "description": "Meeting details",
+                        "name": "meeting",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateMeetingBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting/getAllMeetings": {
+            "get": {
+                "description": "Get all meetings",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get all meetings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting/getMeetingsByParticipantId": {
+            "get": {
+                "description": "Get meetings by participant ID",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get meetings by participant ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Participant ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting/getMeetingsByRoomIdAndDatePeriod": {
+            "get": {
+                "description": "Get meetings by room ID and date",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get meetings by room ID and date",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "room_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date",
+                        "name": "date_from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date",
+                        "name": "date_to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.GetAllMeetingsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/meeting/{id}": {
+            "get": {
+                "description": "Get a meeting",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Get a meeting",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Meeting ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.CreateUpdateGetMeetingResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a meeting",
+                "tags": [
+                    "Meeting"
+                ],
+                "summary": "Delete a meeting",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Meeting ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentations.DeleteMeetingResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room/getAllRooms": {
             "get": {
                 "description": "Get all rooms",
@@ -639,61 +928,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Room": {
-            "type": "object",
-            "properties": {
-                "capacity": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "room_name": {
-                    "type": "string"
-                },
-                "rules": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "presentations.CreateCodeTypeInput": {
             "type": "object",
             "required": [
@@ -797,6 +1031,38 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.CreateMeetingBody": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "integer"
+                },
+                "participants": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.CreateRoomInput": {
             "type": "object",
             "properties": {
@@ -856,6 +1122,57 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.CreateUpdateGetMeetingResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "meeting": {
+                            "type": "object",
+                            "properties": {
+                                "description": {
+                                    "type": "string"
+                                },
+                                "end_time": {
+                                    "type": "string"
+                                },
+                                "id": {
+                                    "type": "string"
+                                },
+                                "organizer": {
+                                    "type": "integer"
+                                },
+                                "participants": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "room_id": {
+                                    "type": "integer"
+                                },
+                                "start_time": {
+                                    "type": "string"
+                                },
+                                "status_type": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.DeleteCodeTypeResponse": {
             "type": "object",
             "properties": {
@@ -876,6 +1193,17 @@ const docTemplate = `{
                 "data": {
                     "type": "object"
                 },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.DeleteFileResponse": {
+            "type": "object",
+            "properties": {
                 "message": {
                     "type": "string"
                 },
@@ -905,6 +1233,60 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.CodeType"
+                            }
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetAllMeetingsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "meetings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "end_time": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "organizer": {
+                                        "type": "integer"
+                                    },
+                                    "participants": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "room_id": {
+                                        "type": "integer"
+                                    },
+                                    "start_time": {
+                                        "type": "string"
+                                    },
+                                    "status_type": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    }
+                                }
                             }
                         }
                     }
@@ -1003,6 +1385,34 @@ const docTemplate = `{
                     "properties": {
                         "code_value": {
                             "$ref": "#/definitions/models.CodeValue"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "presentations.GetFileURLsByMeetingIDResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "file_name": {
+                                "type": "string"
+                            },
+                            "uploader_id": {
+                                "type": "integer"
+                            },
+                            "url": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
@@ -1263,6 +1673,41 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.UpdateMeetingBody": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "integer"
+                },
+                "participants": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.UpdateRoomInput": {
             "type": "object",
             "properties": {
@@ -1345,6 +1790,31 @@ const docTemplate = `{
                 }
             }
         },
+        "presentations.UploadFileResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "file_name": {
+                            "type": "string"
+                        },
+                        "uploader_id": {
+                            "type": "integer"
+                        },
+                        "url": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "presentations.WhoAmIResponse": {
             "type": "object",
             "properties": {
@@ -1383,12 +1853,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Meeting Center API",
-	Description:      "This is a simple Meeting Center API",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

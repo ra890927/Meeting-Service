@@ -1,0 +1,186 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+::ng-deep *{
+    --mdc-filled-text-field-container-color: transparent;
+}
+.room-div {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    background-color: #f5f1f1;
+    height: 80vh;
+}
+
+.parentDiv{
+    display: flex;
+    justify-content: center;
+}
+
+.inputDiv {
+    /* margin: 20px; */
+    display: flex;
+    justify-content: flex-start;
+    width: 70vw;
+    /* height: 5vh; */
+}
+
+.button-div {
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.search-bar-div {
+    z-index: 100;
+    /* margin-top: 60px; */
+    /* height: 10vh; */
+    width: 45vw;
+    display: flex;
+    justify-content: flex-start;
+    align-items: end;
+    /* margin-left: 20px; */
+
+}
+
+.search-bar {
+    width: 20vw;
+    height: 85%;
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::after  {
+    border-bottom-color: rgba(120, 120, 120, 0.6)!important;
+}
+
+.room-mat-card {
+    width: 70vw;
+    height: 60vh;
+    /* margin: 20px; */
+
+}
+
+.list-header{
+    display: flex;
+    justify-content: center;
+}
+
+.list-column {
+    padding: 8px;
+    text-align: left;
+
+}
+
+.room {
+    width: 10vw;
+}
+
+.tagContainer{
+    overflow-y: auto;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    width: 40vw;
+    /* -ms-overflow-style: none; */
+}
+
+/* .tagContainer::-webkit-scrollbar {
+
+    width: 10em;
+} */
+
+.add-tag-button{
+    margin-right: 10px;
+}
+
+mat-chip-row{
+    margin: 5px;
+}
+
+.disabled-chip {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.tags{
+    width: 40vw;
+}
+
+.capacity{
+    width: 10vw;
+    text-align: center;
+}
+
+.actions{
+    width: 10vw;
+    text-align: center;
+}
+
+.list-header .list-column {
+    font-weight: bold;
+    background-color: #f5f1f1;
+}
+
+::ng-deep :root{
+    --mdc-list-list-item-one-line-container-height: 60px;
+}
+  
+.rooms.row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.rooms.row .column {
+    /* flex: 1;  */
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.disabled-status {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.edit {
+    color: goldenrod !important;
+}
+.save {
+    color: goldenrod;
+}
+.delete {
+    color: red;
+}
+
+.controls:hover {
+    color: purple;
+}
+
+.divider-div{
+    display: flex;
+    justify-content: center;
+}
+
+.custom-divider {
+    width: 60vw;
+}
+
+
+.mat-divider.mat-divider-inset {
+    margin-left: 0px;
+}
+
+.mat-mdc-list-item .mat-divider-inset, .mat-mdc-list-option .mat-divider-inset {
+    position: relative;
+}

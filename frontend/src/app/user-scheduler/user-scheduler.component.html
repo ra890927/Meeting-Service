@@ -1,0 +1,49 @@
+<div class="profile-container">
+    <div class="profile-header">PROFILE</div>
+    <div class="profile-event-container">
+        <div class="user-profile">
+            <div class="user-profile-container">
+                <div class="user-profile-header">{{User.username}}</div>
+                <div class="user-profile-body">
+                    <!-- <div class="user-profile-item">Username: {{User.username}}</div> -->
+                    <div class="user-profile-item">{{User.email}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="event-list">
+            <div class="event-list-header">Current Events</div>
+            <div class="event-list-body">
+                @for(event of detailsInfo; track event){
+                    @if (isEventInFuture(event.start)) {
+                <div class="event-list-item-container">
+                    <div class = "circle"></div>
+                    <div class="event-list-item-title">{{event.title}}</div>
+                    <div class="event-list-item">Room: {{event.RoomDetail.room_name}}</div>
+                    <div class="event-list-item">{{event.start | date: 'yyyy-MM-dd HH:mm'}}~{{event.end|date: 'HH:mm'}}</div>
+                    <div class="event-list-item">Organizer: {{event.Organizer.username}}</div>
+                    <div class="button-container">
+                        <mat-icon class="event-list-item-button" matTooltip="more info" (click)="openDialog(event.id)">info</mat-icon>
+                    </div>
+                </div>
+                }
+            }
+            </div>
+        </div>
+    </div>   
+    <div class="calendar-container">
+        <full-calendar  [options]="calendarOptions" class="calendar">
+            <ng-template  #eventContent let-arg>
+                <div *ngIf="isMonthView" class="month-view-event">
+                    <span class="event-dot" [style.backgroundColor]="arg.event.backgroundColor || '#333'"></span>
+                    <div class="time-text">{{arg.timeText}}</div>
+                    <div class="booker-text" [style.fontWeight]="'bold'" matTooltip="{{arg.event.title}}">{{arg.event.title}}</div>
+                </div>
+                    <div *ngIf="!isMonthView" class="event-container">
+                    <div class="time-field">{{arg.timeText}}</div>
+                    <div class="text-field">{{arg.event.extendedProps.organizer}}</div>
+                    <div class="text-field" style="font-size: 1.2em; margin: 5px;">{{arg.event.title}}</div>
+                </div>
+            </ng-template>
+        </full-calendar>
+    </div>
+</div>

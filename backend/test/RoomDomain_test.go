@@ -1,12 +1,14 @@
 package test
 
 import (
-	"meeting-center/src/domains"
-	"meeting-center/src/models"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
+	"meeting-center/src/domains"
+	"meeting-center/src/models"
 )
 
 type MockRoomRepo struct {
@@ -30,58 +32,111 @@ func (m *MockRoomRepo) DeleteRoom(id int) error {
 
 func (m *MockRoomRepo) GetRoomByID(id int) (*models.Room, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Room), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).(*models.Room), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (m *MockRoomRepo) GetAllRooms() ([]*models.Room, error) {
 	args := m.Called()
-	return args.Get(0).([]*models.Room), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).([]*models.Room), args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
-func TestDomainCreateRoom(t *testing.T) {
-	mockRoomRepo := new(MockRoomRepo)
-	rd := domains.NewRoomDomain(mockRoomRepo)
+type RoomDomainTestSuite struct {
+	suite.Suite
+	rd domains.RoomDomain
+	rr *MockRoomRepo
+}
+
+func (suite *RoomDomainTestSuite) SetupTest() {
+	suite.rr = new(MockRoomRepo)
+	suite.rd = domains.NewRoomDomain(suite.rr)
+}
+
+func TestRoomDomainTestSuite(t *testing.T) {
+	suite.Run(t, new(RoomDomainTestSuite))
+}
+
+func (suite *RoomDomainTestSuite) TestNewRoomDomain() {
+	// Test case with no arguments
+	// rd := domains.NewRoomDomain()
+	// assert.NotNil(suite.T(), rd)
+
+	// Test case with one argument
+	mockRepo := new(MockRoomRepo)
+	rd := domains.NewRoomDomain(mockRepo)
+	assert.NotNil(suite.T(), rd)
+
+	// Test case with too many arguments should panic
+	assert.Panics(suite.T(), func() {
+		domains.NewRoomDomain(mockRepo, mockRepo)
+	})
+}
+
+func (suite *RoomDomainTestSuite) TestCreateRoom() {
 	room := &models.Room{
 		RoomName: "Conference Room A",
 		Type:     "Board Meeting",
 		Capacity: 11,
 	}
 
-	mockRoomRepo.On("CreateRoom", room).Return(nil)
-	err := rd.CreateRoom(room)
+	// Test successful creation
+	suite.rr.On("CreateRoom", room).Return(nil).Once()
+	err := suite.rd.CreateRoom(room)
+	assert.NoError(suite.T(), err)
+	suite.rr.AssertCalled(suite.T(), "CreateRoom", room)
 
-	assert.NoError(t, err)
+	// Test creation error
+	suite.rr.On("CreateRoom", room).Return(errors.New("create error")).Once()
+	err = suite.rd.CreateRoom(room)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "create error", err.Error())
+	suite.rr.AssertCalled(suite.T(), "CreateRoom", room)
 }
 
-func TestDomainUpdateRoom(t *testing.T) {
-	mockRoomRepo := new(MockRoomRepo)
-	rd := domains.NewRoomDomain(mockRoomRepo)
+func (suite *RoomDomainTestSuite) TestUpdateRoom() {
 	room := &models.Room{
 		RoomName: "Updated Conference Room",
 		Type:     "Executive Meeting",
 		Capacity: 12,
 	}
 
-	mockRoomRepo.On("UpdateRoom", room).Return(nil)
-	err := rd.UpdateRoom(room)
+	// Test successful update
+	suite.rr.On("UpdateRoom", room).Return(nil).Once()
+	err := suite.rd.UpdateRoom(room)
+	assert.NoError(suite.T(), err)
+	suite.rr.AssertCalled(suite.T(), "UpdateRoom", room)
 
-	assert.NoError(t, err)
+	// Test update error
+	suite.rr.On("UpdateRoom", room).Return(errors.New("update error")).Once()
+	err = suite.rd.UpdateRoom(room)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "update error", err.Error())
+	suite.rr.AssertCalled(suite.T(), "UpdateRoom", room)
 }
 
-func TestDomainDeleteRoom(t *testing.T) {
-	mockRoomRepo := new(MockRoomRepo)
-	rd := domains.NewRoomDomain(mockRoomRepo)
+func (suite *RoomDomainTestSuite) TestDeleteRoom() {
 	id := 1
 
-	mockRoomRepo.On("DeleteRoom", id).Return(nil)
-	err := rd.DeleteRoom(id)
+	// Test successful deletion
+	suite.rr.On("DeleteRoom", id).Return(nil).Once()
+	err := suite.rd.DeleteRoom(id)
+	assert.NoError(suite.T(), err)
+	suite.rr.AssertCalled(suite.T(), "DeleteRoom", id)
 
-	assert.NoError(t, err)
+	// Test deletion error
+	suite.rr.On("DeleteRoom", id).Return(errors.New("delete error")).Once()
+	err = suite.rd.DeleteRoom(id)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "delete error", err.Error())
+	suite.rr.AssertCalled(suite.T(), "DeleteRoom", id)
 }
 
-func TestDomainGetRoomByID(t *testing.T) {
-	mockRoomRepo := new(MockRoomRepo)
-	rd := domains.NewRoomDomain(mockRoomRepo)
+func (suite *RoomDomainTestSuite) TestGetRoomByID() {
 	id := 1
 	room := &models.Room{
 		RoomName: "Conference Room A",
@@ -89,16 +144,23 @@ func TestDomainGetRoomByID(t *testing.T) {
 		Capacity: 10,
 	}
 
-	mockRoomRepo.On("GetRoomByID", id).Return(room, nil)
-	fetchedRoom, err := rd.GetRoomByID(id)
+	// Test successful retrieval
+	suite.rr.On("GetRoomByID", id).Return(room, nil).Once()
+	fetchedRoom, err := suite.rd.GetRoomByID(id)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), room, fetchedRoom)
+	suite.rr.AssertCalled(suite.T(), "GetRoomByID", id)
 
-	assert.NoError(t, err)
-	assert.Equal(t, room, fetchedRoom)
+	// Test retrieval error
+	suite.rr.On("GetRoomByID", id).Return(nil, errors.New("not found")).Once()
+	fetchedRoom, err = suite.rd.GetRoomByID(id)
+	assert.Error(suite.T(), err)
+	assert.Nil(suite.T(), fetchedRoom)
+	assert.Equal(suite.T(), "not found", err.Error())
+	suite.rr.AssertCalled(suite.T(), "GetRoomByID", id)
 }
 
-func TestDomainGetAllRooms(t *testing.T) {
-	mockRoomRepo := new(MockRoomRepo)
-	rd := domains.NewRoomDomain(mockRoomRepo)
+func (suite *RoomDomainTestSuite) TestGetAllRooms() {
 	rooms := []*models.Room{
 		{
 			RoomName: "Conference Room A",
@@ -112,10 +174,25 @@ func TestDomainGetAllRooms(t *testing.T) {
 		},
 	}
 
-	mockRoomRepo.On("GetAllRooms").Return(rooms, nil)
-	allRooms, err := rd.GetAllRooms()
+	// Test successful retrieval
+	suite.rr.On("GetAllRooms").Return(rooms, nil).Once()
+	allRooms, err := suite.rd.GetAllRooms()
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), rooms, allRooms)
+	suite.rr.AssertCalled(suite.T(), "GetAllRooms")
 
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(allRooms))
-	assert.Equal(t, rooms, allRooms)
+	// Test retrieval error
+	suite.rr.On("GetAllRooms").Return(nil, errors.New("db error")).Once()
+	allRooms, err = suite.rd.GetAllRooms()
+	assert.Error(suite.T(), err)
+	assert.Nil(suite.T(), allRooms)
+	assert.Equal(suite.T(), "db error", err.Error())
+	suite.rr.AssertCalled(suite.T(), "GetAllRooms")
+
+	// Test no rooms
+	suite.rr.On("GetAllRooms").Return(nil, nil).Once()
+	allRooms, err = suite.rd.GetAllRooms()
+	assert.NoError(suite.T(), err)
+	assert.Empty(suite.T(), allRooms)
+	suite.rr.AssertCalled(suite.T(), "GetAllRooms")
 }

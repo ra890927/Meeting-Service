@@ -1,12 +1,12 @@
 mysql:
-    host: localhost
+    host: db
     username: root
     password: ${MYSQL_ROOT_PASSWORD}
     maxIdleConns: 10
     maxOpenConns: 100
     maxLifetimeSec: 3600
 redis:
-    host: localhost
+    host: redis
     password: ${REDIS_PASSWORD}
 gcs:
     bucketname: meeting-center-storage-prod

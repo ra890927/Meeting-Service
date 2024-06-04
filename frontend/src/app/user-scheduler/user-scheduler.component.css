@@ -1,0 +1,225 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.profile-container{
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    z-index: 99;
+}
+.profile-header{
+    position: absolute;
+    top: 15vh;
+    right: 15px;
+    font-size: 60px;
+    font-weight: 600;
+    writing-mode: vertical-rl; 
+    transform: rotate(360deg); 
+    font-family: Courier;
+}
+.profile-event-container{
+    display: flex;
+    z-index: 99;
+    flex-direction: column;
+    width: 30%;
+    height: 95%;
+    justify-content: center;
+    align-items: center;
+}
+.user-profile{
+    display: flex;
+    width: 80%;
+    height:10%;
+    justify-content: center;
+}
+
+::ng-deep .fc-timegrid-event{
+    overflow: hidden;
+}
+
+.user-profile-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    bottom: 3vh;
+    background-color: rgba(222, 184, 135, 0.8);
+    border-radius: 20px;
+    border: 3px solid rgba(214, 214, 214, 0.5);
+}
+.user-profile-header{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    font-weight: 600;
+    width: 80%;
+    height: 20%;
+    margin-left: 30px;
+    color: rgb(87, 59, 59);
+    font-size: 2.5em;
+    text-shadow: 2px 2px 2px #a5a5a5;
+    font-family: Courier;
+
+}
+.user-profile-body{
+    display: flex;
+    position: relative;
+    margin-left: 50px;
+    top: 30%;
+    flex-direction: column;
+    width: 100%;
+    height: 80%;
+    font-size: 1.5em;
+    font-family: Courier;
+    font-weight: 600;
+    color: rgb(87, 59, 59);
+}
+
+.event-list{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: 90%;
+    overflow-y: hidden;
+    background-color: silver;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 3px solid rgba(220, 220, 220, 0.5);
+}
+
+.event-list-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 8%;
+    color: white;
+    text-shadow: 2px 2px 2px #808080;
+    font-size: 1.8em;
+    font-weight: 600;
+    text-align: center;
+    background-color: rgba(156, 156, 156, 0.675);
+    /* border-bottom: rgb(220, 220, 220) 2px solid; */
+}
+.event-list-body{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 90%;
+    overflow-y: scroll;
+}
+/* .event-list-body::-webkit-scrollbar{
+    display: none;
+} */
+.event-list-item-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* overflow: hidden; */
+    border-top: rgb(220, 220, 220) 2px solid;
+    height: 120px;
+}
+.circle{
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.event-list-item-title{
+    display: flex;
+    justify-content:left;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    margin-left: 15px;
+    margin-bottom: 5px;
+    color: white;
+    font-size: 1.5em;
+}
+.event-list-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 20%;
+    background-color:silver;
+    color:black;
+    font-size: 1em;
+}
+.button-container{
+    display: flex;
+    justify-content: right;
+    color: white !important;
+    font-size: 1.5em;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+}
+::ng-deep .mat-icon{
+    margin-right: 20px;
+    cursor: pointer;
+}
+.calendar-container{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    /* font-family: 'Courier New', Courier, monospace; */
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.calendar{
+    width:80%;
+    height: 80%;
+    margin-left: 3vw;
+}
+
+.text-field{
+    width: 80%;
+    text-align: left;
+    font-size: 1.2em;
+}
+.time-field{
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: rgba(255, 255, 255, 0.6) 1px solid;
+}
+.month-view-event {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+.event-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-left: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.booker-text {
+    margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date-time-container {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Adjust the gap as needed */
+}
+::ng-deep .fc-timegrid-event-harness{
+    opacity: 0.8;
+}
