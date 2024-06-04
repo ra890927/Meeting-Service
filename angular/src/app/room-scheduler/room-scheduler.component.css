@@ -3,28 +3,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-::ng-deep html{
-    --mat-form-field-subscript-text-line-height: 10px !important;
-}
-/* width */
-/* ::ng-deep ::-webkit-scrollbar {
-  width: 10px;
-} */
-
-/* Track */
-/* ::ng-deep ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-} */
- 
-/* Handle */
-/* ::ng-deep ::-webkit-scrollbar-thumb {
-  background: #fffbd5; 
-} */
-
-/* Handle on hover */
-/* ::ng-deep ::-webkit-scrollbar-thumb:hover {
-  background: #f5ffcf; 
-} */
 .calendarContainer {
     display: flex;
     justify-content: flex-start;

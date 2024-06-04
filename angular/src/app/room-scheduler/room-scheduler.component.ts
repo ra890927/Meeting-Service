@@ -17,7 +17,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
-import {createEventId} from './event-utils';//test use
 import { R, S, cl, co, ez, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,6 +25,8 @@ import { UserService } from '../API/user.service';
 import { AuthService } from '../API/auth.service';
 import { ItemService } from '../API/item.service';
 import { interval, startWith, Subscription, switchMap } from 'rxjs';
+import { F } from '@angular/cdk/keycodes';
+import { FileService } from '../API/file.service';
 //need to save in a interface file
 interface Room {
   id: number;
@@ -51,20 +52,9 @@ interface CodeValue {
   description: string;
   codeTypeId: number;
 }
-
-interface CodeType {
-  code_values: CodeValue[];
-  id: number;
-  type_desc: string;
-  type_name: string;
-}
-
-interface CodeTypesResponse {
-  data: {
-    code_types: CodeType[];
-  };
-  message: string;
-  status: string;
+interface fileUpload{
+  file: File;
+  file_name: string;
 }
 
 interface UserResponse {
@@ -129,7 +119,7 @@ export class RoomSchedulerComponent implements OnInit{
   private pollingSubscription: Subscription | null = null;
   //inject
   is = inject(ItemService);
-  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService) {
+  constructor(private changeDetector: ChangeDetectorRef, private router: Router, private dialog: MatDialog, private userService: UserService, private authService: AuthService, private itemService: ItemService, private fileService: FileService) {
   }
   isadmin = false;
   error = signal<string | null>(null);
@@ -441,13 +431,27 @@ export class RoomSchedulerComponent implements OnInit{
     const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: '', organizer: this.CurrentUser.id, description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: [this.CurrentUser.id]},
+      data: {title: '', organizer: this.CurrentUser.id, description: '', startTime: selectInfo.startStr, endTime: selectInfo.endStr, participants: [this.CurrentUser.id], files: []},
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {
         console.log(data);
         this.itemService.postMeeting( data.description, data.endTime, data.organizer, data.participants, this.selectedRoom.id, data.startTime, 'approved', data.title).subscribe((response: any) => {
+          const meeting_id = response.data.meeting.id;
+
           if(response.status === 'success'){
+            if(data.files.length > 0){
+              data.files.forEach((file: File) => {
+                this.fileService.uploadFile(file, meeting_id).subscribe((response: any) => {
+                  if(response.status === 'success'){
+                    console.log('upload file success');
+                  }else{
+                    console.log('upload file failed');
+                  }
+                });
+              });
+            }
+            this.fileService
             calendarApi.addEvent({
               // id: createEventId(),
               title: data.title,
@@ -484,7 +488,7 @@ export class RoomSchedulerComponent implements OnInit{
     const dialogRef = this.dialog.open(PopUpFormComponent, {
       width: '50%',
       height: '50%',
-      data: {title: clickInfo.event.title,organizer: clickInfo.event.extendedProps['organizer'],description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
+      data: {id: clickInfo.event.id, title: clickInfo.event.title,organizer: clickInfo.event.extendedProps['organizer'],description: clickInfo.event.extendedProps['description'], startTime: clickInfo.event.startStr, endTime: clickInfo.event.endStr, participants: clickInfo.event.extendedProps['participants']},
     });
     dialogRef.afterClosed().subscribe(data => {
       if (data && data.title !== undefined && data.title !== '') {

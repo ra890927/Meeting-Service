@@ -48,7 +48,12 @@
         <div>
             <div class="upload-item">
                 <mat-label>Uploaded Files</mat-label>
-                <mat-icon class="add" (click)="canUpload ? fileInput.click() : null">add</mat-icon>
+                @if(isUploading){
+                  <mat-spinner class="icon-size"></mat-spinner>
+                }
+                @else{
+                  <mat-icon class="add" (click)="canUpload ? fileInput.click() : null">add</mat-icon>
+                }
             </div>
             <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" multiple>
               <button class="get-file-button" [matMenuTriggerFor]="menu">
@@ -60,11 +65,11 @@
                 <div class="dropdown-item">
                   <div class="file-name">{{ file.file_name }}</div>
                   <div class="button-set">
-                    <a [href]="file.url" download >
-                      <button mat-icon-button color="primary" [disabled]="!canUpload">
-                        <mat-icon>download</mat-icon>
-                      </button>
-                    </a>
+                    @if(data.id !== undefined){
+                        <button mat-icon-button color="primary" [disabled]="!canUpload" (click)="download(file)">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                    }
                     <button mat-icon-button color="warn" (click)="canUpload ? deleteFile(file): null">
                       <mat-icon>delete</mat-icon>
                     </button>

@@ -2,13 +2,8 @@ import { Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
-
-
-const MEETING_API = 'http://140.113.215.132:8080/api/v1/meeting';
-const USER_API = 'http://140.113.215.132:8080/api/v1/user/';
-const ROOM_API = 'http://140.113.215.132:8080/api/v1/room/';
-const TAG_API = 'http://140.113.215.132:8080/api/v1/code';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -21,7 +16,7 @@ export class ItemService {
   }
   // get all tags
   getAllTags(): any {
-    return this.http.get(TAG_API + "/type/getAllCodeTypes", httpOptions).pipe(
+    return this.http.get(environment.apiUrl + "code/type/getAllCodeTypes", httpOptions).pipe(
       map((response: any) => {
         // console.log(response);
       const filteredData = response.data.code_types.filter((item: any) => item.type_name === 'ROOM_RULE');
@@ -50,25 +45,25 @@ export class ItemService {
 
   // get all rooms
   getAllRooms(): Observable<any> {
-    return this.http.get(ROOM_API + 'getAllRooms', httpOptions);
+    return this.http.get(environment.apiUrl + 'room/getAllRooms', httpOptions);
   }
   // get all users
 
   getAllUsers(): Observable<any> {
-    return this.http.get(USER_API+'getAllUsers', httpOptions);
+    return this.http.get(environment.apiUrl + 'user/getAllUsers', httpOptions);
 
   }
   // get meeting by user id
   getMeetingByUserId(id: string): Observable<any>  {
-    return this.http.get(MEETING_API + "/getMeetingsByParticipantId?id=" + String(id), httpOptions);
+    return this.http.get(environment.apiUrl + "room/getMeetingsByParticipantId?id=" + String(id), httpOptions);
   }
   
   getMeetingByRoomIdAndTime(id: number, start: string, end: string): Observable<any>  {
-    return this.http.get(MEETING_API + "/getMeetingsByRoomIdAndDatePeriod?room_id=" + id + "&date_from=" + start + "&date_to=" + end, httpOptions);
+    return this.http.get(environment.apiUrl + "meeting/getMeetingsByRoomIdAndDatePeriod?room_id=" + id + "&date_from=" + start + "&date_to=" + end, httpOptions);
   }
   // post meeting
   postMeeting(description:string, end_time:string, organizer:number, participants:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
-    return this.http.post(MEETING_API, {
+    return this.http.post(environment.apiUrl + 'meeting', {
       description,
       end_time,
       organizer,
@@ -81,7 +76,7 @@ export class ItemService {
   }
   // put meeting
   putMeeting(id:string, description:string, end_time:string, organizer:number, participants:number[], room_id:number, start_time:string, status_type:string, title:string): Observable<any> {
-    return this.http.put(MEETING_API, {
+    return this.http.put(environment.apiUrl + 'meeting', {
       id,
       description,
       end_time,
@@ -95,6 +90,6 @@ export class ItemService {
   }
   // delete meeting
   deleteMeeting(id:string): Observable<any> {
-    return this.http.delete(MEETING_API + "/" + id, httpOptions);
+    return this.http.delete(environment.apiUrl + 'meeting/' + id, httpOptions);
   }
 }

@@ -15,7 +15,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // import listPlugin from '@fullcalendar/list';
-import {createEventId} from './event-utils';//test use
 import { C, S, cl, co, s } from '@fullcalendar/core/internal-common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';

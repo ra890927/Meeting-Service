@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-const AUTH_API = 'http://140.113.215.132:8080/api/v1/user';
+import { environment } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -25,7 +24,7 @@ export class UserService {
 
   // register
   register(username: string, email: string, password: string): Observable<any> {
-    return this.http.post(AUTH_API, 
+    return this.http.post(environment.apiUrl + 'user', 
     {
       username,
       email,
