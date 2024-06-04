@@ -48,7 +48,7 @@
             <div class="upload-item">
                 <mat-label>Uploaded Files</mat-label>
                 @if(isUploading){
-                  <mat-spinner></mat-spinner>
+                  <mat-spinner class="icon-size"></mat-spinner>
                 }
                 @else{
                   <mat-icon class="add" (click)="canUpload ? fileInput.click() : null">add</mat-icon>
@@ -64,11 +64,13 @@
                 <div class="dropdown-item">
                   <div class="file-name">{{ file.file_name }}</div>
                   <div class="button-set">
-                    <a [href]="file.url" download >
-                      <button mat-icon-button color="primary" [disabled]="!canUpload">
-                        <mat-icon>download</mat-icon>
-                      </button>
-                    </a>
+                    @if(data.id !== undefined){
+                      <a [href]="file.url" download  >
+                        <button mat-icon-button color="primary" [disabled]="!canUpload">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                      </a>
+                    }
                     <button mat-icon-button color="warn" (click)="canUpload ? deleteFile(file): null">
                       <mat-icon>delete</mat-icon>
                     </button>
