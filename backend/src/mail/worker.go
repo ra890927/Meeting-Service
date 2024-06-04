@@ -34,7 +34,15 @@ func getRedigoPool() *redigo.Pool {
 		MaxIdle:   viper.GetInt("mail.redigo.maxIdle"),
 		Wait:      viper.GetBool("mail.redigo.wait"),
 		Dial: func() (redigo.Conn, error) {
-			return redigo.Dial("tcp", ":"+viper.GetString("mail.redigo.port"))
+			conn, err := redigo.Dial(
+				"tcp", viper.GetString("redis.host")+":"+viper.GetString("redis.port"),
+				redigo.DialPassword(viper.GetString("redis.password")),
+				redigo.DialDatabase(viper.GetInt("redis.database")),
+			)
+			if err != nil {
+				panic(err)
+			}
+			return conn, err
 		},
 	}
 }
