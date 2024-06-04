@@ -63,10 +63,11 @@
     cursor: pointer;
 }
 .add:hover{
-    background-color: grey!important;
+    /* background-color: grey!important; */
+    opacity: 0.8;
 }
 
-.get-file-button{
+/* .get-file-button{
     background-color: transparent;
     display: flex;
     align-items: center;
@@ -78,23 +79,48 @@
     text-decoration: none;
     border-radius: 10px;
     cursor: pointer;
+} */
+.get-file-button {
+    border: 2px solid #787878;
+    background: rgb(199, 184, 161);
+    border-radius: 10px;
+    padding-right: 3px;
+    /* box-shadow: 1px 1px 3px rgb(80, 80, 80); */
+    cursor: pointer;
+    margin: 10px;
+}
+
+.get-file-button:hover {
+    /* background-color: #f5f5f5; */
+    opacity: 0.8;
+}
+.attach-icon {
+    color: white;
 }
 .attach-file{
-    width: 40%;
-    display: flex;
-    text-align: center;
+    height: 60%;
+    width: 50%;
+    color: white;
+    text-decoration: none;
+    margin: 0px 2px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    
 }
 .dropdown-item{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     width: 100%;
     margin: 5px;
 }
 .file-name{
     width: 60%;
-    text-align: left;
+    margin: 0px 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
+
 .button-set{
     display: flex;
     justify-content: space-between;

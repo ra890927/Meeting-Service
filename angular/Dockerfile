@@ -4,11 +4,13 @@ WORKDIR /usr/local/app
 
 COPY package*.json ./
 
+RUN npm install -g @angular/cli
+
 RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN ng build
 
 FROM nginx:alpine
 

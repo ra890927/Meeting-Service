@@ -549,6 +549,7 @@ export class RoomSchedulerComponent implements OnInit{
     });
   }
   handleEvents(events: EventApi[]) {
+    console.log(this.currentEvents());
     this.currentEvents.set(events);
     this.changeDetector.detectChanges();
   }

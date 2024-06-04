@@ -35,7 +35,7 @@ export class ItemService {
 
   // get code type id
   getCodeTypeId(): any {
-    return this.http.get(TAG_API + "/type/getAllCodeTypes", httpOptions).pipe(
+    return this.http.get(environment.apiUrl + "code/type/getAllCodeTypes", httpOptions).pipe(
       map((response: any) => {
         const filteredData = response.data.code_types.filter((item: any) => item.type_name === 'ROOM_RULE');
         return filteredData[0];
@@ -55,7 +55,7 @@ export class ItemService {
   }
   // get meeting by user id
   getMeetingByUserId(id: string): Observable<any>  {
-    return this.http.get(environment.apiUrl + "room/getMeetingsByParticipantId?id=" + String(id), httpOptions);
+    return this.http.get(environment.apiUrl + "meeting/getMeetingsByParticipantId?id=" + String(id), httpOptions);
   }
   
   getMeetingByRoomIdAndTime(id: number, start: string, end: string): Observable<any>  {

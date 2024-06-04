@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
 }
 
 .detail-header{
@@ -42,6 +42,53 @@
     font-size: 16px;
     color: #666;
 }
+
+.get-file-button {
+    border: 2px solid #787878;
+    background: rgb(199, 184, 161);
+    border-radius: 10px;
+    padding-right: 3px;
+    /* box-shadow: 1px 1px 3px rgb(80, 80, 80); */
+    cursor: pointer;
+}
+
+.get-file-button:hover {
+    /* background-color: #f5f5f5; */
+    opacity: 0.8;
+}
+
+.attach-icon {
+    color: white;
+
+}
+
+.attach_file {
+    height: 60%;
+    width: 50%;
+    color: white;
+    text-decoration: none;
+    margin: 0px 2px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin: 5px;
+}
+
+.file-name {
+    width: 60%;
+    margin: 0px 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.button-set {
+    margin: 0px 5px;
+}
+
 .rules{
     text-decoration: none;
     border:none;

@@ -57,8 +57,8 @@
             </div>
             <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" multiple>
               <button class="get-file-button" [matMenuTriggerFor]="menu">
-                <mat-icon >attach_file</mat-icon>
-                <span class="attach_file">attachment</span>
+                <mat-icon class="attach-icon">attach_file</mat-icon>
+                <span class="attach-file">attachment</span>
               </button>
               <mat-menu #menu="matMenu">
                 @for(file of uploadedFiles; track file){
