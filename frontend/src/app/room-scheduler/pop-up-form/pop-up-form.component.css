@@ -1,0 +1,145 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.form-title{
+    font-size: 2em;
+    margin: 10px;
+}
+
+.input-container{
+    margin: 5px;
+    width: 100%;
+}
+.description{
+    height:40%;
+}
+.description-container{
+    resize: none;
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2em;
+}
+.action-container{
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    padding: 10px;
+}
+.buttons{
+    position: relative;
+    padding: 0.25em 1em;
+}
+
+.user-email{
+    font-size: 0.8em;
+    color: grey;
+}
+.file-container{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 5px;
+}
+.upload-item{
+    width: 100%;
+    height: 40%;
+    align-items: center;
+    display: flex;
+    margin-left: 15px;
+    justify-content: left;
+}
+
+.add {
+    background-color: grey!important;
+    margin-left: 10px;
+    color: white!important;
+    font-size: 15px;
+    text-align: center;
+    height: fit-content;
+    width: fit-content;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.add:hover{
+    /* background-color: grey!important; */
+    opacity: 0.8;
+}
+
+/* .get-file-button{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60%;
+    width: 50%;
+    color: grey!important;
+    border: grey 3px solid;
+    text-decoration: none;
+    border-radius: 10px;
+    cursor: pointer;
+} */
+.get-file-button {
+    border: 2px solid #787878;
+    background: rgb(199, 184, 161);
+    border-radius: 10px;
+    padding-right: 3px;
+    /* box-shadow: 1px 1px 3px rgb(80, 80, 80); */
+    cursor: pointer;
+    margin: 10px;
+}
+
+.get-file-button:hover {
+    /* background-color: #f5f5f5; */
+    opacity: 0.8;
+}
+.attach-icon {
+    color: white;
+}
+.attach-file{
+    height: 60%;
+    width: 50%;
+    color: white;
+    text-decoration: none;
+    margin: 0px 2px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    
+}
+.dropdown-item{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin: 5px;
+}
+.file-name{
+    width: 60%;
+    margin: 0px 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.button-set{
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+    margin: 5px;
+}
+
+.label{
+    position: relative;
+    top:0%;
+    left: 0%;
+}
+
+::placeholder{
+    
+    color: grey;
+}
+
+.icon-size{
+    width: 24px;
+    height: 24px;
+}
