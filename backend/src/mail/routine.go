@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gocraft/work"
 	"github.com/jasonlvhit/gocron"
 )
 
@@ -46,7 +45,6 @@ func initScheduler() {
 func getMeetingForNotification() {
 	log.Print("[INFO] Send notification mail start")
 
-	userRepo := repos.NewUserRepo()
 	meetingRepo := repos.NewMeetingRepo()
 
 	dateFrom, dateTo := time.Now(), time.Now().Add(30*time.Minute)
@@ -57,22 +55,7 @@ func getMeetingForNotification() {
 	}
 
 	for _, meeting := range meetings {
-		for _, uid := range meeting.Participants {
-			user, err := userRepo.GetUserByID(uid)
-			if err != nil {
-				log.Fatal("[ERROR] getMeetingForNotification:", err)
-				continue
-			}
-
-			_, err = enqueuer.Enqueue("send_email", work.Q{
-				"recipient": user.Email,
-				"subject":   meeting.Title,
-				"body":      "",
-			})
-			if err != nil {
-				log.Fatal("[ERROR] getMeetingForNotification:", err)
-			}
-		}
+		SendEmailByMeeting(meeting)
 	}
 
 	log.Print("[INFO] Send notification mail end")
