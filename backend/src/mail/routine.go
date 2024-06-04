@@ -15,6 +15,11 @@ var (
 	schedulerOnce sync.Once
 )
 
+const (
+	NOTICE uint = iota
+	REMIND
+)
+
 func GetSchedulerInstance() *gocron.Scheduler {
 	if scheduler == nil {
 		schedulerOnce.Do(func() {
@@ -47,7 +52,7 @@ func getMeetingForNotification() {
 
 	meetingRepo := repos.NewMeetingRepo()
 
-	dateFrom, dateTo := time.Now(), time.Now().Add(30*time.Minute)
+	dateFrom, dateTo := time.Now(), time.Now().Add(10*time.Minute)
 	meetings, err := meetingRepo.GetMeetingsByDatePeriod(dateFrom, dateTo)
 	if err != nil {
 		log.Fatal("[ERROR] getMeetingForNotification:", err)
@@ -55,7 +60,7 @@ func getMeetingForNotification() {
 	}
 
 	for _, meeting := range meetings {
-		SendEmailByMeeting(meeting)
+		SendEmailByMeeting(meeting, REMIND)
 	}
 
 	log.Print("[INFO] Send notification mail end")

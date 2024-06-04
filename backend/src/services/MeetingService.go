@@ -71,7 +71,7 @@ func (ms meetingService) CreateMeeting(operator models.User, meeting *models.Mee
 		return errors.New("error when creating meeting")
 	}
 
-	mail.SendEmailByMeeting(*meeting)
+	mail.SendEmailByMeeting(*meeting, mail.NOTICE)
 
 	return nil
 }
@@ -98,7 +98,7 @@ func (ms meetingService) UpdateMeeting(operator models.User, meeting *models.Mee
 		return errors.New("error when updating meeting")
 	}
 
-	mail.SendEmailByMeeting(*meeting)
+	mail.SendEmailByMeeting(*meeting, mail.NOTICE)
 
 	return nil
 }
